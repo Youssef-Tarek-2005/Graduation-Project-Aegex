@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dead_letter*.ndjson
+data/*.csv
+!data/.gitkeep

@@ -1,0 +1,175 @@
+
+# AEGEX - Portable Docker Compose development stack
+# Development defaults only. Configure credentials before production use.
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: aegex
+      POSTGRES_PASSWORD: aegex
+      POSTGRES_DB: aegex
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aegex -d aegex"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    # SeaweedFS provides the S3-compatible object storage service.
+    image: chrislusf/seaweedfs:latest
+    restart: unless-stopped
+    command: server -dir=/data -s3 -s3.port=9000 -master.volumeSizeLimitMB=100
+    ports:
+      - "9000:9000"
+      - "9333:9333"
+    volumes:
+      - miniodata:/data
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  kafka:
+    image: apache/kafka:3.8.0
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+
+  # SSH and Telnet honeypot
+  cowrie:
+    image: cowrie/cowrie:latest
+    restart: unless-stopped
+    ports:
+      - "2222:2222"
+      - "2223:2223"
+    environment:
+      COWRIE_TELNET_ENABLED: "yes"
+    volumes:
+      - cowrielogs:/cowrie/cowrie-git/var/log/cowrie
+
+  # MQTT honeypot broker
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./honeypots/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mqttdata:/mosquitto/data
+      - mqttlogs:/mosquitto/log
+
+  # Zeek network monitoring
+  zeek:
+    image: zeek/zeek:8.0
+    restart: unless-stopped
+    profiles:
+      - capture
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    entrypoint:
+      - /usr/local/zeek/bin/zeek
+    command:
+      - -i
+      - ${ZEEK_INTERFACE:-eth0}
+      - -f
+      - "tcp port 2222 or tcp port 2223 or tcp port 1883 or tcp port 22 or tcp port 23"
+      - /scripts/aegex.zeek
+    volumes:
+      - ./honeypots/zeek/aegex.zeek:/scripts/aegex.zeek:ro
+      - zeeklogs:/logs
+    working_dir: /logs
+
+  # AEGEX event collection and processing pipeline
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: ["python", "main.py"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      cowrie:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+    environment:
+      AEGEX_CSV_PATH: /data/my_data.csv
+      AEGEX_TIME_MODE: ingest
+      AEGEX_POSTGRES_URL: postgresql+psycopg2://aegex:aegex@postgres:5432/aegex
+      AEGEX_MINIO_ENDPOINT: minio:9000
+      AEGEX_MINIO_OBJECT_LOCK: "false"
+      AEGEX_ES_URL: http://elasticsearch:9200
+      AEGEX_KAFKA_ENABLED: "false"
+      AEGEX_DEAD_LETTER: /dead_letter/dead_letter.ndjson
+      AEGEX_FEEDS_ENABLED: "true"
+      AEGEX_FEEDS_FROM_START: ${AEGEX_FEEDS_FROM_START:-true}
+      AEGEX_MQTT_HOST: mosquitto
+      AEGEX_FOLLOW_CSV: ${AEGEX_FOLLOW_CSV:-true}
+      AEGEX_SIMULATE_NETWORK: ${AEGEX_SIMULATE_NETWORK:-true}
+    volumes:
+      # The CSV is stored under the Python project directory in this repository.
+      - ./aegex/data:/data:ro
+      - deadletter:/dead_letter
+      - cowrielogs:/feeds/cowrie:ro
+      - zeeklogs:/feeds/zeek:ro
+      - mqttlogs:/feeds/mosquitto:ro
+
+  # AEGEX API and dashboard
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command:
+      - uvicorn
+      - aegex.api:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      AEGEX_POSTGRES_URL: postgresql+psycopg2://aegex:aegex@postgres:5432/aegex
+      AEGEX_ES_URL: http://elasticsearch:9200
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
+  miniodata:
+  esdata:
+  deadletter:
+  cowrielogs:
+  zeeklogs:
+  mqttdata:
+  mqttlogs:
