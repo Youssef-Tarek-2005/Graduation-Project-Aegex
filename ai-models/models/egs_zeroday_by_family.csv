@@ -1,0 +1,4 @@
+Family,Samples,EdgeMLP (no graph),E-GraphSAGE (graph)
+XSS,15915,78.92,97.04
+SQL_injection,51203,100.0,99.93
+Backdoor,24862,52.99,99.2

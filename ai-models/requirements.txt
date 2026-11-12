@@ -1,0 +1,16 @@
+# Layers 1 and 3 — Keras models
+tensorflow>=2.16,<3
+scikit-learn>=1.4
+pandas>=2.0
+numpy>=1.26
+
+# Layer 2 — E-GraphSAGE
+torch>=2.2
+
+# plots produced by the notebooks
+matplotlib>=3.8
+
+# Layer 4 (RAG) is a separate project with its own requirements.txt:
+#   https://github.com/rvong65/threat-intelligence-assistant
+# Install it in its own virtualenv, then add tensorflow there so
+# scripts/detect_and_report.py can reach both halves from one interpreter.

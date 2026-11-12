@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تشغيل E-GraphSAGE — دليل الخطوات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070f1c; --bg2:#0c1a2e; --card:#102237; --card2:#16304a; --line:#1f3f5e;
+  --txt:#e8f1f8; --muted:#8fa9c0;
+  --cyan:#00e5ff; --cyan-dim:#0a4a5c;
+  --orange:#ffa62b; --green:#3ddc97; --red:#ff5c7a; --purple:#b47cff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,229,255,.10), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(180,124,255,.07), transparent);
+  background-attachment:fixed; color:var(--txt);
+  font-family:'IBM Plex Sans Arabic','Cairo',sans-serif;
+  line-height:1.9; overflow-x:hidden;
+}
+code,.mono,pre{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed}
+
+.progress-wrap{position:fixed;top:0;left:0;right:0;height:3px;background:#0a1626;z-index:100}
+.progress{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .35s ease;box-shadow:0 0 12px var(--cyan)}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:48px 16px 110px}
+.slide{display:none;width:100%;max-width:840px;animation:fade .4s ease}
+.slide.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;color:var(--cyan);background:rgba(0,229,255,.08);border:1px solid var(--cyan-dim);padding:5px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-family:'Cairo',sans-serif;font-weight:900;font-size:clamp(25px,5.6vw,40px);line-height:1.35;margin-bottom:14px;background:linear-gradient(120deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-family:'Cairo',sans-serif;font-weight:800;font-size:clamp(21px,4.6vw,30px);margin-bottom:18px;color:#fff}
+h3{font-family:'Cairo',sans-serif;font-weight:700;font-size:clamp(17px,3.6vw,21px);margin:24px 0 10px;color:var(--cyan)}
+p{margin-bottom:14px;font-size:clamp(15px,3.3vw,17px)}
+.lead{font-size:clamp(16px,3.6vw,19px);color:var(--muted)}
+ul,ol{margin:0 20px 16px 0;padding-right:8px}
+li{margin-bottom:9px;font-size:clamp(14.5px,3.2vw,16.5px)}
+b,strong{color:#fff;font-weight:700}
+
+.box{border-radius:14px;padding:18px 20px;margin:18px 0;border-right:4px solid}
+.def{background:rgba(0,229,255,.06);border-color:var(--cyan)} .def .box-t{color:var(--cyan)}
+.tip{background:rgba(255,166,43,.07);border-color:var(--orange)} .tip .box-t{color:var(--orange)}
+.warn{background:rgba(255,92,122,.07);border-color:var(--red)} .warn .box-t{color:var(--red)}
+.ok{background:rgba(61,220,151,.07);border-color:var(--green)} .ok .box-t{color:var(--green)}
+.box-t{display:block;font-family:'Cairo',sans-serif;font-weight:800;font-size:15px;margin-bottom:8px}
+.box p:last-child,.box ul:last-child,.box li:last-child{margin-bottom:0}
+
+pre{position:relative;background:#060d18;border:1px solid var(--line);border-radius:12px;padding:40px 16px 16px;overflow-x:auto;margin:14px 0;font-size:12.5px;line-height:1.8;text-align:left}
+pre code{color:#cfe6f5}
+.k{color:var(--purple)} .s{color:var(--green)} .n{color:var(--orange)}
+.c{color:#5b7591;font-style:italic} .f{color:var(--cyan)}
+code.inl{background:#081322;border:1px solid var(--line);padding:2px 7px;border-radius:6px;font-size:.88em;color:var(--cyan)}
+.cp{position:absolute;top:8px;right:10px;background:var(--card2);border:1px solid var(--line);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:4px 9px;border-radius:6px;cursor:pointer;transition:.18s;z-index:2}
+.cp:hover{border-color:var(--cyan);color:var(--cyan)}
+.cp.done{border-color:var(--green);color:var(--green)}
+
+.tw{overflow-x:auto;margin:18px 0;border-radius:12px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:420px;font-size:14px}
+th{background:var(--card2);color:var(--cyan);font-family:'Cairo',sans-serif;font-weight:800;padding:12px 14px;text-align:right;font-size:13.5px;white-space:nowrap}
+td{padding:11px 14px;border-top:1px solid var(--line);background:rgba(16,34,55,.5)}
+tr:hover td{background:rgba(22,48,74,.7)}
+
+.steps{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.step .num{flex:0 0 32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#04131d;font-family:'JetBrains Mono',monospace;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.step .body b{display:block;margin-bottom:3px;font-size:15.5px}
+.step .body span{color:var(--muted);font-size:14px}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+@media(max-width:620px){.cols{grid-template-columns:1fr}}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px}
+.mini b{display:block;color:var(--cyan);margin-bottom:6px;font-family:'Cairo',sans-serif}
+.mini span{font-size:14px;color:var(--muted)}
+
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+.q .qt{font-family:'Cairo',sans-serif;font-weight:700;margin-bottom:14px;font-size:16px;color:#fff}
+.opt{display:block;width:100%;text-align:right;background:var(--bg2);border:1px solid var(--line);color:var(--txt);padding:12px 15px;border-radius:10px;margin-bottom:9px;cursor:pointer;font-family:inherit;font-size:14.5px;transition:.18s}
+.opt:hover{border-color:var(--cyan);background:var(--card2)}
+.opt.right{border-color:var(--green);background:rgba(61,220,151,.14);color:var(--green)}
+.opt.wrong{border-color:var(--red);background:rgba(255,92,122,.12);color:var(--red)}
+.qa{display:none;margin-top:10px;padding:12px 15px;background:rgba(0,229,255,.06);border-right:3px solid var(--cyan);border-radius:9px;font-size:14px;color:var(--muted)}
+.qa.show{display:block}
+
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(7,15,28,.93);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:90}
+.nbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:10px 20px;border-radius:10px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:14.5px;transition:.18s}
+.nbtn:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.counter{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+.hint{text-align:center;color:#4e6b85;font-size:12px;margin-top:26px;font-family:'JetBrains Mono',monospace}
+.chk{list-style:none;margin-right:0}
+.chk li{position:relative;padding-right:30px;margin-bottom:12px}
+.chk li::before{content:"☐";position:absolute;right:0;color:var(--cyan);font-size:18px;top:-2px}
+.graph{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px 0;font-family:'JetBrains Mono',monospace;font-size:13px}
+.node{background:var(--card2);border:2px solid var(--cyan);border-radius:50%;width:74px;height:74px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;color:var(--cyan);padding:4px}
+.edge{color:var(--orange);font-size:12px;text-align:center;min-width:110px}
+.edge b{display:block;color:var(--orange)}
+</style>
+</head>
+<body>
+
+<div class="progress-wrap"><div class="progress" id="prog"></div></div>
+<div class="stage">
+
+<!-- 1 -->
+<section class="slide active">
+  <span class="badge">E-GRAPHSAGE · المرحلة 2</span>
+  <h1>تشغيل E-GraphSAGE<br>على كل الـ 2.2 مليون اتصال</h1>
+  <p class="lead">الـ autoencoder خلص. دلوقتي نجرّب سؤال مختلف: هل رؤية الاتصال <b>وسط جيرانه</b> بتكشف هجمات فاتت عليه؟</p>
+
+  <div class="cols">
+    <div class="mini"><b>⏱ الإعداد</b><span>5 دقايق (تنصيب PyTorch بس)</span></div>
+    <div class="mini"><b>⚡ التشغيل</b><span>25 – 40 دقيقة للنموذجين</span></div>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ إيه الجديد</span>
+    <p>الـ autoencoder بيبص على <b>كل اتصال لوحده</b>. E-GraphSAGE بيبني <b>جراف للشبكة</b> — الأجهزة نقط والاتصالات خطوط — وبيصنّف كل اتصال وهو شايف باقي نشاط الجهازين.</p>
+  </div>
+
+  <p class="hint">استخدم ← → في الكيبورد · أو اسحب بصباعك</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <span class="badge">01 · السؤال الأول</span>
+  <h2>PowerShell جديد ولا القديم؟</h2>
+
+  <div class="box ok">
+    <span class="box-t">✓ القديم — لو لسه مفتوح</span>
+    <p>لو شايف <code class="inl">(venv)</code> في أول السطر، إنت جاهز. ما تفتحش جديد.</p>
+  </div>
+
+  <h3>لو قفلته، ترجّعه بسطرين</h3>
+
+<pre><code>cd <span class="s">$HOME\Desktop\PoC</span>
+.\venv\Scripts\Activate.ps1</code></pre>
+
+  <div class="box warn">
+    <span class="box-t">⚠ ليه مهم</span>
+    <p>لو نصّبت PyTorch في نافذة <b>من غير</b> <code class="inl">(venv)</code>، هيتنصّب في مكان تاني والـ notebook مش هيلاقيه — وهتشوف <code class="inl">ModuleNotFoundError</code> وإنت متأكد إنك نصّبته.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ قاعدة بسيطة</span>
+    <p><b>شايف <code class="inl">(venv)</code> → كمّل. مش شايفها → شغّل السطرين فوق الأول.</b></p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <span class="badge">02 · التنصيب</span>
+  <h2>نصّب PyTorch</h2>
+  <p>ده كل اللي ناقص. مش محتاج أي حاجة تانية.</p>
+
+<pre><code>pip install --default-timeout=1000 --retries 10 torch</code></pre>
+
+  <div class="tw">
+  <table>
+    <tr><th></th><th></th></tr>
+    <tr><td><b>الحجم</b></td><td>~250 ميجا</td></tr>
+    <tr><td><b>الوقت</b></td><td>2 – 5 دقايق</td></tr>
+  </table>
+  </div>
+
+  <div class="box warn">
+    <span class="box-t">⚠ ما تدوسش جوه النافذة</span>
+    <p>فاكر لما التنصيب اتلغى المرة اللي فاتت برسالة <code class="inl">Operation cancelled by user</code>؟ ده حصل من كليك جوه النافذة. سيبها في حالها لحد ما تخلص.</p>
+  </div>
+
+  <h3>لو النت قطع</h3>
+  <p>أعد نفس الأمر — هيكمّل من عند اللي وقف، مش هيعيد من الأول.</p>
+
+  <h3>اتأكد إنه اشتغل</h3>
+<pre><code>python -c <span class="s">"import torch; print(torch.__version__)"</span></code></pre>
+  <p>لازم يطبع رقم إصدار زي <code class="inl">2.9.0</code>.</p>
+
+  <div class="box def">
+    <span class="box-t">◆ مش محتاج PyTorch Geometric</span>
+    <p>المكتبة المعتادة للجرافات دي وجع على ويندوز. عشان كده الـ GNN مكتوب بـ PyTorch العادي في الـ notebook — وتقدر تشرح كل سطر فيه في المناقشة.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="badge">03 · الفكرة</span>
+  <h2>الجراف شكله إيه</h2>
+
+  <div class="graph">
+    <div class="node">ESP32<br>Camera</div>
+    <div class="edge"><b>←— اتصال —→</b>38 خاصية</div>
+    <div class="node">Attacker</div>
+  </div>
+
+  <div class="tw">
+  <table>
+    <tr><th>العنصر</th><th>بيمثّل إيه</th></tr>
+    <tr><td><b>النقطة</b> (node)</td><td>جهاز — عنوان IP</td></tr>
+    <tr><td><b>الخط</b> (edge)</td><td>اتصال بين جهازين، شايل الـ 38 خاصية</td></tr>
+    <tr><td><b>التنبؤ</b></td><td>واحد لكل اتصال: هجوم ولا طبيعي</td></tr>
+  </table>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ الـ IP مش خاصية — ده مقصود</span>
+    <p>تمثيل الجهاز بيبدأ <b>متجه ثابت من واحدات</b>، مش عنوانه. والورقة البحثية نفسها بتعمل كده عمداً.</p>
+    <p><b>ليه؟</b> لأن الـ dataset من معمل، والمهاجم عنوانه ثابت. لو الموديل شاف العنوان، هيتعلم «الـ IP ده هو المهاجم» — وده مايشتغلش على أي شبكة تانية.</p>
+    <p>الـ IP بيحدد <b>مين يتوصل بمين</b> بس.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ سؤال محتمل: «ليه شيلت الـ IP؟»</span>
+    <p>«عشان ما يتعلمش عنوان المهاجم. الورقة الأصلية بتبدأ بتمثيل ثابت للنقط لنفس السبب، والموديل كده بيتعلم <b>السلوك</b> مش <b>الهوية</b>.»</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="badge">04 · أهم إعداد</span>
+  <h2>WINDOW = 100 — ليه بالذات</h2>
+  <p>الاتصالات بتتقسّم لـ <b>نوافذ</b> متتالية، وكل نافذة بتبقى جراف صغير مستقل. الرقم ده بيحدد النتيجة أكتر من أي حاجة تانية.</p>
+
+  <div class="tw">
+  <table>
+    <tr><th>النافذة</th><th>اتصالات لكل جهاز</th><th>MLP</th><th>E-GraphSAGE</th></tr>
+    <tr><td><b>100</b></td><td>2.1</td><td>34.1%</td><td><b style="color:var(--green)">95.4%</b></td></tr>
+    <tr><td>250</td><td>5.0</td><td>30.9%</td><td>87.6%</td></tr>
+    <tr><td>500</td><td>10.0</td><td>26.7%</td><td>67.4%</td></tr>
+    <tr><td>1000</td><td>40.0</td><td>14.6%</td><td>22.3%</td></tr>
+  </table>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ السبب</span>
+    <p><b>نافذة كبيرة:</b> الجهاز بيبعت اتصالات طبيعية وهجومية في نفس الوقت. تمثيله بيبقى <b>متوسط الاتنين</b> — والإشارة تضيع.</p>
+    <p><b>نافذة صغيرة:</b> تمثيله بيعكس <b>لحظة محددة</b>. لو بيهاجم دلوقتي، هيبان.</p>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ وده هيبقى شريحة في العرض</span>
+    <p>في جدول زي ده، ومعاه تفسير للآلية، ومعاه تجربة بتأكده — ده بيوريهم إنك <b>فهمت النموذج</b> مش بس شغّلته.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <span class="badge">05 · الضمانة</span>
+  <h2>الـ MLP — أهم حاجة في الملف كله</h2>
+  <p>الـ notebook بيدرّب <b>نموذجين</b>، مش واحد.</p>
+
+  <div class="tw">
+  <table>
+    <tr><th></th><th>EdgeMLP</th><th>E-GraphSAGE</th></tr>
+    <tr><td>الخصائص</td><td>نفسها</td><td>نفسها</td></tr>
+    <tr><td>التصنيفات</td><td>نفسها</td><td>نفسها</td></tr>
+    <tr><td>التقسيم</td><td>نفسه</td><td>نفسه</td></tr>
+    <tr><td><b>الجراف</b></td><td><b style="color:var(--red)">❌</b></td><td><b style="color:var(--green)">✅</b></td></tr>
+  </table>
+  </div>
+
+  <div class="box warn">
+    <span class="box-t">⚠ من غيره، نتيجتك مالهاش قيمة</span>
+    <p>لو عرضت «E-GraphSAGE جاب 90%» بس، أول سؤال هيبقى:</p>
+    <p style="margin-right:14px"><b>«طب إزاي عرفت إن ده بسبب الجراف؟ يمكن بسبب إن النموذج أكبر وفيه parameters أكتر؟»</b></p>
+    <p>ومتقدرش ترد.</p>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ معاه، الرد جاهز</span>
+    <p>«درّبت نموذج تاني بنفس المدخلات والتصنيفات والتقسيم بالظبط، الفرق الوحيد إنه مفيهوش جراف. الفرق بينهم <b>هو مساهمة الجراف</b> ومفيش تفسير تاني.»</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ ده اسمه ضابط تجريبي (control)</span>
+    <p>مفهوم أساسي في المنهج العلمي: تثبّت كل حاجة وتغيّر عامل واحد. ذكر الكلمة دي في المناقشة بيفرق.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <span class="badge">06 · العدالة</span>
+  <h2>اختبار الهجوم المجهول</h2>
+  <p>في فخ تاني كان ممكن يدمّر المقارنة.</p>
+
+  <div class="box warn">
+    <span class="box-t">⚠ المشكلة</span>
+    <div class="tw" style="margin:10px 0 0">
+    <table>
+      <tr><th></th><th>Autoencoder</th><th>E-GraphSAGE</th></tr>
+      <tr><td>شاف هجمات في التدريب؟</td><td><b>لأ أبداً</b></td><td>آه</td></tr>
+    </table>
+    </div>
+    <p style="margin-top:10px">نموذج شاف الإجابات هيكسب نموذج ما شفهاش — <b>مش لأنه أذكى</b>.</p>
+  </div>
+
+  <h3>الحل</h3>
+  <div class="tw">
+  <table>
+    <tr><th>التدريب على</th><th>الاختبار على</th></tr>
+    <tr><td>DDoS · Scanning · Password · MITM · Ransomware</td><td><b>XSS · SQL injection · Backdoor</b></td></tr>
+  </table>
+  </div>
+
+  <p>التلاتة دول <b>محجوزين تماماً</b> — مش موجودين في التدريب ولا كأمثلة سالبة.</p>
+
+  <div class="box def">
+    <span class="box-t">◆ السؤال اللي بيجاوب عليه</span>
+    <p>«هل رؤية السياق بتساعد في كشف هجوم <b>جديد تماماً</b>؟»</p>
+    <p>وده بالظبط اللي مشروعك محتاج يثبته.</p>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ الـ notebook بيتأكد بنفسه</span>
+    <p>فيه فحص بيقف ويقول <code class="inl">LEAK</code> لو أي نوع محجوز وصل للتدريب بالغلط. مش هيعدّي من غير ما تعرف.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <span class="badge">07 · التشغيل</span>
+  <h2>خطوات التشغيل</h2>
+
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div class="body"><b>حط الـ notebook في الفولدر</b><span>نزّل <code class="inl">EGraphSAGE_EdgeIIoTset.ipynb</code> وحطه في <code class="inl">Desktop\PoC</code> جنب الـ CSV</span></div></div>
+    <div class="step"><div class="num">2</div><div class="body"><b>شغّل Jupyter</b><span>من نفس النافذة اللي فيها <code class="inl">(venv)</code></span></div></div>
+    <div class="step"><div class="num">3</div><div class="body"><b>غيّر المسار</b><span>في أول خلية — <code class="inl">CSV_PATH</code></span></div></div>
+    <div class="step"><div class="num">4</div><div class="body"><b>Run All Cells</b><span>وسيبه يشتغل</span></div></div>
+  </div>
+
+<pre><code>jupyter notebook</code></pre>
+
+  <h3>المسار بتاعك</h3>
+<pre><code>CSV_PATH = <span class="k">r</span><span class="s">'C:\Users\KimoStore\Desktop\PoC\DNN-EdgeIIoT-dataset.csv'</span></code></pre>
+
+  <div class="box warn">
+    <span class="box-t">⚠ انسخه زي ما هو</span>
+    <p>من غير أي نجوم ولا علامات زيادة. ولاحظ الـ <code class="inl">r</code> قبل علامة التنصيص — من غيرها ويندوز هيفهم الـ <code class="inl">\</code> غلط.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ امنع الجهاز من النوم</span>
+    <p>Settings ← System ← Power ← خلي <code class="inl">Screen and sleep</code> على <b>Never</b> وإنت موصّل بالشاحن.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <span class="badge">08 · المتابعة</span>
+  <h2>4 نقاط تتأكد عندها</h2>
+
+  <div class="tw">
+  <table>
+    <tr><th>#</th><th>بعد خلية</th><th>لازم تشوف</th></tr>
+    <tr><td>1</td><td>التحميل</td><td><code class="inl">loaded 2,219,201 flows</code></td></tr>
+    <tr><td>2</td><td>الجراف</td><td><code class="inl">windows 22,192 | nodes ...</code></td></tr>
+    <tr><td>3</td><td>التقسيم</td><td><code class="inl">no held-out family in training</code></td></tr>
+    <tr><td>4</td><td>الدفعة</td><td><code class="inl">sample batch: 40,000 flows</code></td></tr>
+  </table>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ خد بالك من سطر واحد بالذات</span>
+    <p><code class="inl">flows per host inside a window</code></p>
+    <p>لو الرقم ده <b>أقل من 5</b> → ممتاز، الجراف هيشتغل كويس.</p>
+    <p>لو <b>أكبر من 20</b> → صغّر <code class="inl">WINDOW</code> لـ 50 وأعد التشغيل.</p>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ أثناء التدريب</span>
+    <p>هيطبع الخسارة كل 5 دورات. المفروض تنزل مع الوقت. لو ثابتة تماماً من أول دورة، في مشكلة — قولي.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ الذاكرة</span>
+    <p>المفروض تفضل تحت <b>4 جيجا</b> طول الوقت — لأن التدريب بيشتغل على دفعات. لو طلعت فوق 12، وقّف وقولي.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <span class="badge">09 · الأهم</span>
+  <h2>القسم 8 — ما تتخطاهوش</h2>
+  <p>ده قسم اختياري في الـ notebook، بس هو <b>أقوى حاجة هتعرضها</b>.</p>
+
+  <h3>بيعمل إيه</h3>
+  <p>بيعيد التجربة كلها على 4 أحجام نوافذ مختلفة، ويرسم النتيجة.</p>
+
+  <div class="box ok">
+    <span class="box-t">✓ المتوقّع — والتباين هو المقصود</span>
+    <div class="tw" style="margin:10px 0 0">
+    <table>
+      <tr><th>النموذج</th><th>لما النافذة تصغر</th></tr>
+      <tr><td><b>E-GraphSAGE</b></td><td>يتحسّن <b>بقوة</b></td></tr>
+      <tr><td><b>MLP</b></td><td><b>مايتحركش</b></td></tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ ليه التباين ده مهم</span>
+    <p>الـ MLP <b>مفيهوش جراف أصلاً</b> — فحجم النافذة مستحيل يأثر عليه.</p>
+    <p>فلو E-GraphSAGE اتحسّن والـ MLP ثابت، يبقى التحسّن جاي من <b>الجراف وبس</b>. مفيش تفسير تاني ممكن.</p>
+    <p>دي أنضف من أي رقم مفرد.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ الرسمة اللي هتطلع</span>
+    <p>خطين: واحد صاعد (E-GraphSAGE) وواحد أفقي (MLP). <b>حطها في العرض</b> — بتحكي القصة في ثانية من غير كلام.</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <span class="badge">10 · الشفافية</span>
+  <h2>حاجة لازم تقولها إنت الأول</h2>
+
+  <div class="box warn">
+    <span class="box-t">⚠ في انحراف عن الورقة البحثية</span>
+    <p>الورقة بتمثّل الاتصال بـ <code class="inl">CONCAT(z_u, z_v)</code> — تمثيل الجهازين بس.</p>
+    <p>أنا ضفت <b>خصائص الاتصال نفسه</b> كمان.</p>
+  </div>
+
+  <h3>ليه</h3>
+  <p>الـ testbed فيه أجهزة قليلة. فتمثيل الجهازين بيطلع <b>شبه متطابق</b> لكل الاتصالات بينهم — والمصنّف مش هيلاقي حاجة يفرّق بيها.</p>
+
+  <div class="box ok">
+    <span class="box-t">✓ قولها بنفسك في المناقشة</span>
+    <p>«نفّذت E-GraphSAGE زي ما في الورقة، مع انحراف واحد معلن: ضفت خصائص الاتصال لمدخلات المصنّف. السبب إن عدد الأجهزة في الـ testbed قليل، فتمثيل الطرفين بيبقى متشابه جداً. ده موثّق في الكود.»</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ ليه ده يحسب ليك</span>
+    <p>إنك تعرف <b>فين خرجت عن الورقة وليه</b> بيوريهم إنك قريتها وفهمتها. لو حد اكتشفها وإنت ساكت، هتبقى مشكلة. لو إنت قلتها، هتبقى نقطة قوة.</p>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <span class="badge">11 · المشاكل</span>
+  <h2>لو حصلت مشكلة</h2>
+
+  <div class="tw">
+  <table>
+    <tr><th>الرسالة</th><th>السبب</th><th>الحل</th></tr>
+    <tr><td><code class="inl">No module named 'torch'</code></td><td>البيئة مش مفعّلة وقت التنصيب</td><td>فعّل <code class="inl">(venv)</code> وأعد التنصيب</td></tr>
+    <tr><td><code class="inl">FileNotFoundError</code></td><td>المسار غلط</td><td>Shift + كليك يمين ← Copy as path</td></tr>
+    <tr><td><code class="inl">LEAK: a held-out family...</code></td><td>تسريب في التقسيم</td><td>قولي — ده فحص أمان اشتغل</td></tr>
+    <tr><td><code class="inl">held-out families not in the data</code></td><td>نوع هجوم مش موجود</td><td>شوف أسماء الأنواع المطبوعة وعدّل القايمة</td></tr>
+    <tr><td><code class="inl">MemoryError</code></td><td>الدفعة كبيرة</td><td>نزّل <code class="inl">BATCH_WIN</code> لـ 200</td></tr>
+    <tr><td>التدريب بطيء جداً</td><td>نوافذ كتير</td><td>كبّر <code class="inl">WINDOW</code> لـ 200</td></tr>
+  </table>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ لو عايز تجرّب بسرعة الأول</span>
+    <p>غيّر في أول خلية:</p>
+<pre style="margin-top:8px"><code>SAMPLE_ROWS = <span class="n">200_000</span>
+EPOCHS      = <span class="n">10</span></code></pre>
+    <p>هيخلص في 5 دقايق وتشوف إن كل حاجة ماشية، وبعدين ترجّعهم لـ <code class="inl">None</code> و <code class="inl">40</code>.</p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <span class="badge">12 · اختبر نفسك</span>
+  <h2>أسئلة سريعة</h2>
+
+  <div class="q">
+    <div class="qt">1. ليه بندرّب الـ MLP أصلاً؟</div>
+    <button class="opt" data-ok="0">عشان يبقى عندنا نموذج احتياطي</button>
+    <button class="opt" data-ok="1">عشان نثبت إن التحسّن جاي من الجراف مش من حاجة تانية</button>
+    <button class="opt" data-ok="0">عشان أسرع في التدريب</button>
+    <div class="qa">ضابط تجريبي: نفس المدخلات والتصنيفات والتقسيم، والفرق الوحيد الجراف. من غيره، أي رقم عالي ممكن يكون بسبب حجم النموذج.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">2. ليه الـ IP مش خاصية في الموديل؟</div>
+    <button class="opt" data-ok="1">عشان الموديل ما يحفظش عنوان المهاجم بدل ما يتعلم السلوك</button>
+    <button class="opt" data-ok="0">عشان نوفّر ذاكرة</button>
+    <button class="opt" data-ok="0">عشان نص مش رقم</button>
+    <div class="qa">الـ dataset من معمل والمهاجم عنوانه ثابت. لو الموديل شافه هيجيب نتيجة عالية مالهاش قيمة على أي شبكة تانية. الورقة نفسها بتبدأ بتمثيل ثابت للنقط لنفس السبب.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">3. ليه النافذة الصغيرة أحسن للـ E-GraphSAGE؟</div>
+    <button class="opt" data-ok="1">تمثيل الجهاز بيعكس لحظة محددة بدل متوسط سلوكه كله</button>
+    <button class="opt" data-ok="0">لأنها أسرع في الحساب</button>
+    <button class="opt" data-ok="0">لأنها بتقلل الذاكرة</button>
+    <div class="qa">في نافذة كبيرة الجهاز بيبعت طبيعي وهجوم مع بعض، فتمثيله بيبقى متوسط الاتنين والإشارة تضيع. من 1000 لـ 100، النتيجة قفزت من 22% لـ 95%.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">4. في القسم 8، إيه اللي يأكد إن الجراف هو السبب؟</div>
+    <button class="opt" data-ok="1">E-GraphSAGE بيتحسّن مع النافذة الأصغر والـ MLP ثابت</button>
+    <button class="opt" data-ok="0">إن E-GraphSAGE رقمه أعلى</button>
+    <button class="opt" data-ok="0">إن التدريب أسرع</button>
+    <div class="qa">الـ MLP مفيهوش جراف، فحجم النافذة مستحيل يأثر عليه. لو هو ثابت والتاني بيتحرك، يبقى الحركة من الجراف وبس.</div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <span class="badge">13 · الخلاصة</span>
+  <h2>قائمة التأكد</h2>
+
+  <ul class="chk">
+    <li>شايف <code class="inl">(venv)</code> في أول السطر</li>
+    <li><code class="inl">python -c "import torch; print(torch.__version__)"</code> بيطبع رقم</li>
+    <li>الـ notebook في <code class="inl">Desktop\PoC</code> جنب الـ CSV</li>
+    <li><code class="inl">CSV_PATH</code> فيه <code class="inl">r</code> ومفيهوش نجوم</li>
+    <li><code class="inl">flows per host</code> طلع أقل من 5</li>
+    <li>شفت <code class="inl">no held-out family in training</code></li>
+    <li>شغّلت القسم 8 (مسح أحجام النوافذ)</li>
+    <li>فولدر <code class="inl">EGraphSAGE_results</code> اتعمل وفيه الرسومات</li>
+  </ul>
+
+  <div class="box def">
+    <span class="box-t">◆ اللي هتخرج بيه</span>
+    <div class="tw" style="margin:10px 0 0">
+    <table>
+      <tr><th>الملف</th><th>فيه إيه</th></tr>
+      <tr><td><code class="inl">egs_window_sweep.png</code></td><td><b>أهم رسمة</b> — الجراف ضد اللاجراف</td></tr>
+      <tr><td><code class="inl">egs_zeroday.png</code></td><td>الهجمات المجهولة لكل نوع</td></tr>
+      <tr><td><code class="inl">egs_comparison.csv</code></td><td>جدول المقارنة</td></tr>
+      <tr><td><code class="inl">egs_summary.json</code></td><td>كل الأرقام</td></tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="box warn">
+    <span class="box-t">⚠ تذكير — نقطة التوقف</span>
+    <p>لو الحاجة دي مش شغالة خلال <b>يومين</b>، سيبها وركّز على العرض.</p>
+    <p>الـ autoencoder لوحده نتيجة قوية مكتملة: <b>77.9% كشف · 96.7% دقة · 2.2 مليون سجل</b>. ومناقشة بنتيجة واحدة قوية أحسن من اتنين نصّهم شغال.</p>
+  </div>
+
+  <p style="margin-top:28px;text-align:center;color:var(--muted)">بالتوفيق 🎯</p>
+</section>
+
+</div>
+
+<div class="nav">
+  <button class="nbtn" id="prev">السابق ←</button>
+  <span class="counter" id="count">1 / 14</span>
+  <button class="nbtn" id="next">→ التالي</button>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+const prog=document.getElementById('prog'),count=document.getElementById('count'),
+      prev=document.getElementById('prev'),next=document.getElementById('next');
+function render(){
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  count.textContent=(i+1)+' / '+slides.length;
+  prog.style.width=((i+1)/slides.length*100)+'%';
+  prev.disabled=i===0; next.disabled=i===slides.length-1;
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function go(d){const n=i+d; if(n>=0&&n<slides.length){i=n;render();}}
+prev.onclick=()=>go(-1); next.onclick=()=>go(1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='BUTTON')return;
+  if(e.key==='ArrowLeft')go(1);
+  if(e.key==='ArrowRight')go(-1);
+});
+let sx=0,sy=0;
+document.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX;sy=e.changedTouches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){ dx<0?go(-1):go(1); }
+},{passive:true});
+document.querySelectorAll('pre').forEach(pre=>{
+  const b=document.createElement('button');
+  b.className='cp'; b.textContent='copy';
+  b.onclick=()=>{navigator.clipboard.writeText(pre.querySelector('code').innerText).then(()=>{
+    b.textContent='copied'; b.classList.add('done');
+    setTimeout(()=>{b.textContent='copy';b.classList.remove('done')},1600);});};
+  pre.appendChild(b);
+});
+document.querySelectorAll('.q').forEach(q=>{
+  const opts=[...q.querySelectorAll('.opt')], ans=q.querySelector('.qa');
+  opts.forEach(o=>o.onclick=()=>{
+    if(q.dataset.done)return;
+    q.dataset.done=1;
+    opts.forEach(x=>x.classList.add(x.dataset.ok==='1'?'right':'wrong'));
+    ans.classList.add('show');
+  });
+});
+render();
+</script>
+</body>
+</html>

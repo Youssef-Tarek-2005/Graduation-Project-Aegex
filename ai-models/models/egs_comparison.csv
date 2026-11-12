@@ -1,0 +1,3 @@
+Model,Seen recall %,Seen precision %,Seen F1 %,Seen FPR %,Zero-day recall %
+EdgeMLP (no graph),95.77,97.92,96.83,0.67,83.65
+E-GraphSAGE (graph),99.9,99.62,99.76,0.13,99.23

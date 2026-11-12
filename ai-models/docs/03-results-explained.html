@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فهم نتائج الـ Autoencoder — شرح كل رقم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070f1c; --bg2:#0c1a2e; --card:#102237; --card2:#16304a; --line:#1f3f5e;
+  --txt:#e8f1f8; --muted:#8fa9c0;
+  --cyan:#00e5ff; --cyan-dim:#0a4a5c;
+  --orange:#ffa62b; --green:#3ddc97; --red:#ff5c7a; --purple:#b47cff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,229,255,.10), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(180,124,255,.07), transparent);
+  background-attachment:fixed;
+  color:var(--txt);
+  font-family:'IBM Plex Sans Arabic','Cairo',sans-serif;
+  line-height:1.9; overflow-x:hidden;
+}
+code,.mono,pre{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed}
+
+.progress-wrap{position:fixed;top:0;left:0;right:0;height:3px;background:#0a1626;z-index:100}
+.progress{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .35s ease;box-shadow:0 0 12px var(--cyan)}
+
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:48px 16px 110px}
+.slide{display:none;width:100%;max-width:840px;animation:fade .4s ease}
+.slide.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;color:var(--cyan);background:rgba(0,229,255,.08);border:1px solid var(--cyan-dim);padding:5px 12px;border-radius:99px;margin-bottom:18px}
+
+h1{font-family:'Cairo',sans-serif;font-weight:900;font-size:clamp(25px,5.6vw,40px);line-height:1.35;margin-bottom:14px;background:linear-gradient(120deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-family:'Cairo',sans-serif;font-weight:800;font-size:clamp(21px,4.6vw,30px);margin-bottom:18px;color:#fff}
+h3{font-family:'Cairo',sans-serif;font-weight:700;font-size:clamp(17px,3.6vw,21px);margin:24px 0 10px;color:var(--cyan)}
+p{margin-bottom:14px;font-size:clamp(15px,3.3vw,17px)}
+.lead{font-size:clamp(16px,3.6vw,19px);color:var(--muted)}
+ul,ol{margin:0 20px 16px 0;padding-right:8px}
+li{margin-bottom:9px;font-size:clamp(14.5px,3.2vw,16.5px)}
+b,strong{color:#fff;font-weight:700}
+
+.box{border-radius:14px;padding:18px 20px;margin:18px 0;border-right:4px solid}
+.def{background:rgba(0,229,255,.06);border-color:var(--cyan)} .def .box-t{color:var(--cyan)}
+.tip{background:rgba(255,166,43,.07);border-color:var(--orange)} .tip .box-t{color:var(--orange)}
+.warn{background:rgba(255,92,122,.07);border-color:var(--red)} .warn .box-t{color:var(--red)}
+.ok{background:rgba(61,220,151,.07);border-color:var(--green)} .ok .box-t{color:var(--green)}
+.box-t{display:block;font-family:'Cairo',sans-serif;font-weight:800;font-size:15px;margin-bottom:8px}
+.box p:last-child,.box ul:last-child,.box li:last-child{margin-bottom:0}
+
+.tw{overflow-x:auto;margin:18px 0;border-radius:12px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:420px;font-size:14px}
+th{background:var(--card2);color:var(--cyan);font-family:'Cairo',sans-serif;font-weight:800;padding:12px 14px;text-align:right;font-size:13.5px;white-space:nowrap}
+td{padding:11px 14px;border-top:1px solid var(--line);background:rgba(16,34,55,.5)}
+tr:hover td{background:rgba(22,48,74,.7)}
+
+/* hero number */
+.hero{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.hn{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+.hn .v{font-family:'JetBrains Mono',monospace;font-size:clamp(26px,6vw,36px);font-weight:700;line-height:1.1}
+.hn .l{font-size:13px;color:var(--muted);margin-top:6px}
+.hn.g .v{color:var(--green)} .hn.c .v{color:var(--cyan)}
+.hn.o .v{color:var(--orange)} .hn.r .v{color:var(--red)}
+
+/* confusion matrix */
+.cm{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;margin:20px 0;font-size:13.5px}
+.cm>div{padding:14px 10px;border-radius:10px;text-align:center}
+.cm .hd{background:var(--card2);color:var(--cyan);font-family:'Cairo',sans-serif;font-weight:800;display:flex;align-items:center;justify-content:center}
+.cm .rh{background:var(--card2);color:var(--cyan);font-family:'Cairo',sans-serif;font-weight:800;writing-mode:horizontal-tb;display:flex;align-items:center;justify-content:center;padding:14px 8px}
+.cm .cell{background:var(--card);border:1px solid var(--line)}
+.cm .cell b{display:block;font-family:'JetBrains Mono',monospace;font-size:19px;margin-bottom:3px}
+.cm .cell span{font-size:12px;color:var(--muted);display:block}
+.cm .good b{color:var(--green)} .cm .bad b{color:var(--red)}
+
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+.q .qt{font-family:'Cairo',sans-serif;font-weight:700;margin-bottom:14px;font-size:16px;color:#fff}
+.opt{display:block;width:100%;text-align:right;background:var(--bg2);border:1px solid var(--line);color:var(--txt);padding:12px 15px;border-radius:10px;margin-bottom:9px;cursor:pointer;font-family:inherit;font-size:14.5px;transition:.18s}
+.opt:hover{border-color:var(--cyan);background:var(--card2)}
+.opt.right{border-color:var(--green);background:rgba(61,220,151,.14);color:var(--green)}
+.opt.wrong{border-color:var(--red);background:rgba(255,92,122,.12);color:var(--red)}
+.qa{display:none;margin-top:10px;padding:12px 15px;background:rgba(0,229,255,.06);border-right:3px solid var(--cyan);border-radius:9px;font-size:14px;color:var(--muted)}
+.qa.show{display:block}
+
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(7,15,28,.93);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:90}
+.nbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:10px 20px;border-radius:10px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:14.5px;transition:.18s}
+.nbtn:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.counter{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+.hint{text-align:center;color:#4e6b85;font-size:12px;margin-top:26px;font-family:'JetBrains Mono',monospace}
+
+.bar{display:flex;height:30px;border-radius:7px;overflow:hidden;margin:8px 0 14px;font-family:'JetBrains Mono',monospace;font-size:12px}
+.bar div{display:flex;align-items:center;justify-content:center;color:#04131d;font-weight:700;white-space:nowrap;overflow:hidden}
+code.inl{background:#081322;border:1px solid var(--line);padding:2px 7px;border-radius:6px;font-size:.88em;color:var(--cyan)}
+.formula{background:#060d18;border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--cyan);direction:ltr}
+</style>
+</head>
+<body>
+
+<div class="progress-wrap"><div class="progress" id="prog"></div></div>
+<div class="stage">
+
+<!-- 1 -->
+<section class="slide active">
+  <span class="badge">فهم النتائج · EDGE-IIOTSET</span>
+  <h1>إيه معنى الأرقام<br>اللي طلعت معاك؟</h1>
+  <p class="lead">كل مصطلح في ملف النتائج، مشروح بأرقامك إنت — مش بأمثلة من كتاب.</p>
+
+  <div class="hero">
+    <div class="hn g"><div class="v">77.9%</div><div class="l">معدل الكشف</div></div>
+    <div class="hn c"><div class="v">96.7%</div><div class="l">الدقة (Precision)</div></div>
+    <div class="hn o"><div class="v">4.96%</div><div class="l">إنذارات كاذبة</div></div>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ الفكرة في جملة</span>
+    <p>عندك <b>926,687</b> اتصال في الاختبار. الموديل بص على كل واحد وقال: ده طبيعي ولا ده هجوم. الأرقام اللي جاية كلها بتوصف <b>قد إيه كان صح</b> — بس كل رقم بيقيس حاجة مختلفة.</p>
+  </div>
+
+  <p class="hint">استخدم ← → في الكيبورد · أو اسحب بصباعك</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <span class="badge">01 · الأساس</span>
+  <h2>أربع حالات بس — كل حاجة مبنية عليهم</h2>
+  <p>تخيل حارس أمن على باب. كل واحد بيعدّي، الحارس بياخد قرار. في <b>4 احتمالات</b> بس:</p>
+
+  <div class="tw">
+  <table>
+    <tr><th>الحالة</th><th>الحقيقة</th><th>قرار الموديل</th><th>عندك</th></tr>
+    <tr><td><b style="color:var(--green)">صح موجب</b></td><td>هجوم</td><td>قال هجوم ✓</td><td><b>470,086</b></td></tr>
+    <tr><td><b style="color:var(--red)">خطأ سالب</b></td><td>هجوم</td><td>قال طبيعي ✗</td><td><b>133,472</b></td></tr>
+    <tr><td><b style="color:var(--red)">خطأ موجب</b></td><td>طبيعي</td><td>قال هجوم ✗</td><td><b>16,034</b></td></tr>
+    <tr><td><b style="color:var(--green)">صح سالب</b></td><td>طبيعي</td><td>قال طبيعي ✓</td><td><b>307,095</b></td></tr>
+  </table>
+  </div>
+
+  <h3>نفس الكلام في مربع</h3>
+
+  <div class="cm">
+    <div class="hd" style="background:transparent"></div>
+    <div class="hd">الموديل قال: هجوم</div>
+    <div class="hd">الموديل قال: طبيعي</div>
+
+    <div class="rh">الحقيقة:<br>هجوم</div>
+    <div class="cell good"><b>470,086</b><span>اتمسك ✓</span></div>
+    <div class="cell bad"><b>133,472</b><span>فات ✗</span></div>
+
+    <div class="rh">الحقيقة:<br>طبيعي</div>
+    <div class="cell bad"><b>16,034</b><span>إنذار كاذب ✗</span></div>
+    <div class="cell good"><b>307,095</b><span>عدّى صح ✓</span></div>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ احفظ ده وبس</span>
+    <p>كل المصطلحات اللي جاية — Precision و Recall و F1 — مجرد <b>قسمة</b> بين الأربع أرقام دول. مفيش حاجة جديدة.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <span class="badge">02 · المصطلح الأول</span>
+  <h2>معدل الكشف — 77.89%</h2>
+  <p>بيسمّوه كمان <b>Recall</b> أو <b>Sensitivity</b> أو <b>True Positive Rate</b>. كلهم نفس الحاجة.</p>
+
+  <div class="box def">
+    <span class="box-t">◆ السؤال اللي بيجاوب عليه</span>
+    <p>«من كل الهجمات اللي حصلت فعلاً، النظام مسك كام منهم؟»</p>
+  </div>
+
+  <div class="formula">470,086 ÷ 603,558 = 77.89%</div>
+
+  <div class="bar">
+    <div style="width:77.89%;background:var(--green)">اتمسك 470,086</div>
+    <div style="width:22.11%;background:var(--red)">فات 133,472</div>
+  </div>
+
+  <p>يعني من كل 100 هجوم، النظام مسك 78 وفاته 22.</p>
+
+  <div class="box warn">
+    <span class="box-t">⚠ الرقم ده لوحده مضلّل</span>
+    <p>لو عملت نظام بيقول <b>«كل حاجة هجوم»</b>، معدل الكشف هيبقى <b>100%</b> — وهيبقى نظام عديم الفائدة تماماً.</p>
+    <p>عشان كده لازم تبصله <b>مع</b> الإنذارات الكاذبة، مش لوحده.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="badge">03 · المصطلح التاني</span>
+  <h2>الإنذارات الكاذبة — 4.96%</h2>
+  <p>اسمه <b>False Positive Rate</b>.</p>
+
+  <div class="box def">
+    <span class="box-t">◆ السؤال اللي بيجاوب عليه</span>
+    <p>«من كل الاتصالات الطبيعية، النظام اتهم كام واحد منهم غلط؟»</p>
+  </div>
+
+  <div class="formula">16,034 ÷ 323,129 = 4.96%</div>
+
+  <div class="bar">
+    <div style="width:95.04%;background:var(--green)">عدّى صح 307,095</div>
+    <div style="width:4.96%;background:var(--red)">إنذار كاذب</div>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ ليه الرقم ده بالذات مهم ليك</span>
+    <p>إحنا <b>اخترنا</b> الـ 5% دي بنفسنا لما حطينا الـ threshold عند 95%. والنتيجة طلعت <b>4.96%</b>.</p>
+    <p>يعني النظام اشتغل <b>بالظبط زي ما خططنا</b>. ده مش حظ — ده إثبات إن المنهجية سليمة.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ ليه الإنذارات الكاذبة خطيرة في الواقع</span>
+    <p>تخيل نظام بينذر 500 مرة كاذبة كل يوم. بعد أسبوع، الـ security team هتبطّل تبص على التنبيهات خالص — وساعتها الهجوم الحقيقي هيعدّي.</p>
+    <p>ده اسمه <b>alert fatigue</b> وهو من أكبر مشاكل أنظمة الأمن الحقيقية.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="badge">04 · أهم رقم</span>
+  <h2>الدقة (Precision) — 96.70%</h2>
+
+  <div class="box def">
+    <span class="box-t">◆ السؤال اللي بيجاوب عليه</span>
+    <p>«لما النظام يقول «ده هجوم» — بيبقى صح قد إيه؟»</p>
+  </div>
+
+  <div class="formula">470,086 ÷ (470,086 + 16,034) = 96.70%</div>
+
+  <div class="bar">
+    <div style="width:96.7%;background:var(--green)">تنبيه صحيح</div>
+    <div style="width:3.3%;background:var(--red)"></div>
+  </div>
+
+  <p>من كل <b>100 تنبيه</b> بيطلعه النظام، <b>97 منهم هجوم حقيقي</b> و 3 بس إنذار كاذب.</p>
+
+  <div class="box ok">
+    <span class="box-t">✓ ده أقوى رقم عندك — قوله في العرض</span>
+    <p>الفرق بين الـ Recall والـ Precision مهم:</p>
+    <ul>
+      <li><b>Recall</b> بيبص من ناحية <b>الهجمات</b>: مسكنا كام منهم؟</li>
+      <li><b>Precision</b> بيبص من ناحية <b>التنبيهات</b>: كام تنبيه كان صح؟</li>
+    </ul>
+    <p>ونظام أمني عملي، الـ Precision فيه <b>أهم</b> — لأنه بيحدد هل الناس هتثق في التنبيهات ولا هتتجاهلها.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <span class="badge">05 · الموازنة</span>
+  <h2>F1 — 86.28%</h2>
+
+  <div class="box def">
+    <span class="box-t">◆ ليه موجود أصلاً</span>
+    <p>عندك رقمين بيتنافسوا: <b>الكشف 77.9%</b> و <b>الدقة 96.7%</b>. أنهي واحد تقول؟</p>
+    <p>الـ F1 بيدمجهم في رقم واحد — بس <b>مش متوسط عادي</b>.</p>
+  </div>
+
+  <div class="formula">2 × (0.967 × 0.779) ÷ (0.967 + 0.779) = 86.28%</div>
+
+  <p>لاحظ إن المتوسط العادي كان هيطلع <b>87.3%</b>، والـ F1 طلع <b>86.3%</b> — أقل شوية.</p>
+
+  <div class="box tip">
+    <span class="box-t">★ ليه أقل؟</span>
+    <p>لأن الـ F1 <b>بيعاقب على عدم التوازن</b>. لو واحد من الرقمين ضعيف، الـ F1 بينزل بقوة.</p>
+    <p>مثال: نظام كشفه 100% ودقته 10% → المتوسط العادي 55% (رقم مخادع)، لكن الـ F1 = <b>18%</b> بس. وده الوصف الصادق.</p>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ معنى 86.28% عندك</span>
+    <p>رقم كويس. معناه إن الرقمين متوازنين بشكل معقول، مفيش واحد منهم منهار على حساب التاني.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <span class="badge">06 · فخ</span>
+  <h2>الدقة الكلية (Accuracy) — 83.87%</h2>
+  <p>ده الرقم الوحيد في القايمة اللي <b>ما تعتمدش عليه</b>.</p>
+
+  <div class="formula">(470,086 + 307,095) ÷ 926,687 = 83.87%</div>
+
+  <div class="box warn">
+    <span class="box-t">⚠ ليه مضلّل</span>
+    <p>بيانات الاختبار بتاعتك <b>مش متوازنة</b>:</p>
+    <ul>
+      <li>هجوم: 603,558 (<b>65.1%</b>)</li>
+      <li>طبيعي: 323,129 (<b>34.9%</b>)</li>
+    </ul>
+    <p>يعني لو عملت موديل غبي بيقول <b>«كل حاجة هجوم»</b> من غير ما يشوف البيانات أصلاً، هيجيب دقة <b>65.13%</b>!</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <tr><th>الموديل</th><th>الدقة الكلية</th><th>مفيد؟</th></tr>
+    <tr><td>«كل حاجة هجوم» (غبي)</td><td>65.13%</td><td>❌ لأ</td></tr>
+    <tr><td>«كل حاجة طبيعي» (غبي)</td><td>34.87%</td><td>❌ لأ</td></tr>
+    <tr><td><b>موديلك</b></td><td><b>83.87%</b></td><td>✅ آه</td></tr>
+  </table>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ لو حد سألك عن الـ Accuracy في المناقشة</span>
+    <p>«الدقة الكلية مضلّلة مع البيانات غير المتوازنة — موديل تافه بيقول كل حاجة هجوم كان هياخد 65%. عشان كده اعتمدت على <b>Precision و Recall</b>، وهما اللي بيوصفوا الأداء الحقيقي.»</p>
+    <p>الرد ده بيوريهم إنك فاهم المقاييس مش بس بتطبعها.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <span class="badge">07 · القلب</span>
+  <h2>الـ Threshold — 0.0002998</h2>
+  <p>ده الرقم اللي كل حاجة بتتبني عليه. خليني أشرحه بالراحة.</p>
+
+  <h3>الخطوة 1 — الموديل بيطلّع رقم لكل اتصال</h3>
+  <p>الـ Autoencoder بياخد الاتصال، يضغطه، ويحاول يرجّعه زي ما كان. الفرق بين الأصل والمحاولة اسمه <b>reconstruction error</b>.</p>
+
+  <div class="tw">
+  <table>
+    <tr><th>نوع الاتصال</th><th>الموديل عارفه؟</th><th>الـ error</th></tr>
+    <tr><td>طبيعي</td><td>آه، اتدرب عليه</td><td><b style="color:var(--green)">صغير جداً</b></td></tr>
+    <tr><td>هجوم</td><td>لأ، عمره ما شافه</td><td><b style="color:var(--red)">كبير</b></td></tr>
+  </table>
+  </div>
+
+  <h3>الخطوة 2 — نحدد الحد الفاصل</h3>
+  <p>رتّبنا أخطاء <b>البيانات الطبيعية</b> من الأصغر للأكبر، وأخدنا النقطة اللي عندها 95% منهم تحتها. دي طلعت <code class="inl">0.0002998</code>.</p>
+
+  <div class="box def">
+    <span class="box-t">◆ القاعدة</span>
+    <p>أي اتصال خطأه <b>أكبر من 0.0002998</b> → هجوم<br>أي اتصال خطأه <b>أقل</b> → طبيعي</p>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ حاجة مهمة لاحظها</span>
+    <p>في تشغيلة Colab (400 ألف صف) كان الـ threshold <b>0.0278</b>. دلوقتي بقى <b>0.0003</b> — أصغر <b>93 مرة</b>.</p>
+    <p><b>ليه؟</b> لأن الموديل اتدرب على بيانات طبيعية أكتر بـ 5.5 مرة، فبقى يعيد بناءها بدقة عالية جداً. وده اللي خلّى الكشف يقفز من 60% لـ 78%.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <span class="badge">08 · المقايضة</span>
+  <h2>ليه 95% بالذات؟</h2>
+  <p>الـ threshold مسطرة بتزحلقها. وكل اتجاه ليه تمن.</p>
+
+  <div class="tw">
+  <table>
+    <tr><th>الـ Threshold</th><th>الكشف</th><th>إنذارات كاذبة</th><th>النتيجة</th></tr>
+    <tr><td>90% (أقل)</td><td>↑ أعلى</td><td>↑ ~10%</td><td>بتمسك أكتر وبتزعج أكتر</td></tr>
+    <tr><td><b>95% (اللي اخترناه)</b></td><td><b>77.9%</b></td><td><b>4.96%</b></td><td><b>متوازن</b></td></tr>
+    <tr><td>99% (أعلى)</td><td>↓ أقل</td><td>↓ ~1%</td><td>تنبيهات نضيفة بس بتفوّت كتير</td></tr>
+  </table>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ سؤال شبه مؤكد في المناقشة: «ليه 95؟»</span>
+    <p>«الـ threshold مقايضة بين الكشف والإنذارات الكاذبة. اخترت الـ 95% لأنها بتقبل <b>5% إنذارات كاذبة</b> — وده معدل مقبول في أنظمة كشف التسلل العملية.</p>
+    <p>لو رفعته لـ 99 هقلل الإزعاج بس هفوّت هجمات أكتر، ولو نزّلته لـ 90 هكشف أكتر بس هغرق الفريق في تنبيهات. و<b>الرقم ده قابل للضبط</b> حسب حساسية البيئة.»</p>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ ونقطة مهمة</span>
+    <p>الـ threshold اتحسب من <b>بيانات التدريب الطبيعية بس</b> — الموديل عمره ما شاف هجوم وهو بيحدده. ده بيخلي الطريقة شغالة على هجمات <b>جديدة ماحدش شافها قبل كده</b>، وهي أهم ميزة في المنهج ده.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <span class="badge">09 · الرسومات</span>
+  <h2>تقرا الرسومات التلاتة إزاي</h2>
+
+  <h3>1. منحنى التدريب</h3>
+  <div class="tw">
+  <table>
+    <tr><th>اللي تشوفه</th><th>معناه</th></tr>
+    <tr><td>الخطين نزلوا بسرعة واستقروا</td><td>✅ الموديل اتعلم بسرعة</td></tr>
+    <tr><td>الخطين <b>فوق بعض</b></td><td>✅ مفيش overfitting</td></tr>
+    <tr><td>لو الـ Validation طلع فوق</td><td>❌ overfitting — الموديل حفظ مش فهم</td></tr>
+  </table>
+  </div>
+  <p>عندك الخطين ملتصقين ومستقرين — تدريب سليم.</p>
+
+  <h3>2. الفصل بين الطبيعي والهجوم</h3>
+  <p>دي <b>أهم رسمة في العرض كله</b>. اقراها كده:</p>
+  <ul>
+    <li><b>العمود الأخضر الطويل عند الصفر</b> = كل الـ traffic الطبيعي، خطأه شبه معدوم</li>
+    <li><b>الخط الأسود المتقطع</b> = الـ threshold</li>
+    <li><b>الذيل البرتقالي الممتد لليمين</b> = الهجمات المكشوفة</li>
+    <li><b>البرتقالي اللي على شمال الخط</b> = الهجمات اللي فاتت (الـ 133,472)</li>
+  </ul>
+
+  <div class="box tip">
+    <span class="box-t">★ الجملة اللي تقولها على الرسمة دي</span>
+    <p>«الكتلة الخضرا كلها على يسار الخط — ده الطبيعي والموديل بيعيد بناءه بدقة. والذيل البرتقالي الممتد لليمين ده الهجمات، وكل ما ابتعد عن الخط كل ما كان الهجوم أوضح.»</p>
+  </div>
+
+  <h3>3. الكشف لكل نوع هجوم</h3>
+  <p>التدرّج من فوق لتحت بيحكي قصة واضحة:</p>
+  <div class="tw">
+  <table>
+    <tr><th>فوق (كشف عالي)</th><th>تحت (كشف منخفض)</th></tr>
+    <tr><td>DDoS · Scanning · Fingerprinting</td><td>XSS · MITM · DDoS_HTTP</td></tr>
+    <tr><td>هجمات <b>صاخبة</b> — بتغيّر شكل الـ traffic بوضوح</td><td>هجمات <b>مخبّية</b> في محتوى الطلبات</td></tr>
+  </table>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ ده مش ضعف — ده دعم لمشروعك</span>
+    <p>«الطريقة دي بتشوف <b>شكل الـ traffic</b> مش <b>محتواه</b>. عشان كده هجمات الحجم الكبير بتتكشف بوضوح، وهجمات طبقة التطبيق أصعب.</p>
+    <p>وده بالظبط اللي بيأكد تصميم مشروعي: الـ honeypot بيشوف <b>سلوك الجهاز الحقيقي</b> مش بس الـ flow.»</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <span class="badge">10 · المقارنة</span>
+  <h2>جدول المقارنة — وأغرب رقم فيه</h2>
+
+  <div class="tw">
+  <table>
+    <tr><th>الطريقة</th><th>الكشف</th><th>إنذارات كاذبة</th></tr>
+    <tr><td><b>Autoencoder</b></td><td><b style="color:var(--green)">77.89%</b></td><td>4.96%</td></tr>
+    <tr><td>One-Class SVM</td><td>54.18%</td><td>5.28%</td></tr>
+    <tr><td>Isolation Forest</td><td><b style="color:var(--red)">0.91%</b></td><td>4.98%</td></tr>
+  </table>
+  </div>
+
+  <div class="box warn">
+    <span class="box-t">⚠ الـ 0.91% دي محتاجة تفسير</span>
+    <p>بص للرقمين دول مع بعض: بيكشف <b>4.98%</b> من الطبيعي، و<b>0.91%</b> بس من الهجوم.</p>
+    <p>يعني بيشك في الطبيعي <b>أكتر</b> من الهجوم. ده أسوأ من التخمين العشوائي.</p>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ السبب الحقيقي (مُختبَر)</span>
+    <p>الـ Isolation Forest شغلته يلاقي النقط <b>المعزولة والنادرة</b>.</p>
+    <p>لكن هجمات زي الـ DDoS والـ scanning بتولّد <b>آلاف الاتصالات المتطابقة</b> — يعني هي <b>أكثف</b> منطقة في البيانات مش أندرها. فالخوارزمية بتعتبرها «النمط الطبيعي» وتروح تشك في الـ traffic الشرعي المتنوّع.</p>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ الاختبار اللي يثبت كلامك</span>
+    <div class="tw" style="margin:10px 0 0">
+    <table>
+      <tr><th>نوع الهجوم</th><th>كشف الـ Isolation Forest</th></tr>
+      <tr><td>متنوّع وقيمه خارج المدى</td><td>25.6%</td></tr>
+      <tr><td><b>متكرّر ومتجمّع</b> (flood)</td><td><b>0.00%</b></td></tr>
+    </table>
+    </div>
+    <p style="margin-top:10px">ده يحوّل الرقم الغريب من <b>نقطة ضعف</b> لـ <b>نتيجة بحثية</b> إنت أثبتّها بتجربة.</p>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <span class="badge">11 · اختبر نفسك</span>
+  <h2>أسئلة سريعة</h2>
+
+  <div class="q">
+    <div class="qt">1. إيه الفرق بين Recall و Precision؟</div>
+    <button class="opt" data-ok="0">مفيش فرق، اسمين لنفس الحاجة</button>
+    <button class="opt" data-ok="1">Recall: مسكنا كام هجوم؟ — Precision: كام تنبيه كان صح؟</button>
+    <button class="opt" data-ok="0">Recall للطبيعي و Precision للهجوم</button>
+    <div class="qa">الاتنين بيبصوا من ناحية مختلفة. الـ Recall مقامه <b>كل الهجمات</b>، والـ Precision مقامه <b>كل التنبيهات</b>.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">2. ليه الدقة الكلية 83.87% مش رقم يُعتمد عليه؟</div>
+    <button class="opt" data-ok="1">لأن البيانات غير متوازنة — موديل تافه كان هياخد 65%</button>
+    <button class="opt" data-ok="0">لأنها أقل من 90%</button>
+    <button class="opt" data-ok="0">لأنها محسوبة غلط</button>
+    <div class="qa">65.1% من بيانات الاختبار هجوم. فموديل بيقول «كل حاجة هجوم» بياخد 65.13% من غير ما يتعلم حاجة.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">3. لو نزّلت الـ threshold من 95 لـ 90، إيه اللي هيحصل؟</div>
+    <button class="opt" data-ok="1">الكشف يزيد والإنذارات الكاذبة تزيد كمان</button>
+    <button class="opt" data-ok="0">الاتنين يتحسّنوا</button>
+    <button class="opt" data-ok="0">مش هيفرق</button>
+    <div class="qa">مقايضة دايماً. حد أقل = الموديل بيشك في حاجات أكتر = بيمسك هجمات أكتر وبينذر غلط أكتر.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">4. ليه الـ Isolation Forest جاب 0.91% بس؟</div>
+    <button class="opt" data-ok="1">بيكشف النقط النادرة، وهجمات الـ flood هي الأكثف مش الأندر</button>
+    <button class="opt" data-ok="0">الكود فيه غلطة</button>
+    <button class="opt" data-ok="0">البيانات مش كفاية</button>
+    <div class="qa">واتأكد بالتجربة: مع هجوم متنوّع بيوصل 25.6%، ومع هجوم متكرّر بينزل لـ 0.00%.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">5. أنهي رقم تحطه في أول شريحة في العرض؟</div>
+    <button class="opt" data-ok="0">الدقة الكلية 83.87%</button>
+    <button class="opt" data-ok="1">Precision 96.7% مع الكشف 77.9%</button>
+    <button class="opt" data-ok="0">الـ F1 بس</button>
+    <div class="qa">الـ Precision بيقول «لما ينذر بيبقى صح» والكشف بيقول «بيمسك قد إيه». الاتنين مع بعض بيدوا الصورة الكاملة. الدقة الكلية مضلّلة.</div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <span class="badge">12 · ورقة مراجعة</span>
+  <h2>كل حاجة في جدول واحد</h2>
+
+  <div class="tw">
+  <table>
+    <tr><th>المصطلح</th><th>بيجاوب على</th><th>عندك</th></tr>
+    <tr><td><b>Detection / Recall</b></td><td>مسكنا كام هجوم من كل الهجمات؟</td><td>77.89%</td></tr>
+    <tr><td><b>Precision</b></td><td>كام تنبيه من تنبيهاتنا كان صح؟</td><td>96.70%</td></tr>
+    <tr><td><b>False Positive Rate</b></td><td>كام اتصال طبيعي اتهمناه غلط؟</td><td>4.96%</td></tr>
+    <tr><td><b>F1</b></td><td>الاتنين الأولانيين متوازنين قد إيه؟</td><td>86.28%</td></tr>
+    <tr><td><b>Accuracy</b></td><td>كام قرار صح من كل القرارات؟ <i>(مضلّل)</i></td><td>83.87%</td></tr>
+    <tr><td><b>Threshold</b></td><td>الخطأ يوصل لكام عشان نقول هجوم؟</td><td>0.0002998</td></tr>
+  </table>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ الجملة اللي تلخّص النتيجة كلها</span>
+    <p>«على الـ dataset كاملة — <b>2.2 مليون سجل</b> — النظام كشف <b>77.9%</b> من الهجمات عند معدل إنذارات كاذبة <b>5%</b>، وبدقة <b>96.7%</b>: يعني لما ينذر، بيبقى صح في 97 حالة من كل 100.»</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ وأهم نصيحة</span>
+    <p>لو حد سألك عن رقم مش فاكره — <b>ارجع للأربع أرقام الأساسية</b>: 470,086 و 133,472 و 16,034 و 307,095. كل المقاييس مجرد قسمة بينهم.</p>
+  </div>
+
+  <p style="margin-top:28px;text-align:center;color:var(--muted)">بالتوفيق 🎯</p>
+</section>
+
+</div>
+
+<div class="nav">
+  <button class="nbtn" id="prev">السابق ←</button>
+  <span class="counter" id="count">1 / 13</span>
+  <button class="nbtn" id="next">→ التالي</button>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+const prog=document.getElementById('prog'),count=document.getElementById('count'),
+      prev=document.getElementById('prev'),next=document.getElementById('next');
+
+function render(){
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  count.textContent=(i+1)+' / '+slides.length;
+  prog.style.width=((i+1)/slides.length*100)+'%';
+  prev.disabled=i===0; next.disabled=i===slides.length-1;
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function go(d){const n=i+d; if(n>=0&&n<slides.length){i=n;render();}}
+prev.onclick=()=>go(-1); next.onclick=()=>go(1);
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='BUTTON')return;
+  if(e.key==='ArrowLeft')go(1);
+  if(e.key==='ArrowRight')go(-1);
+});
+
+let sx=0,sy=0;
+document.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX;sy=e.changedTouches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){ dx<0?go(-1):go(1); }
+},{passive:true});
+
+document.querySelectorAll('.q').forEach(q=>{
+  const opts=[...q.querySelectorAll('.opt')], ans=q.querySelector('.qa');
+  opts.forEach(o=>o.onclick=()=>{
+    if(q.dataset.done)return;
+    q.dataset.done=1;
+    opts.forEach(x=>x.classList.add(x.dataset.ok==='1'?'right':'wrong'));
+    ans.classList.add('show');
+  });
+});
+render();
+</script>
+</body>
+</html>

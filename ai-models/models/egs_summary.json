@@ -1,0 +1,15 @@
+{
+  "flows": 2219201,
+  "features": 38,
+  "window": 100,
+  "windows": 22193,
+  "nodes": 248318,
+  "hosts_per_window": 11.2,
+  "heldout_families": [
+    "XSS",
+    "SQL_injection",
+    "Backdoor"
+  ],
+  "graph_gain_f1": 2.930000000000007,
+  "graph_gain_zeroday": 15.579999999999998
+}

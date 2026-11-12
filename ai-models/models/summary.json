@@ -1,0 +1,15 @@
+{
+  "dataset": "DNN-EdgeIIoT-dataset.csv",
+  "rows_used": 2219201,
+  "features_used": 38,
+  "train_normal": 1292514,
+  "test_normal": 323129,
+  "test_attack": 603558,
+  "epochs_run": 20,
+  "threshold": 0.0002998274867422879,
+  "detection_rate": 0.7788580384983713,
+  "false_positive_rate": 0.049621049178501464,
+  "precision": 0.9670163745577224,
+  "f1": 0.8627980008773234,
+  "accuracy": 0.8386661299877952
+}

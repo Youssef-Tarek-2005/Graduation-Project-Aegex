@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شرح جزء الـ GNN — من الأول للآخر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070f1c; --bg2:#0c1a2e; --card:#102237; --card2:#16304a; --line:#1f3f5e;
+  --txt:#e8f1f8; --muted:#8fa9c0;
+  --cyan:#00e5ff; --cyan-dim:#0a4a5c;
+  --orange:#ffa62b; --green:#3ddc97; --red:#ff5c7a; --purple:#b47cff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,229,255,.10), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(180,124,255,.07), transparent);
+  background-attachment:fixed; color:var(--txt);
+  font-family:'IBM Plex Sans Arabic','Cairo',sans-serif;
+  line-height:1.9; overflow-x:hidden;
+}
+code,.mono,pre{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed}
+
+.progress-wrap{position:fixed;top:0;left:0;right:0;height:3px;background:#0a1626;z-index:100}
+.progress{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .35s ease;box-shadow:0 0 12px var(--cyan)}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:48px 16px 110px}
+.slide{display:none;width:100%;max-width:840px;animation:fade .4s ease}
+.slide.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;color:var(--cyan);background:rgba(0,229,255,.08);border:1px solid var(--cyan-dim);padding:5px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-family:'Cairo',sans-serif;font-weight:900;font-size:clamp(25px,5.6vw,40px);line-height:1.35;margin-bottom:14px;background:linear-gradient(120deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-family:'Cairo',sans-serif;font-weight:800;font-size:clamp(21px,4.6vw,30px);margin-bottom:18px;color:#fff}
+h3{font-family:'Cairo',sans-serif;font-weight:700;font-size:clamp(17px,3.6vw,21px);margin:24px 0 10px;color:var(--cyan)}
+p{margin-bottom:14px;font-size:clamp(15px,3.3vw,17px)}
+.lead{font-size:clamp(16px,3.6vw,19px);color:var(--muted)}
+ul,ol{margin:0 20px 16px 0;padding-right:8px}
+li{margin-bottom:9px;font-size:clamp(14.5px,3.2vw,16.5px)}
+b,strong{color:#fff;font-weight:700}
+
+.box{border-radius:14px;padding:18px 20px;margin:18px 0;border-right:4px solid}
+.def{background:rgba(0,229,255,.06);border-color:var(--cyan)} .def .box-t{color:var(--cyan)}
+.tip{background:rgba(255,166,43,.07);border-color:var(--orange)} .tip .box-t{color:var(--orange)}
+.warn{background:rgba(255,92,122,.07);border-color:var(--red)} .warn .box-t{color:var(--red)}
+.ok{background:rgba(61,220,151,.07);border-color:var(--green)} .ok .box-t{color:var(--green)}
+.box-t{display:block;font-family:'Cairo',sans-serif;font-weight:800;font-size:15px;margin-bottom:8px}
+.box p:last-child,.box ul:last-child,.box li:last-child{margin-bottom:0}
+
+.tw{overflow-x:auto;margin:18px 0;border-radius:12px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:420px;font-size:14px}
+th{background:var(--card2);color:var(--cyan);font-family:'Cairo',sans-serif;font-weight:800;padding:12px 14px;text-align:right;font-size:13.5px;white-space:nowrap}
+td{padding:11px 14px;border-top:1px solid var(--line);background:rgba(16,34,55,.5)}
+tr:hover td{background:rgba(22,48,74,.7)}
+code.inl{background:#081322;border:1px solid var(--line);padding:2px 7px;border-radius:6px;font-size:.88em;color:var(--cyan)}
+
+.steps{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.step .num{flex:0 0 32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#04131d;font-family:'JetBrains Mono',monospace;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.step .body b{display:block;margin-bottom:3px;font-size:15.5px}
+.step .body span{color:var(--muted);font-size:14px}
+
+.net{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:20px 0}
+.dev{background:var(--card2);border:2px solid var(--cyan);border-radius:14px;padding:12px 10px;text-align:center;font-size:12px;color:var(--cyan);min-width:92px;font-family:'JetBrains Mono',monospace}
+.link{color:var(--orange);font-size:11px;text-align:center;min-width:96px;font-family:'JetBrains Mono',monospace}
+.link b{display:block;font-size:17px;color:var(--orange)}
+
+.hero{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.hn{flex:1;min-width:140px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+.hn .v{font-family:'JetBrains Mono',monospace;font-size:clamp(22px,5vw,30px);font-weight:700;line-height:1.1}
+.hn .l{font-size:12.5px;color:var(--muted);margin-top:6px}
+.hn.g .v{color:var(--green)} .hn.c .v{color:var(--cyan)} .hn.o .v{color:var(--orange)}
+
+.bar{display:flex;height:28px;border-radius:7px;overflow:hidden;margin:6px 0 14px;font-family:'JetBrains Mono',monospace;font-size:11.5px}
+.bar div{display:flex;align-items:center;justify-content:center;color:#04131d;font-weight:700;white-space:nowrap;overflow:hidden}
+
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+.q .qt{font-family:'Cairo',sans-serif;font-weight:700;margin-bottom:14px;font-size:16px;color:#fff}
+.opt{display:block;width:100%;text-align:right;background:var(--bg2);border:1px solid var(--line);color:var(--txt);padding:12px 15px;border-radius:10px;margin-bottom:9px;cursor:pointer;font-family:inherit;font-size:14.5px;transition:.18s}
+.opt:hover{border-color:var(--cyan);background:var(--card2)}
+.opt.right{border-color:var(--green);background:rgba(61,220,151,.14);color:var(--green)}
+.opt.wrong{border-color:var(--red);background:rgba(255,92,122,.12);color:var(--red)}
+.qa{display:none;margin-top:10px;padding:12px 15px;background:rgba(0,229,255,.06);border-right:3px solid var(--cyan);border-radius:9px;font-size:14px;color:var(--muted)}
+.qa.show{display:block}
+
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(7,15,28,.93);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:90}
+.nbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:10px 20px;border-radius:10px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:14.5px;transition:.18s}
+.nbtn:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.counter{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+.hint{text-align:center;color:#4e6b85;font-size:12px;margin-top:26px;font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+
+<div class="progress-wrap"><div class="progress" id="prog"></div></div>
+<div class="stage">
+
+<!-- 1 -->
+<section class="slide active">
+  <span class="badge">شرح جزء الـ GNN</span>
+  <h1>إيه اللي عملناه<br>في الجزء ده بالظبط؟</h1>
+  <p class="lead">من أول «ليه أصلاً محتاجينه» لحد «إيه اللي النتايج بتقوله» — بالبساطة.</p>
+
+  <div class="hero">
+    <div class="hn g"><div class="v">+46</div><div class="l">نقطة في كشف الـ Backdoor</div></div>
+    <div class="hn c"><div class="v">+18</div><div class="l">نقطة في كشف الـ XSS</div></div>
+    <div class="hn o"><div class="v">4</div><div class="l">إعدادات اتجرّبت</div></div>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ الفكرة في جملة</span>
+    <p>الـ autoencoder بيبص على <b>كل اتصال لوحده</b>. الـ GNN بيبصله <b>وسط جيرانه</b> — ودي الفرق اللي كشف هجمات كانت بتفوت.</p>
+  </div>
+
+  <p class="hint">استخدم ← → في الكيبورد · أو اسحب بصباعك</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <span class="badge">01 · ليه أصلاً</span>
+  <h2>المشكلة اللي كانت عندنا</h2>
+  <p>الـ autoencoder اشتغل كويس، بس في أنواع هجوم كان ضعيف فيها جداً.</p>
+
+  <div class="tw">
+  <table>
+    <tr><th>نوع الهجوم</th><th>الـ Autoencoder</th><th>ليه</th></tr>
+    <tr><td>DDoS</td><td style="color:var(--green)">ممتاز</td><td>بيغيّر شكل الاتصال بوضوح</td></tr>
+    <tr><td>Scanning</td><td style="color:var(--green)">ممتاز</td><td>نفس السبب</td></tr>
+    <tr><td><b>XSS</b></td><td style="color:var(--red)">ضعيف</td><td>مخبّي جوه طلب عادي</td></tr>
+    <tr><td><b>SQL injection</b></td><td style="color:var(--red)">ضعيف</td><td>نفس السبب</td></tr>
+    <tr><td><b>Backdoor</b></td><td style="color:var(--red)">ضعيف</td><td>نفس السبب</td></tr>
+  </table>
+  </div>
+
+  <h3>السبب الجذري</h3>
+  <p>الـ autoencoder بيشوف <b>صف واحد</b> في كل مرة. وطلب HTTP فيه SQL injection شكله — في الصف لوحده — <b>زي أي طلب عادي بالظبط</b>.</p>
+
+  <div class="box tip">
+    <span class="box-t">★ بس لو بصيت على الصورة الأكبر...</span>
+    <div class="tw" style="margin:10px 0 0">
+    <table>
+      <tr><th>اللي بتشوفه</th><th>الحكم</th></tr>
+      <tr><td>طلب HTTP واحد</td><td>طبيعي 🤷</td></tr>
+      <tr><td>نفس الجهاز بعت <b>500 طلب</b> لنفس الهدف في ثواني</td><td><b>هجوم</b> 🚨</td></tr>
+    </table>
+    </div>
+    <p style="margin-top:10px">المعلومة <b>مش في الاتصال</b> — هي في <b>اللي حواليه</b>.</p>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ وده بالظبط اللي الـ GNN بيعمله</span>
+    <p>بيبني <b>خريطة للشبكة</b>، وبيحكم على كل اتصال وهو شايف باقي نشاط الجهازين.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <span class="badge">02 · الأساس</span>
+  <h2>يعني إيه جراف؟</h2>
+  <p>كلمة مخيفة، بس الفكرة بسيطة جداً: <b>نقط متوصّلة بخطوط</b>.</p>
+
+  <div class="net">
+    <div class="dev">كاميرا<br>ESP32</div>
+    <div class="link"><b>———</b>اتصال</div>
+    <div class="dev">جهاز<br>المهاجم</div>
+    <div class="link"><b>———</b>اتصال</div>
+    <div class="dev">حسّاس<br>الدخان</div>
+  </div>
+
+  <div class="tw">
+  <table>
+    <tr><th>في الجراف</th><th>في شبكتك</th></tr>
+    <tr><td><b>نقطة</b> (node)</td><td>جهاز — كاميرا، حسّاس، لابتوب</td></tr>
+    <tr><td><b>خط</b> (edge)</td><td>اتصال بين جهازين</td></tr>
+  </table>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ ليه الشكل ده مناسب؟</span>
+    <p>لأن <b>الشبكة فعلاً شكلها كده</b>. أجهزة بتتكلم مع بعضها. إحنا مش بنخترع شكل — إحنا بنمثّل الواقع زي ما هو.</p>
+  </div>
+
+  <h3>فين الـ 38 خاصية؟</h3>
+  <p>كل <b>خط</b> شايل الـ 38 خاصية بتاعة الاتصال — عدد الـ packets، الحجم، المدة، إلخ.</p>
+  <p>يعني الخط مش مجرد «في اتصال» — ده «في اتصال وده تفاصيله».</p>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="badge">03 · قرار مهم</span>
+  <h2>ليه الـ IP مش خاصية؟</h2>
+  <p>ده قرار لو اتعمل غلط كان هيدمّر المشروع كله.</p>
+
+  <div class="box warn">
+    <span class="box-t">⚠ لو سبنا الموديل يشوف الـ IP</span>
+    <p>الـ dataset متسجّلة من <b>معمل</b>. يعني المهاجم عنوانه <b>ثابت</b> في كل الهجمات.</p>
+    <p>الموديل هيتعلم أبسط حاجة ممكنة:</p>
+    <p style="margin-right:14px"><b>«أي حاجة جاية من 192.168.0.5 = هجوم»</b></p>
+    <p>وهيجيب نتيجة قريبة من 100%. <b>ومالهاش أي قيمة</b> — لأنه على أي شبكة تانية المهاجم عنوانه مختلف.</p>
+  </div>
+
+  <h3>اللي عملناه</h3>
+  <div class="tw">
+  <table>
+    <tr><th>الـ IP بيُستخدم في</th><th>الـ IP مايُستخدمش في</th></tr>
+    <tr><td>✅ تحديد مين متوصل بمين</td><td>❌ خصائص الموديل</td></tr>
+    </table>
+  </div>
+
+  <p>وتمثيل كل جهاز بيبدأ <b>متجه ثابت من واحدات</b> — مفيش أي معلومة عن هويته.</p>
+
+  <div class="box ok">
+    <span class="box-t">✓ والورقة البحثية بتعمل نفس الحاجة</span>
+    <p>ده مش اجتهاد مننا. ورقة E-GraphSAGE نفسها بتبدأ بتمثيل ثابت للنقط <b>لنفس السبب بالظبط</b>.</p>
+    <p>فالموديل مجبر يتعلم <b>السلوك</b> مش <b>الهوية</b>.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="badge">04 · النموذج</span>
+  <h2>E-GraphSAGE بيشتغل إزاي</h2>
+  <p>تلات خطوات بس.</p>
+
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div class="body"><b>كل جهاز بيسمع اتصالاته</b><span>الكاميرا بتبص على كل الخطوط الواصلة ليها، وبتعمل <b>ملخّص</b> لنشاطها</span></div></div>
+    <div class="step"><div class="num">2</div><div class="body"><b>يكرّر مرة تانية</b><span>دلوقتي ملخّص الكاميرا فيه كمان حاجة عن <b>جيران جيرانها</b> — النظرة بتتوسّع</span></div></div>
+    <div class="step"><div class="num">3</div><div class="body"><b>يحكم على كل اتصال</b><span>ملخّص الجهاز الأول + ملخّص الجهاز التاني + تفاصيل الاتصال ← <b>هجوم ولا طبيعي؟</b></span></div></div>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ تشبيه بسيط</span>
+    <p>تخيل مدير أمن في شركة:</p>
+    <ul>
+      <li><b>خطوة 1:</b> بيسأل كل موظف عمل إيه النهاردة</li>
+      <li><b>خطوة 2:</b> بيسأل كمان عن اللي اتعاملوا معاه</li>
+      <li><b>خطوة 3:</b> لما يشوف معاملة مشبوهة، بيحكم عليها وهو عارف <b>سجل الطرفين</b> مش بس المعاملة نفسها</li>
+    </ul>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ اسم العملية دي</span>
+    <p><b>Message Passing</b> — تمرير الرسائل. النقط بتتبادل معلومات عبر الخطوط، وكل تكرار بيوسّع نظرة كل نقطة.</p>
+    <p>إحنا عملنا <b>تكرارين</b> (طبقتين). ده كفاية — أكتر من كده كل النقط بتبقى متشابهة.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <span class="badge">05 · النوافذ</span>
+  <h2>ليه قسّمنا الاتصالات لنوافذ</h2>
+  <p>معندناش جراف واحد كبير. عندنا <b>آلاف الجرافات الصغيرة</b>.</p>
+
+  <div class="box def">
+    <span class="box-t">◆ إيه النافذة</span>
+    <p>كل <b>100 اتصال متتاليين</b> = جراف مستقل لوحده.</p>
+    <p>يعني 2.2 مليون اتصال ← حوالي <b>22,000 جراف صغير</b>.</p>
+  </div>
+
+  <h3>السبب الأول — المعنى</h3>
+  <p>لو عملنا جراف واحد للملف كله، تمثيل الكاميرا هيبقى <b>متوسط كل سلوكها عبر الوقت</b> — طبيعي وهجوم مخلوطين.</p>
+  <p>في نافذة صغيرة، تمثيلها بيعكس <b>اللي بتعمله دلوقتي</b>.</p>
+
+  <h3>السبب التاني — الذاكرة</h3>
+  <p>النوافذ <b>منفصلة تماماً</b> عن بعضها، فنقدر ندرّب على مجموعة منها في كل مرة. الذاكرة بتفضل ~100 ميجا مهما كبرت البيانات.</p>
+
+  <div class="box ok">
+    <span class="box-t">✓ وده مش تقريب</span>
+    <p>عشان النوافذ مش بتشترك في أي نقطة، التدريب على دفعات <b>حساب مظبوط 100%</b> — مش تقريب ولا اختصار.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ وفيه فايدة تالتة</span>
+    <p>النافذة الزمنية دي هي <b>نص الطريق للـ Temporal GAT</b> اللي في البروبوزال. البنية موجودة خلاص.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <span class="badge">06 · الضمانة</span>
+  <h2>الـ MLP — أهم جزء في التجربة</h2>
+  <p>درّبنا <b>نموذجين</b> مش واحد. وده مش رفاهية.</p>
+
+  <div class="tw">
+  <table>
+    <tr><th></th><th>EdgeMLP</th><th>E-GraphSAGE</th></tr>
+    <tr><td>الخصائص</td><td>نفسها</td><td>نفسها</td></tr>
+    <tr><td>التصنيفات</td><td>نفسها</td><td>نفسها</td></tr>
+    <tr><td>التقسيم</td><td>نفسه</td><td>نفسه</td></tr>
+    <tr><td><b>الجراف</b></td><td style="color:var(--red)"><b>❌</b></td><td style="color:var(--green)"><b>✅</b></td></tr>
+  </table>
+  </div>
+
+  <div class="box warn">
+    <span class="box-t">⚠ السؤال اللي من غيره متقدرش ترد عليه</span>
+    <p>لو عرضت رقم E-GraphSAGE لوحده، الكوميتي هتقول:</p>
+    <p style="margin-right:14px"><b>«طب إزاي عرفت إن ده بسبب الجراف؟ يمكن بسبب إن النموذج أكبر؟»</b></p>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ مع الـ MLP، الرد مباشر</span>
+    <p>«درّبت نموذج تاني بنفس كل حاجة، والفرق الوحيد إنه مفيهوش جراف. الفرق بينهم <b>هو مساهمة الجراف</b> ومفيش تفسير تاني ممكن.»</p>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ الاسم العلمي لده</span>
+    <p><b>ضابط تجريبي (control)</b> — تثبّت كل العوامل وتغيّر واحد بس. ده أساس أي تجربة علمية.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <span class="badge">07 · العدالة</span>
+  <h2>اختبار الهجوم المجهول</h2>
+  <p>في فخ تاني كان ممكن يخلي النتيجة مالهاش معنى.</p>
+
+  <div class="box warn">
+    <span class="box-t">⚠ المشكلة</span>
+    <div class="tw" style="margin:10px 0 0">
+    <table>
+      <tr><th></th><th>Autoencoder</th><th>E-GraphSAGE</th></tr>
+      <tr><td>شاف هجمات وهو بيتدرب؟</td><td><b>لأ أبداً</b></td><td>آه</td></tr>
+    </table>
+    </div>
+    <p style="margin-top:10px">نموذج شاف الإجابات هيكسب نموذج ماشفهاش — <b>ومش لأنه أذكى</b>.</p>
+  </div>
+
+  <h3>اللي عملناه</h3>
+  <div class="tw">
+  <table>
+    <tr><th>اتدرّب على</th><th>اتختبر على</th></tr>
+    <tr><td>DDoS · Scanning · Password · Ransomware · MITM</td><td><b>XSS · SQL injection · Backdoor</b></td></tr>
+  </table>
+  </div>
+
+  <p>التلاتة دول <b>محجوزين بالكامل</b> — الموديل عمره ما شافهم ولا كمثال سالب.</p>
+
+  <div class="box def">
+    <span class="box-t">◆ السؤال اللي بيجاوب عليه</span>
+    <p>«هل رؤية السياق بتساعد في كشف هجوم <b>جديد تماماً</b>؟»</p>
+    <p>ودي أهم ميزة في أي نظام أمني — إنه يكشف اللي ماتدربش عليه.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <span class="badge">08 · النتيجة الأولى</span>
+  <h2>الهجمات المجهولة</h2>
+
+  <div class="tw">
+  <table>
+    <tr><th>نوع الهجوم</th><th>العينات</th><th>MLP</th><th>E-GraphSAGE</th><th>الفرق</th></tr>
+    <tr><td><b>Backdoor</b></td><td>24,862</td><td>52.99%</td><td><b style="color:var(--green)">99.20%</b></td><td><b style="color:var(--green)">+46.2</b></td></tr>
+    <tr><td><b>XSS</b></td><td>15,915</td><td>78.92%</td><td><b style="color:var(--green)">97.04%</b></td><td><b style="color:var(--green)">+18.1</b></td></tr>
+    <tr><td>SQL injection</td><td>51,203</td><td>100.00%</td><td>99.93%</td><td>−0.07</td></tr>
+  </table>
+  </div>
+
+  <h3>الـ Backdoor — القصة الكبيرة</h3>
+  <div class="bar">
+    <div style="width:53%;background:#8fa9c0">MLP — 52.99%</div>
+    <div style="width:47%;background:var(--card2);color:var(--muted)">فات</div>
+  </div>
+  <div class="bar">
+    <div style="width:99%;background:var(--green)">E-GraphSAGE — 99.20%</div>
+    <div style="width:1%;background:var(--card2)"></div>
+  </div>
+
+  <p>من نص الهجمات، لـ <b>تقريباً كلها</b>. والفرق جاي من الجراف وبس.</p>
+
+  <div class="box def">
+    <span class="box-t">◆ وليه الـ SQL injection ما اتحسّنش؟</span>
+    <p>لأن الـ MLP أصلاً جاب <b>100%</b>. مفيش مساحة للتحسين.</p>
+    <p>ده معناه إن خصائص الاتصال لوحدها كانت كافية للنوع ده — <b>فالجراف مالوش دور يلعبه هنا</b>. وده طبيعي ومش عيب.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ النقطة المهمة</span>
+    <p>الجراف <b>مش بيحسّن كل حاجة</b>. بيحسّن الحاجات اللي <b>المعلومة فيها في السياق</b>. والـ Backdoor مثال مثالي: اتصال واحد شكله عادي، لكن نمط الاتصالات بيفضحه.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <span class="badge">09 · النتيجة التانية</span>
+  <h2>مسح أحجام النوافذ</h2>
+  <p>جرّبنا 4 أحجام مختلفة عشان نتأكد إن النتيجة مش مظبوطة على مقاس إعداد واحد.</p>
+
+  <div class="tw">
+  <table>
+    <tr><th>النافذة</th><th>MLP</th><th>E-GraphSAGE</th><th>الفرق</th></tr>
+    <tr><td>50</td><td>~91.8%</td><td><b>~99.5%</b></td><td>+7.7</td></tr>
+    <tr><td>100</td><td>~90.9%</td><td><b>~99.0%</b></td><td>+8.1</td></tr>
+    <tr><td>250</td><td>~89.8%</td><td><b>~98.3%</b></td><td>+8.5</td></tr>
+    <tr><td>1000</td><td>~86.5%</td><td><b>~97.4%</b></td><td>+10.9</td></tr>
+  </table>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ الاستنتاج</span>
+    <p>E-GraphSAGE <b>فوق الـ MLP في كل إعداد</b> — بفارق 8 لـ 11 نقطة.</p>
+    <p>والثبات ده <b>أقوى من قفزة في نقطة واحدة</b>، لأنه بيوري إن النتيجة مش معتمدة على اختيار محظوظ.</p>
+  </div>
+
+  <div class="box warn">
+    <span class="box-t">⚠ حاجة لازم تعرفها — توقّع كان غلط</span>
+    <p>كنت متوقّع إن الـ MLP يفضل <b>ثابت</b> لأنه مفيهوش جراف. طلع بينزل من 91.8% لـ 86.5%.</p>
+    <p><b>السبب:</b> حجم النافذة مش بيحدد الجراف بس — بيحدد كمان <b>إزاي البيانات بتتقسّم</b> لتدريب واختبار. نوافذ أكبر = عدد نوافذ أقل = تقسيم أخشن.</p>
+    <p>فهو بيأثر على النموذجين، بس بطرق مختلفة.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">★ لو حد سأل عن ده</span>
+    <p>«الـ MLP بيتأثر بحجم النافذة لأنها بتحدد التقسيم. المهم إن <b>الفجوة بين النموذجين ثابتة</b> في كل الإعدادات — ودي مساهمة الجراف.»</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <span class="badge">10 · الصراحة</span>
+  <h2>حاجتين لازم تقولهم إنت الأول</h2>
+  <p>في المناقشة، إنك تذكر حدود شغلك بنفسك بيحسب <b>ليك</b> مش عليك.</p>
+
+  <h3>1. انحراف عن الورقة البحثية</h3>
+  <div class="box warn">
+    <span class="box-t">⚠ الفرق</span>
+    <p>الورقة بتمثّل الاتصال بـ <b>تمثيل الجهازين بس</b>. إحنا ضفنا <b>خصائص الاتصال نفسه</b> كمان.</p>
+    <p><b>ليه؟</b> المعمل فيه أجهزة قليلة، فتمثيل الجهازين بيطلع شبه متطابق لكل الاتصالات بينهم — والمصنّف مش هيلاقي حاجة يفرّق بيها.</p>
+  </div>
+
+  <h3>2. المقارنة بالـ autoencoder مش مباشرة</h3>
+  <div class="box warn">
+    <span class="box-t">⚠ مينفعش تقول «الـ GNN أحسن من الـ autoencoder»</span>
+    <div class="tw" style="margin:10px 0 0">
+    <table>
+      <tr><th>النموذج</th><th>النوع</th><th>شاف هجمات؟</th></tr>
+      <tr><td>Autoencoder</td><td>غير موجّه</td><td>لأ</td></tr>
+      <tr><td>E-GraphSAGE</td><td>موجّه</td><td>آه (أنواع تانية)</td></tr>
+    </table>
+    </div>
+    <p style="margin-top:10px">دول <b>منهجين مختلفين</b>، مش نسختين من نفس الحاجة.</p>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ الصياغة الصح</span>
+    <p>«المقارنة العادلة هي <b>E-GraphSAGE ضد الـ MLP</b> — نفس الإعداد بالظبط. الـ autoencoder منهج منفصل، وميزته إنه مايحتاجش تصنيفات خالص — فيكشف هجمات ماحدش صنّفها قبل كده.»</p>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <span class="badge">11 · اختبر نفسك</span>
+  <h2>أسئلة سريعة</h2>
+
+  <div class="q">
+    <div class="qt">1. ليه الجراف ساعد في الـ Backdoor ومساعدش في الـ SQL injection؟</div>
+    <button class="opt" data-ok="0">لأن الـ Backdoor أسهل في الكشف</button>
+    <button class="opt" data-ok="1">لأن الـ MLP أصلاً جاب 100% في الـ SQL injection — مفيش مساحة للتحسين</button>
+    <button class="opt" data-ok="0">لأن عينات الـ Backdoor أكتر</button>
+    <div class="qa">الجراف بيضيف قيمة لما المعلومة تكون في السياق. لو خصائص الاتصال لوحدها كافية، الجراف مالوش دور.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">2. إيه اللي كان هيحصل لو سبنا الـ IP كخاصية؟</div>
+    <button class="opt" data-ok="1">الموديل يحفظ عنوان المهاجم ويجيب نتيجة عالية مالهاش قيمة</button>
+    <button class="opt" data-ok="0">التدريب يبقى أبطأ</button>
+    <button class="opt" data-ok="0">مش هيفرق</button>
+    <div class="qa">الـ dataset من معمل والمهاجم عنوانه ثابت. الموديل هيتعلم العنوان بدل السلوك، ومش هيشتغل على أي شبكة تانية.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">3. ليه قسّمنا الاتصالات لنوافذ صغيرة؟</div>
+    <button class="opt" data-ok="1">عشان تمثيل الجهاز يعكس لحظة محددة بدل متوسط سلوكه كله</button>
+    <button class="opt" data-ok="0">عشان نوفّر مساحة على الهارد</button>
+    <button class="opt" data-ok="0">عشان الكود يبقى أبسط</button>
+    <div class="qa">وكمان عشان الذاكرة — النوافذ منفصلة فنقدر ندرّب على دفعات، والحساب يفضل مظبوط 100%.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">4. أنهي مقارنة هي العادلة؟</div>
+    <button class="opt" data-ok="0">E-GraphSAGE ضد الـ autoencoder</button>
+    <button class="opt" data-ok="1">E-GraphSAGE ضد الـ MLP</button>
+    <button class="opt" data-ok="0">الاتنين عادلين</button>
+    <div class="qa">الـ MLP بنفس المدخلات والتصنيفات والتقسيم، والفرق الوحيد الجراف. الـ autoencoder منهج مختلف تماماً — غير موجّه ومشافش أي هجوم.</div>
+  </div>
+
+  <div class="q">
+    <div class="qt">5. ليه مسح أحجام النوافذ مهم؟</div>
+    <button class="opt" data-ok="1">بيثبت إن النتيجة مش معتمدة على إعداد محظوظ</button>
+    <button class="opt" data-ok="0">بيخلي التدريب أسرع</button>
+    <button class="opt" data-ok="0">بيقلل الإنذارات الكاذبة</button>
+    <div class="qa">نتيجة واحدة عند إعداد واحد ممكن تكون صدفة. أربع إعدادات كلها بنفس الاتجاه = نتيجة حقيقية.</div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <span class="badge">12 · الخلاصة</span>
+  <h2>كل حاجة في صفحة واحدة</h2>
+
+  <h3>السؤال</h3>
+  <p>هل رؤية الاتصال <b>وسط جيرانه</b> بتكشف هجمات بتفوت على الموديل اللي بيبص لكل اتصال لوحده؟</p>
+
+  <h3>الطريقة</h3>
+  <div class="tw">
+  <table>
+    <tr><th>القرار</th><th>السبب</th></tr>
+    <tr><td>الأجهزة نقط والاتصالات خطوط</td><td>ده شكل الشبكة الحقيقي</td></tr>
+    <tr><td>الـ IP للربط بس، مش خاصية</td><td>عشان مايحفظش عنوان المهاجم</td></tr>
+    <tr><td>نوافذ من 100 اتصال</td><td>تمثيل الجهاز يعكس لحظة محددة</td></tr>
+    <tr><td>MLP بنفس كل حاجة بدون جراف</td><td>عشان نعزل مساهمة الجراف</td></tr>
+    <tr><td>3 أنواع هجوم محجوزة</td><td>عشان نختبر على هجوم جديد</td></tr>
+    <tr><td>4 أحجام نوافذ</td><td>عشان نتأكد إن النتيجة ثابتة</td></tr>
+  </table>
+  </div>
+
+  <h3>النتيجة</h3>
+  <div class="box ok">
+    <span class="box-t">✓ آه — والفرق كبير في الهجمات اللي كانت ضعيفة</span>
+    <ul>
+      <li><b>Backdoor:</b> من 53% لـ <b>99%</b></li>
+      <li><b>XSS:</b> من 79% لـ <b>97%</b></li>
+      <li><b>ثابت عبر 4 إعدادات</b> بفارق 8 لـ 11 نقطة</li>
+    </ul>
+  </div>
+
+  <div class="box def">
+    <span class="box-t">◆ وده بيدعم مشروعك إزاي</span>
+    <p>البروبوزال بتاعك فيه طبقة correlation. الشغل ده <b>بيثبت بالأرقام</b> إن الـ correlation بتضيف قيمة حقيقية — مش بس ادعاء في الورق.</p>
+  </div>
+
+  <p style="margin-top:28px;text-align:center;color:var(--muted)">بالتوفيق 🎯</p>
+</section>
+
+</div>
+
+<div class="nav">
+  <button class="nbtn" id="prev">السابق ←</button>
+  <span class="counter" id="count">1 / 13</span>
+  <button class="nbtn" id="next">→ التالي</button>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let i=0;
+const prog=document.getElementById('prog'),count=document.getElementById('count'),
+      prev=document.getElementById('prev'),next=document.getElementById('next');
+function render(){
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  count.textContent=(i+1)+' / '+slides.length;
+  prog.style.width=((i+1)/slides.length*100)+'%';
+  prev.disabled=i===0; next.disabled=i===slides.length-1;
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function go(d){const n=i+d; if(n>=0&&n<slides.length){i=n;render();}}
+prev.onclick=()=>go(-1); next.onclick=()=>go(1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='BUTTON')return;
+  if(e.key==='ArrowLeft')go(1);
+  if(e.key==='ArrowRight')go(-1);
+});
+let sx=0,sy=0;
+document.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX;sy=e.changedTouches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){ dx<0?go(-1):go(1); }
+},{passive:true});
+document.querySelectorAll('.q').forEach(q=>{
+  const opts=[...q.querySelectorAll('.opt')], ans=q.querySelector('.qa');
+  opts.forEach(o=>o.onclick=()=>{
+    if(q.dataset.done)return;
+    q.dataset.done=1;
+    opts.forEach(x=>x.classList.add(x.dataset.ok==='1'?'right':'wrong'));
+    ans.classList.add('show');
+  });
+});
+render();
+</script>
+</body>
+</html>
