@@ -79,7 +79,7 @@ AEGEX/
 | Four collection layers | Mostly | Network, device logs, sessions and telemetry are all present. The media layer holds stream metadata (frame rate, bitrate, authenticated or not), not real video, image or audio files. |
 | Unified event store | Mostly | Time-ordered and labeled, but spread across Elasticsearch, MinIO and Postgres rather than one store. |
 | Cleaning, feature extraction, sequence and graph | Yes | All three steps are separate in the pipeline. |
-| LSTM autoencoder, VAE, temporal GAT | Skipped | You asked to ignore these. The Kafka handoff is where they would plug in. |
+| LSTM autoencoder, VAE, temporal GAT | Skipped |  The Kafka handoff is where they would plug in. |
 | Continuous learning and feedback loop | Skipped | Part of the AI block. |
 | Attack analysis (category, severity, confidence) | Yes, rule-based | Signature rules, not a model. |
 | Layered knowledge base | Partly | All five layers exist, but as a small curated seed. The threat feeds are placeholder IPs, not live feeds. |
