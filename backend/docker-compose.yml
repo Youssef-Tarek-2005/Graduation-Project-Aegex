@@ -1,0 +1,29 @@
+# AEGEX v2 - Task B stack.
+# Step 1: only the database. Later steps add the API service here.
+#
+# Start:   docker compose -f backend/docker-compose.yml up -d
+# Stop:    docker compose -f backend/docker-compose.yml down
+# Reset:   docker compose -f backend/docker-compose.yml down -v   (deletes all data, re-runs the schema)
+
+services:
+  db:
+    image: timescale/timescaledb:2.17.2-pg16      # PostgreSQL 16 with the TimescaleDB extension built in
+    container_name: aegex-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: aegex
+      POSTGRES_PASSWORD: aegex                    # development only - change before any real deployment
+      POSTGRES_DB: aegex
+    ports:
+      - "5433:5432"                               # 5433 on your PC, so it never clashes with the old stack's 5432
+    volumes:
+      - aegex_db_data:/var/lib/postgresql/data    # the data survives restarts
+      - ../database/schema_v2.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro   # runs ONCE, on first start
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aegex -d aegex"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  aegex_db_data:
