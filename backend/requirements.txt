@@ -1,0 +1,8 @@
+# Task B backend. Install into a virtual environment:
+#   python -m venv backend/.venv
+#   backend/.venv/Scripts/python -m pip install -r backend/requirements.txt      (Windows)
+#   backend/.venv/bin/python     -m pip install -r backend/requirements.txt      (Linux / macOS)
+
+psycopg[binary]==3.2.3  # PostgreSQL driver (step 4+)
+pytest==8.3.4
+tzdata==2025.2          # time-zone database; Windows has none built in, and the ESP32 parser needs it

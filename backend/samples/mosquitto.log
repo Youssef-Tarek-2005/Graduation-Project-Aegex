@@ -1,0 +1,9 @@
+1795183498: mosquitto version 2.0.18 running
+1795183498: New connection from 192.168.56.20:50112 on port 1883.
+1795183498: New client connected from 192.168.56.20:50112 as esp32-smoke-01 (p2, c1, k60).
+1795183498: esp32-smoke-01 0 aegex/cmd/#
+1795183500: Received PUBLISH from esp32-smoke-01 (d0, q0, r0, m0, 'aegex/sensors/smoke', ... (58 bytes))
+1795183501: Received PINGREQ from esp32-smoke-01
+1795183510: Received PUBLISH from esp32-smoke-01 (d0, q0, r0, m0, 'aegex/sensors/smoke', ... (58 bytes))
+this line has no timestamp, so it is broken
+1795184400: Client esp32-smoke-01 disconnected.
