@@ -79,6 +79,14 @@ def _insert_batch(cur: psycopg.Cursor, batch: list[Event]) -> int:
     return cur.rowcount            # psycopg 3: total rows actually inserted (skipped duplicates count 0)
 
 
+def save_events(conn: psycopg.Connection, events: list[Event]) -> int:
+    """Save ready-made Events (e.g. from the API) in one transaction. Returns how many were new."""
+    if not events:
+        return 0
+    with conn.transaction(), conn.cursor() as cur:
+        return sum(_insert_batch(cur, events[i:i + BATCH_SIZE]) for i in range(0, len(events), BATCH_SIZE))
+
+
 def load_lines(conn: psycopg.Connection, parser: Parser, lines: Iterable[str], capture_id: str | None = None,
                batch_size: int = BATCH_SIZE, allow_outside_capture: bool = False) -> LoadResult:
     """Parse lines with `parser` and save the events. All or nothing: one transaction for the whole file.

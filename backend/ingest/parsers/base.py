@@ -24,9 +24,10 @@ class ParseStats:
     events: int = 0      # events produced
     ignored: int = 0     # valid lines we don't need (e.g. Cowrie "client.size", Mosquitto "version 2.0.18")
     skipped: int = 0     # broken lines (not valid JSON, missing time, ...)
+    unit: str = "events" # what one output row is called in messages ("flows" for Zeek conn.log)
 
     def __str__(self) -> str:
-        return f"{self.lines} lines -> {self.events} events ({self.ignored} ignored, {self.skipped} broken)"
+        return f"{self.lines} lines -> {self.events} {self.unit} ({self.ignored} ignored, {self.skipped} broken)"
 
 
 class Parser:

@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AEGEX Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --card-hover: #f1f5f9;
+  --text: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --line-strong: #cbd5e1;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-light: #eef2ff;
+  --ok: #10b981;
+  --bad: #ef4444;
+  --bad-bg: #fef2f2;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --radius: 10px;
+  --sidebar-w: 240px;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0f17;
+    --card: #151c28;
+    --card-hover: #1e293b;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --line: #1e293b;
+    --line-strong: #334155;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --accent-light: #1e1b4b;
+    --ok: #10b981;
+    --bad: #f87171;
+    --bad-bg: #7f1d1d22;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sidebar & Main Layout */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--card);
+  border-right: 1px solid var(--line);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.sidebar-brand {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand span {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.nav-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nav-item button:hover {
+  background: var(--card-hover);
+  color: var(--text);
+}
+
+.nav-item button.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  padding: 28px 32px 48px;
+  max-width: calc(100% - var(--sidebar-w));
+}
+
+.page-view {
+  display: none;
+}
+
+.page-view.active {
+  display: block;
+}
+
+/* Original Header & Components */
+header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  background: var(--card);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.dot.up { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.dot.down { background: var(--bad); box-shadow: 0 0 8px var(--bad); }
+
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--card);
+  padding: 2px;
+  box-shadow: var(--shadow-sm);
+}
+
+.seg button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.seg button:hover { color: var(--text); }
+.seg button.on { background: var(--accent); color: #ffffff; font-weight: 600; }
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  min-width: 0;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease;
+}
+
+.card:hover { border-color: var(--line-strong); }
+
+.lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.val {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-top: 6px;
+  line-height: 1.1;
+}
+
+.val small {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+.delta {
+  font-size: 12px;
+  color: var(--muted);
+  min-height: 18px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart {
+  position: relative;
+  height: 220px;
+  margin-top: 12px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+select {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.scroll {
+  overflow: auto;
+  max-height: 400px;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; font-size: 12px; }
+th { color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--card); text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; z-index: 10; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--card-hover); }
+
+td.det {
+  white-space: normal;
+  max-width: 380px;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.sev { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+.sev.low { background: #f1f5f9; color: #475569; }
+.sev.medium { background: #fef3c7; color: #d97706; }
+.sev.high { background: #fee2e2; color: #dc2626; }
+.sev.critical { background: #991b1b; color: #ffffff; }
+
+@media (prefers-color-scheme: dark) {
+  .sev.low { background: #1e293b; color: #94a3b8; }
+  .sev.medium { background: #451a03; color: #fbbf24; }
+  .sev.high { background: #450a0a; color: #f87171; }
+}
+
+.empty { padding: 36px 16px; text-align: center; color: var(--muted); font-size: 13px; }
+
+#err {
+  display: none;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--bad-bg);
+  border: 1px solid var(--bad);
+  color: var(--bad);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+input.q {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  min-width: 240px;
+  outline: none;
+  box-shadow: var(--shadow-sm);
+}
+
+button.btn, a.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: #ffffff;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+button.btn:hover, a.btn:hover { background: var(--accent-hover); }
+
+button.btn.alt, a.btn.alt {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+button.btn.alt:hover, a.btn.alt:hover {
+  background: var(--card-hover);
+  border-color: var(--line-strong);
+}
+
+.sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.kb { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.kb:last-child { border-bottom: none; }
+.kb-overview { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; margin:10px 0 16px; }
+.kb-source, .kb-scenario { border:1px solid var(--line); border-radius:10px; padding:12px; min-width:0; }
+.kb-source .count { font-size:22px; font-weight:700; margin:4px 0; }
+.kb-source .name, .kb-scenario .name { font-weight:600; }
+.kb-scenario .desc { color:var(--muted); font-size:12px; line-height:1.45; margin-top:5px; }
+.kb-scenario .mitigations { color:var(--muted); font-size:11px; margin-top:7px; }
+.kb b { font-weight: 600; }
+.kb .id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-right: 8px;
+  background: var(--accent-light);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+pre#rep {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  max-height: 420px;
+  overflow: auto;
+  margin: 16px 0 0;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: none;
+  color: var(--text);
+}
+
+footer {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+footer input {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 4px 8px;
+  width: 220px;
+  font-size: 12px;
+  outline: none;
+}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      AEGEX
+      <span>IoT honeypot monitor</span>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item"><button class="active" data-view="v-overview">Overview</button></li>
+      <li class="nav-item"><button data-view="v-events-time">Events over time</button></li>
+      <li class="nav-item"><button data-view="v-attacks">Detected attacks</button></li>
+      <li class="nav-item"><button data-view="v-recent-events">Recent events</button></li>
+      <li class="nav-item"><button data-view="v-intel">Threat intelligence</button></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <header>
+      <div class="right">
+        <span class="pill" title="The backend API and its database"><i class="dot" id="pg"></i>API + database</span>
+        <span class="pill" title="The old API, still used for the threat-intelligence page"><i class="dot" id="es"></i>Threat-intel API</span>
+        <span class="pill" title="Direct browser connection to the ESP32"><i class="dot" id="esp"></i><span id="espTxt">ESP32</span></span>
+        <select id="portSelect" disabled title="Previously authorized serial ports"><option value="">Select a COM port...</option></select>
+        <button class="btn alt" id="serBtn" title="Read the ESP32 directly over its USB/COM port (Web Serial)">Grant COM access &amp; connect</button>
+      </div>
+      <div class="right">
+        <select id="capSel" title="Live = the last minutes/hours (buttons). A capture = that recording session, start to end.">
+          <option value="">Live</option>
+        </select>
+        <div class="seg" id="seg">
+          <button data-m="15">15m</button><button data-m="60">1h</button><button data-m="360" class="on">6h</button><button data-m="1440">24h</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="err"></div>
+    <div id="espBanner" style="display:none;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-weight:600"></div>
+
+    <!-- VIEW 1: Overview (Sensor KPIs, Layer Cards, Environment Charts) -->
+    <section id="v-overview" class="page-view active">
+      <section class="kpis">
+        <div class="card"><div class="lbl">Temperature</div><div class="val"><span id="vT">-</span><small>&deg;C</small></div><div class="delta" id="dT"></div></div>
+        <div class="card"><div class="lbl">Smoke</div><div class="val"><span id="vS">-</span><small>ADC</small></div><div class="delta" id="dS"></div></div>
+        <div class="card"><div class="lbl">Humidity</div><div class="val"><span id="vH">-</span><small>%</small></div><div class="delta" id="dH"></div></div>
+        <div class="card"><div class="lbl">Security events</div><div class="val" id="vE">-</div><div class="delta">in selected range</div></div>
+      </section>
+
+      <section class="kpis" id="layerCards"></section>
+
+      <section class="row">
+        <div class="card"><div class="lbl">Temperature</div><div class="chart"><canvas id="cT"></canvas></div></div>
+        <div class="card"><div class="lbl">Smoke</div><div class="chart"><canvas id="cS"></canvas></div></div>
+        <div class="card"><div class="lbl">Humidity</div><div class="chart"><canvas id="cH"></canvas></div></div>
+      </section>
+    </section>
+
+    <!-- VIEW 2: Security events over time -->
+    <section id="v-events-time" class="page-view">
+      <section class="card">
+        <div class="lbl">Security events over time</div>
+        <div class="chart" style="height: 350px;"><canvas id="cE"></canvas></div>
+      </section>
+    </section>
+
+    <!-- VIEW 3: Detected attack scenarios + Recent detections -->
+    <section id="v-attacks" class="page-view">
+      <section class="row" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">
+        <div class="card">
+          <div class="lbl">Attack scenarios</div>
+          <div class="sub" id="atkSub">labeled attack events + flows, from Task A's attack log (model alerts come with step 12)</div>
+          <div class="chart" style="height: 300px;"><canvas id="cA"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="head"><div class="lbl">Attack runs</div></div>
+          <div class="scroll" style="max-height:300px">
+            <table>
+              <thead><tr><th>Start</th><th>Scenario</th><th>Tool</th><th>Target</th><th>Attacker</th><th>Events</th><th>Flows</th></tr></thead>
+              <tbody id="atkRows"></tbody>
+            </table>
+            <div class="empty" id="atkEmpty" style="display:none">No attack runs in this range</div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- VIEW 4: Recent security events -->
+    <section id="v-recent-events" class="page-view">
+      <section class="card">
+        <div class="head">
+          <div class="lbl">Recent security events</div>
+          <div style="display:flex;gap:8px">
+            <select id="srcFilter">
+              <option value="">All sources</option>
+              <option value="cowrie">Cowrie honeypot</option>
+              <option value="mosquitto">Mosquitto MQTT</option>
+              <option value="esp32">ESP32 sensor</option>
+              <option value="camera">Camera</option>
+            </select>
+            <select id="sev">
+              <option value="info">All, including info</option>
+              <option value="low" selected>Low and above</option>
+              <option value="medium">Medium and above</option>
+              <option value="high">High and above</option>
+            </select>
+          </div>
+        </div>
+        <div class="scroll" style="max-height: 500px;">
+          <table>
+            <thead><tr><th>Time</th><th>Severity</th><th>Source</th><th>Type</th><th>Source IP</th><th>Details</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+          <div class="empty" id="empty" style="display:none">No events in this range yet</div>
+        </div>
+      </section>
+    </section>
+
+    <!-- VIEW 5: Threat intelligence -->
+    <section id="v-intel" class="page-view">
+      <section class="card">
+        <div class="head" style="flex-wrap:wrap">
+          <div>
+            <div class="lbl">Threat intelligence</div>
+            <div class="sub">MITRE ATT&amp;CK, OWASP IoT Top 10, CVE/NVD, CWE/CAPEC and threat feeds</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input class="q" id="kbq" placeholder="Search e.g. mirai, camera, T1486">
+            <select id="kbl"><option value="">All layers</option></select>
+            <button class="btn alt" id="kbgo">Search</button>
+            <button class="btn" id="repgo">Blue team report</button>
+            <a class="btn alt" id="repdl" style="text-decoration:none">Download .md</a>
+          </div>
+        </div>
+        <div class="sub" style="margin:12px 0 6px">Knowledge-base coverage</div>
+        <div id="intelOverview" class="kb-overview"><div class="empty">Loading threat-intelligence sources...</div></div>
+        <div class="sub" style="margin:18px 0 6px">Search results</div>
+        <div id="kbres"><div class="empty">Search the knowledge base or select a source above.</div></div>
+        <pre id="rep"></pre>
+      </section>
+    </section>
+
+    <footer>API address <input id="api" value="http://localhost:8001"> &nbsp; Threat-intel API <input id="intelApi" value="http://localhost:8000" title="The old API (aegex/api): knowledge base and blue-team report, until E's endpoints exist"> &nbsp; ESP32 address <input id="espUrl" value="http://aegex-esp32.local" style="width:190px"> <span id="upd"></span></footer>
+  </main>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// Sidebar Navigation Control
+document.querySelectorAll(".sidebar .nav-item button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".sidebar .nav-item button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".page-view").forEach(v => v.classList.remove("active"));
+    
+    btn.classList.add("active");
+    const viewId = btn.getAttribute("data-view");
+    $("#" + viewId).classList.add("active");
+
+    // Trigger Chart.js updates on section change so canvas resizes cleanly
+    ch.E.resize(); ch.A.resize();
+    ch.T.resize(); ch.S.resize(); ch.H.resize();
+  });
+});
+
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+Chart.defaults.color = css("--muted");
+Chart.defaults.borderColor = css("--line");
+
+let range = 360;
+
+const PALETTE = [
+  "#4f46e5", "#ef4444", "#10b981", "#f59e0b",
+  "#8b5cf6", "#06b6d4", "#ec4899", "#84cc16"
+];
+
+const axes = { 
+  x: { grid: { display: false }, ticks: { color: css("--muted"), maxTicksLimit: 5, maxRotation: 0 } }, 
+  y: { grid: { color: css("--line") }, ticks: { color: css("--muted"), maxTicksLimit: 5 } } 
+};
+
+function line(id, color) {
+  return new Chart($(id), { 
+    type: "line",
+    data: { 
+      labels: [], 
+      datasets: [{ data: [], borderColor: color, backgroundColor: color + "1a", fill: true, tension: 0.3, pointRadius: ctx => ctx.dataIndex === ctx.dataset.data.length - 1 ? 3 : 0, pointHoverRadius: 5, borderWidth: 2 }] 
+    },
+    options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: axes } 
+  });
+}
+
+const ch = { 
+  T: line("#cT", PALETTE[1]), 
+  S: line("#cS", PALETTE[3]), 
+  H: line("#cH", PALETTE[0]) 
+};
+
+ch.E = new Chart($("#cE"), { 
+  type: "bar", 
+  data: { labels: [], datasets: [] },
+  options: { 
+    responsive: true, maintainAspectRatio: false, animation: false,
+    plugins: { legend: { position: "bottom", labels: { boxWidth: 10, color: css("--muted") } } },
+    scales: { 
+      x: { stacked: true, grid: { display: false }, ticks: { color: css("--muted"), maxTicksLimit: 8, maxRotation: 0 } }, 
+      y: { stacked: true, beginAtZero: true, grid: { color: css("--line") }, ticks: { color: css("--muted"), precision: 0 } } 
+    } 
+  } 
+});
+
+ch.A = new Chart($("#cA"), { 
+  type: "bar", 
+  data: { labels: [], datasets: [{ data: [], borderRadius: 4 }] },
+  options: { 
+    indexAxis: "y", responsive: true, maintainAspectRatio: false, animation: false,
+    plugins: { legend: { position: "bottom", labels: { boxWidth: 10, color: css("--muted") } } },
+    scales: {
+      x: { stacked: true, beginAtZero: true, grid: { color: css("--line") }, ticks: { color: css("--muted"), precision: 0 } },
+      y: { stacked: true, grid: { display: false }, ticks: { color: css("--muted") } }  
+    } 
+  } 
+});
+
+const LAYER_NAMES = { network_traffic: "Network traffic", device_service_logs: "Device & service logs", session_interaction: "Session & interaction", telemetry_media: "Telemetry & media" };
+const nice = t => String(t).replace(/_/g, " ");
+const sevPill = v => { const b = document.createElement("span"); b.className = "sev " + v; b.textContent = v; return b; };
+
+function cards(layers) {
+  const box = $("#layerCards"); box.replaceChildren();
+  const add = (label, value, sub) => { 
+    const c = document.createElement("div"); c.className = "card";
+    const l = document.createElement("div"); l.className = "lbl"; l.textContent = label;
+    const v = document.createElement("div"); v.className = "val"; v.textContent = value;
+    const d = document.createElement("div"); d.className = "delta"; d.textContent = sub || "";
+    c.append(l, v, d); box.appendChild(c); 
+  };
+  // Zeek connections are stored as flows, not events: they are the network-traffic layer.
+  Object.entries(LAYER_NAMES).forEach(([k, n]) => k === "network_traffic"
+    ? add(n, (layers.flows + (layers.layers[k] || 0)).toLocaleString(), "connections (Zeek flows)")
+    : add(n, (layers.layers[k] || 0).toLocaleString(), "events collected"));
+  const lb = layers.labels;
+  add("Attack / normal", `${lb.attack} / ${lb.normal}`, lb.unlabeled ? `events (${lb.unlabeled} not labeled yet)` : "labeled events");
+  add("Attack flows", `${layers.attack_flows} / ${layers.flows}`, "connections labeled attack");
+}
+
+// Until the models post alerts (step 12), the attacks shown are the labeled ones: Task A's attack log.
+function detections(sum, runs) {
+  const sc = Object.entries(sum.scenarios);
+  ch.A.data.labels = sc.map(([k]) => nice(k));
+  ch.A.data.datasets = [
+    { label: "attack events", data: sc.map(([, v]) => v.events), backgroundColor: PALETTE[0], borderRadius: 4 },
+    { label: "attack flows", data: sc.map(([, v]) => v.flows), backgroundColor: PALETTE[5], borderRadius: 4 }
+  ];
+  ch.A.update();
+  $("#atkSub").textContent = `${sum.labels.attack} attack events and ${sum.attack_flows} attack flows in range, from Task A's attack log (model alerts come with step 12)`;
+  const body = $("#atkRows"); body.replaceChildren();
+  $("#atkEmpty").style.display = runs.items.length ? "none" : "block";
+  runs.items.forEach(r => {
+    const tr = document.createElement("tr");
+    const td = t => { const c = document.createElement("td"); c.textContent = t; tr.appendChild(c); return c; };
+    const n = sum.runs[r.run_id] || { events: 0, flows: 0 };
+    td(dayTime(r.start_ts)); td(nice(r.scenario)); td(r.tool || "-"); td(r.target_device || "-"); td(r.attacker_ip);
+    td(n.events.toLocaleString()); td(n.flows.toLocaleString());
+    body.appendChild(tr);
+  });
+}
+
+async function searchKb() {
+  const q = $("#kbq").value.trim(), box = $("#kbres"); box.replaceChildren();
+  if (q.length < 2) return;
+  const r = await get(`/api/v1/intel/search?q=${encodeURIComponent(q)}&layer=${$("#kbl").value}&limit=8`, intelBase());
+  if (!r.results.length) { const e = document.createElement("div"); e.className = "empty"; e.textContent = "No matches"; box.appendChild(e); return; }
+  r.results.forEach(x => { 
+    const d = document.createElement("div"); d.className = "kb";
+    const id = document.createElement("span"); id.className = "id"; id.textContent = x.id;
+    const t = document.createElement("b"); t.textContent = x.title;
+    const m = document.createElement("div"); m.className = "sub"; m.textContent = nice(x.layer) + " - " + x.description;
+    d.append(id, t, m); box.appendChild(d); 
+  });
+}
+
+async function loadLayers() {
+  const overview = $("#intelOverview");
+  try {
+    const [layerData, categoryData] = await Promise.all([
+      get("/api/v1/intel/layers", intelBase()),
+      get("/api/v1/intel/categories", intelBase())
+    ]);
+    $("#es").className = "dot up";
+    const select = $("#kbl");
+    select.replaceChildren(new Option("All layers", ""));
+    layerData.layers.forEach(layer => {
+      const option = document.createElement("option");
+      option.value = layer.layer;
+      option.textContent = `${layer.title.split(" (")[0]} (${layer.entries})`;
+      select.appendChild(option);
+    });
+    overview.replaceChildren();
+    layerData.layers.forEach(layer => {
+      const card = document.createElement("div"); card.className = "kb-source";
+      const name = document.createElement("div"); name.className = "name"; name.textContent = layer.title;
+      const count = document.createElement("div"); count.className = "count"; count.textContent = Number(layer.entries || 0).toLocaleString();
+      const caption = document.createElement("div"); caption.className = "sub"; caption.textContent = "curated knowledge-base entries";
+      card.append(name, count, caption); overview.appendChild(card);
+    });
+    const scenarios = categoryData.categories || [];
+    scenarios.forEach(item => {
+      const card = document.createElement("div"); card.className = "kb-scenario";
+      const name = document.createElement("div"); name.className = "name"; name.textContent = item.title || nice(item.category);
+      const desc = document.createElement("div"); desc.className = "desc"; desc.textContent = `${nice(item.category)} · Base severity: ${item.base_severity}`;
+      const mitigations = document.createElement("div"); mitigations.className = "mitigations";
+      mitigations.textContent = (item.mitigations || []).slice(0, 2).join(" · ") || "No mitigation notes available";
+      card.append(name, desc, mitigations); overview.appendChild(card);
+    });
+    if (!overview.children.length) overview.innerHTML = '<div class="empty">The knowledge base returned no entries.</div>';
+  } catch (e) {
+    $("#es").className = "dot down";
+    overview.textContent = "Could not load the knowledge-base overview from the threat-intel API (" + intelBase() + "): " + e.message;
+  }
+}
+
+const hhmm = iso => new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+const dayTime = iso => new Date(iso).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+const apiBase = () => $("#api").value.trim().replace(/\/$/, "");
+const intelBase = () => $("#intelApi").value.trim().replace(/\/$/, "");
+
+async function get(p, base = apiBase()) {
+  const r = await fetch(base + p, { cache: "no-store" });
+  if (!r.ok) {
+    let why = "";
+    try { const body = await r.json(); why = body.detail?.problems?.join("; ") || (typeof body.detail === "string" ? body.detail : ""); } catch (e) { /* not JSON */ }
+    throw new Error(p.split("?")[0] + " returned HTTP " + r.status + (why ? ": " + why : ""));
+  }
+  return r.json();
+}
+
+// What time range is on screen: "Live" = the last 15m / 1h / 6h / 24h (buttons), or one recorded capture.
+let captures = [];
+const capMode = () => $("#capSel").value !== "";
+function span() {
+  const c = captures.find(x => x.capture_id === $("#capSel").value);
+  if (c) return { from: c.start_ts, to: c.end_ts || new Date().toISOString(), capture_id: c.capture_id };
+  const to = new Date();
+  return { from: new Date(to.getTime() - range * 60000).toISOString(), to: to.toISOString() };
+}
+const query = (s, extra = {}) => new URLSearchParams({ ...s, ...extra }).toString();
+
+async function loadCaptures() {
+  const sel = $("#capSel"), keep = sel.value;
+  try {
+    captures = (await get("/api/v1/captures?order=desc&limit=500")).items;
+  } catch (e) { captures = []; }
+  sel.replaceChildren(new Option("Live", ""));
+  captures.forEach(c => {
+    const minutes = c.end_ts ? Math.round((new Date(c.end_ts) - new Date(c.start_ts)) / 60000) + " min" : "recording";
+    sel.appendChild(new Option(`${c.capture_id} (${dayTime(c.start_ts)}, ${minutes})`, c.capture_id));
+  });
+  sel.value = captures.some(c => c.capture_id === keep) ? keep : "";
+}
+
+// Keep a short browser-side buffer of direct ESP32 readings. These are displayed
+// immediately in the charts, even before the API/pipeline has persisted them.
+let sensorHistory = null;
+const liveSensorPoints = [];
+const sensorTimeLabel = iso => new Date(iso).toLocaleTimeString([], {
+  hour: "2-digit", minute: "2-digit", second: "2-digit"
+});
+
+function renderSensorCharts(ts = sensorHistory) {
+  const labels = Array.isArray(ts?.labels) ? ts.labels : [];
+  const series = Object.fromEntries((ts?.series || []).map(item => [item.name, item.data || []]));
+  const temp = series.tempeture ?? series.temperature ?? series.temperature_c ?? [];
+  const smoke = series.smoke ?? [];
+  const humidity = series.humidity_pct ?? series.humidity ?? [];
+  const points = labels.map((t, i) => ({
+    t,
+    temp: Number.isFinite(Number(temp[i])) ? Number(temp[i]) : null,
+    smoke: Number.isFinite(Number(smoke[i])) ? Number(smoke[i]) : null,
+    humidity: Number.isFinite(Number(humidity[i])) ? Number(humidity[i]) : null
+  }));
+  const cutoff = Date.now() - range * 60000;
+  liveSensorPoints.splice(0, liveSensorPoints.length,
+    ...liveSensorPoints.filter(p => new Date(p.t).getTime() >= cutoff).slice(-1000)
+  );
+  if (!capMode()) points.push(...liveSensorPoints);   // a past capture shows only what was recorded
+  points.sort((a, b) => new Date(a.t).getTime() - new Date(b.t).getTime());
+  const visible = points.slice(-1000);
+  const chartLabels = visible.map(p => sensorTimeLabel(p.t));
+  const definitions = [
+    ["T", "temp", 1, "#vT", "#dT"],
+    ["S", "smoke", 0, "#vS", "#dS"],
+    ["H", "humidity", 1, "#vH", "#dH"]
+  ];
+  definitions.forEach(([key, field, digits, valueId, deltaId]) => {
+    const values = visible.map(p => p[field]);
+    ch[key].data.labels = chartLabels;
+    ch[key].data.datasets[0].data = values;
+    ch[key].update("none");
+    kpi(key, valueId, deltaId, values.filter(v => Number.isFinite(v)), digits);
+  });
+}
+
+function kpi(key, vId, dId, data, digits) {
+  const v = $(vId), d = $(dId);
+  if (live.fresh() && !capMode()) return;       // live ESP32 value wins while the board is reachable (Live mode)
+  if (!data.length) { v.textContent = "-"; d.textContent = ""; return; }
+  const last = data[data.length - 1], diff = last - data[0];
+  v.textContent = last.toFixed(digits);
+  d.textContent = (diff >= 0 ? "\u25B2 " : "\u25BC ") + Math.abs(diff).toFixed(digits) + " since start of range";
+}
+
+// ---- Direct ESP32 link: the browser reads http://<esp32>/data itself (no database in the path) ----
+const live = {
+  last: 0, ok: false,
+  fresh() { return this.ok && Date.now() - this.last < 6000; },
+};
+const espBase = () => ($("#espUrl").value.trim() || "").replace(/\/$/, "");
+
+// Shared by the HTTP and USB paths: d = {smoke, temp, hum, warmup, alarm}; src = "Wi-Fi" | "USB"
+function applyLive(d, src) {
+  const ban = $("#espBanner");
+  live.ok = true; live.last = Date.now();
+  const livePoint = {
+    t: new Date(live.last).toISOString(),
+    temp: d.temp != null && Number.isFinite(Number(d.temp)) ? Number(d.temp) : null,
+    smoke: d.smoke != null && Number.isFinite(Number(d.smoke)) ? Number(d.smoke) : null,
+    humidity: d.hum != null && Number.isFinite(Number(d.hum)) ? Number(d.hum) : null
+  };
+  if (livePoint.temp !== null || livePoint.humidity !== null) {
+    liveSensorPoints.push(livePoint);
+    if (liveSensorPoints.length > 1000) liveSensorPoints.splice(0, liveSensorPoints.length - 1000);
+    if (!capMode()) renderSensorCharts(sensorHistory);
+  }
+  $("#esp").className = "dot up"; $("#espTxt").textContent = "ESP32 live (" + src + ")";
+  if (capMode()) return;                          // looking at a past capture: don't overwrite its numbers
+  $("#vS").textContent = Number.isFinite(d.smoke) ? d.smoke : "-";
+  $("#vT").textContent = Number.isFinite(d.temp) ? d.temp.toFixed(1) : "-";
+  $("#vH").textContent = Number.isFinite(d.hum) ? d.hum.toFixed(0) : "-";
+  ["#dT", "#dS", "#dH"].forEach(i => $(i).textContent = "live from ESP32 (" + src + ")");
+  if (d.alarm) { ban.style.display = "block"; ban.style.background = "#b3261e"; ban.style.color = "#fff"; ban.textContent = "SMOKE ALARM - level " + d.smoke; }
+  else if (d.warmup) { ban.style.display = "block"; ban.style.background = "#7a5b00"; ban.style.color = "#fff"; ban.textContent = "MQ-2 warming up / calibrating - readings not reliable yet"; }
+  else ban.style.display = "none";
+}
+
+async function pollEsp() {
+  const dot = $("#esp"), txt = $("#espTxt"), ban = $("#espBanner");
+  if (serialFresh()) return;                    // USB is delivering data: don't let HTTP overwrite it
+  const base = espBase();
+  if (!base) { dot.className = "dot down"; txt.textContent = "ESP32: no address"; return; }
+  try {
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 2500);
+    const r = await fetch(base + "/data", { signal: ctl.signal, cache: "no-store" });
+    clearTimeout(to);
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const d = await r.json();
+    applyLive({ smoke: d.smoke, temp: d.temp, hum: d.hum, warmup: !!d.warmup, alarm: !!d.alarm }, "Wi-Fi");
+  } catch (e) {
+    live.ok = false; dot.className = "dot down"; txt.textContent = "ESP32 offline"; ban.style.display = "none";
+  }
+}
+
+// ---- Direct ESP32 link over USB (Web Serial). Expects lines: DATA,timestamp_ms,smoke,temp,hum,warmup,alarm ----
+const ser = { port: null, reader: null, active: false, closing: false, last: 0 };
+let ports = [];
+function portLabel(port, i) {                     // browsers don't expose "COM3"; the USB vendor/product ID is what identifies the device
+  const { usbVendorId: v, usbProductId: p } = port.getInfo();
+  return "Serial port " + (i + 1) + (v !== undefined ? " (USB " + v.toString(16).padStart(4, "0") + ":" + p.toString(16).padStart(4, "0") + ")" : "");
+}
+async function loadPorts() {
+  const sel = $("#portSelect");
+  if (!("serial" in navigator)) return;
+  try { ports = await navigator.serial.getPorts(); } catch (e) { ports = []; }
+  sel.replaceChildren(new Option(ports.length ? "Select an authorized COM port..." : "No authorized ports yet", ""));
+  ports.forEach((pt, i) => sel.appendChild(new Option(portLabel(pt, i), i)));
+  if (ser.active && ser.port) sel.value = String(ports.indexOf(ser.port));
+  sel.disabled = ser.active || ports.length === 0;
+}
+const serialFresh = () => ser.active && Date.now() - ser.last < 6000;
+
+function parseSerialLine(line) {
+  if (!line.startsWith("DATA,")) return null;   // ignores empty lines and '#' debug lines
+  const p = line.split(",");
+  if (p.length < 7) return null;
+  const num = x => { const n = Number(x); return x.trim() !== "" && Number.isFinite(n) ? n : null; };   // "nan"/"inf" -> null
+  const smoke = num(p[2]);
+  if (smoke === null) return null;
+  return { smoke, temp: num(p[3]), hum: num(p[4]), warmup: p[5].trim() === "1", alarm: p[6].trim() === "1" };
+}
+
+async function serialConnect() {
+  try {
+    const idx = $("#portSelect").value;
+    ser.port = (idx !== "" && ports[idx]) ? ports[idx] : await navigator.serial.requestPort();   // dropdown choice, else native picker
+    await ser.port.open({ baudRate: 115200 });    // must match Serial.begin() on the ESP32
+  } catch (e) {
+    ser.port = null;
+    if (e.name !== "NotFoundError") alert("USB connection failed: " + e.message);   // NotFoundError = user closed the picker
+    return;
+  }
+  ser.active = true; ser.closing = false; ser.last = 0;
+  $("#serBtn").textContent = "Disconnect USB";
+  loadPorts();                                    // a freshly granted port now appears in the dropdown
+  const decoder = new TextDecoderStream();
+  const piped = ser.port.readable.pipeTo(decoder.writable).catch(() => {});
+  ser.reader = decoder.readable.getReader();
+  let buf = "";
+  try {
+    while (true) {
+      const { value, done } = await ser.reader.read();
+      if (done) break;
+      buf += value;
+      const lines = buf.split("\n");
+      buf = lines.pop();                          // keep the incomplete tail for the next chunk
+      if (buf.length > 4096) buf = "";            // guard against a stream with no newlines
+      for (const l of lines) {
+        const d = parseSerialLine(l.trim());
+        if (d) { ser.last = Date.now(); applyLive(d, "USB"); }
+      }
+    }
+  } catch (e) {
+    if (!ser.closing) alert("USB connection lost: " + e.message);   // e.g. cable unplugged
+  } finally {
+    try { ser.reader.releaseLock(); } catch (e) { /* already released */ }
+    await piped;
+    try { await ser.port.close(); } catch (e) { /* already closed */ }
+    ser.active = false; ser.port = null; ser.reader = null;
+    $("#serBtn").textContent = "Grant COM access & connect";
+    loadPorts();                                  // re-enable the dropdown
+    pollEsp();                                    // fall back to Wi-Fi immediately
+  }
+}
+
+async function serialDisconnect() {
+  ser.closing = true;
+  try { await ser.reader.cancel(); } catch (e) { /* loop's finally handles cleanup */ }
+}
+
+if (!("serial" in navigator)) {
+  $("#serBtn").disabled = true;
+  $("#serBtn").title = "Web Serial is not supported in this browser (use Chrome, Edge or Opera over HTTPS or localhost)";
+}
+if ("serial" in navigator) {
+  loadPorts();
+  navigator.serial.addEventListener("connect", loadPorts);      // authorized device plugged in
+  navigator.serial.addEventListener("disconnect", loadPorts);   // device unplugged
+}
+$("#serBtn").addEventListener("click", () => ser.active ? serialDisconnect() : serialConnect());
+
+$("#espUrl").value = localStorage.getItem("aegexEsp") || $("#espUrl").value;
+$("#espUrl").addEventListener("change", () => { localStorage.setItem("aegexEsp", $("#espUrl").value.trim()); pollEsp(); });
+pollEsp(); setInterval(pollEsp, 20000);
+
+async function refresh() {
+  const s = span();
+  const sourceQuery = $("#srcFilter")?.value ? { source: $("#srcFilter").value } : {};
+  const requests = [
+    ["health", "/health"],
+    ["summary", `/api/v1/stats/summary?${query(s)}`],
+    ["sensors", `/api/v1/stats/sensors?${query(s)}`],
+    ["events", `/api/v1/events?${query(s, { order: "desc", limit: 300, min_severity: $("#sev").value, ...sourceQuery })}`],
+    ["histogram", `/api/v1/stats/events-histogram?${query(s)}`],
+    ["runs", `/api/v1/attack-runs?${query(s, { order: "desc", limit: 100 })}`]
+  ];
+  const results = Object.fromEntries(await Promise.all(requests.map(async ([key, path]) => {
+    try { return [key, { ok: true, data: await get(path) }]; }
+    catch (error) { return [key, { ok: false, error }]; }
+  })));
+  const errors = [];
+
+  if (results.health.ok) $("#pg").className = "dot " + (results.health.data.database === "ok" ? "up" : "down");
+  else { $("#pg").className = "dot down"; errors.push("Health: " + results.health.error.message); }
+
+  if (results.sensors.ok) {
+    sensorHistory = results.sensors.data;
+    renderSensorCharts(sensorHistory);
+  } else {
+    // Keep displaying direct ESP32 readings if the API is temporarily unavailable.
+    renderSensorCharts(sensorHistory);
+    errors.push("Sensors: " + results.sensors.error.message);
+  }
+
+  if (results.summary.ok) {
+    const sum = results.summary.data;
+    cards(sum);
+    $("#vE").textContent = sum.events.toLocaleString();
+    detections(sum, results.runs.ok ? results.runs.data : { items: [] });
+    if (!results.runs.ok) {
+      $("#atkEmpty").textContent = "Counts loaded, but the attack runs could not be loaded.";
+      $("#atkEmpty").style.display = "block";
+      errors.push("Attack runs: " + results.runs.error.message);
+    }
+  } else {
+    ch.A.data.labels = []; ch.A.data.datasets = []; ch.A.update();
+    $("#atkSub").textContent = "Attack counts unavailable";
+    $("#atkRows").replaceChildren();
+    $("#atkEmpty").textContent = "Could not load the attack counts: " + results.summary.error.message;
+    $("#atkEmpty").style.display = "block";
+    errors.push("Summary: " + results.summary.error.message);
+  }
+
+  if (results.events.ok) {
+    const events = results.events.data.items;
+    const body = $("#rows"); body.replaceChildren();
+    $("#empty").textContent = events.length ? "" : "No events in this range at this severity. Pick a capture at the top, or 'All, including info'.";
+    $("#empty").style.display = events.length ? "none" : "block";
+    events.forEach(event => {
+      const tr = document.createElement("tr");
+      const td = (value, cls) => { const cell = document.createElement("td"); if (cls) cell.className = cls; cell.textContent = value; tr.appendChild(cell); return cell; };
+      td(new Date(event.ts).toLocaleString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", month: "short", day: "numeric" }));
+      td("").appendChild(sevPill(event.severity || "info"));
+      const sourceCell = td(""); const sourceBadge = document.createElement("span");
+      const cowrie = event.source === "cowrie";
+      const sourceLabel = cowrie ? "Cowrie SSH" : event.source === "mosquitto" ? "Mosquitto" : event.source === "esp32" ? "ESP32" : (event.source || "-");
+      sourceBadge.className = "pill"; sourceBadge.style.cssText = "font-size:10px;padding:2px 8px;font-weight:600;" + (cowrie ? "background:#6366f120;color:#6366f1;border-color:#6366f160;" : "");
+      sourceBadge.textContent = sourceLabel; sourceCell.appendChild(sourceBadge);
+      td(nice(event.event_type)); td(event.src_ip || "-");
+      const p = event.payload || {};
+      let detailText = (p.input ?? p.command) ? `cmd: ${p.input ?? p.command}`
+        : p.username ? `user: ${p.username}${p.password ? " / " + p.password : ""}`
+        : p.url ? `download: ${p.url}`
+        : p.topic ? `topic: ${p.topic}`
+        : p.temperature_c !== undefined ? `${p.temperature_c} °C, smoke ${p.smoke ?? "-"}, ${p.humidity_pct ?? "-"} %`
+        : "";
+      if (event.label === 1) detailText = `[attack: ${nice(event.scenario)}] ` + detailText;
+      td(detailText, "det"); body.appendChild(tr);
+    });
+  } else errors.push("Events: " + results.events.error.message);
+
+  if (results.histogram.ok) {
+    const hist = results.histogram.data;
+    const multiDay = new Date(s.to) - new Date(s.from) > 86400000;
+    ch.E.data.labels = hist.labels.map(multiDay ? dayTime : hhmm);
+    ch.E.data.datasets = hist.series.map((series, i) => ({ label: nice(series.name), data: series.data, backgroundColor: PALETTE[i % PALETTE.length], borderRadius: 3 }));
+    if (!ch.E.data.datasets.length) ch.E.data.datasets = [{ label: "events (none in this range)", data: hist.labels.map(() => 0), backgroundColor: PALETTE[0], borderRadius: 3 }];
+    ch.E.update();
+  } else {
+    ch.E.data.labels = []; ch.E.data.datasets = []; ch.E.update();
+    errors.push("Events-over-time chart: " + results.histogram.error.message);
+  }
+
+  $("#err").textContent = errors.length ? "Some dashboard panels could not refresh: " + errors.join(" | ") : "";
+  $("#err").style.display = errors.length ? "block" : "none";
+  $("#upd").textContent = "Updated " + new Date().toLocaleTimeString();
+}
+$("#seg").addEventListener("click", e => {
+  if (e.target.tagName !== "BUTTON") return;
+  document.querySelectorAll("#seg button").forEach(b => b.classList.toggle("on", b === e.target));
+  range = +e.target.dataset.m; $("#capSel").value = ""; refresh();   // a time button means Live
+});
+$("#capSel").addEventListener("change", () => {
+  // the time buttons only mean something in Live mode
+  document.querySelectorAll("#seg button").forEach(b => b.classList.toggle("on", !capMode() && +b.dataset.m === range));
+  refresh();
+});
+$("#srcFilter")?.addEventListener("change", refresh);
+$("#sev").addEventListener("change", refresh);
+$("#kbgo").addEventListener("click", () => searchKb().catch(e => alert(e.message)));
+$("#kbq").addEventListener("keydown", e => { if (e.key === "Enter") searchKb().catch(x => alert(x.message)); });
+$("#repgo").addEventListener("click", async () => {
+  const pre = $("#rep"); pre.style.display = "block"; pre.textContent = "Generating...";
+  try { const r = await fetch(intelBase() + `/api/v1/reports/blue-team?minutes=${range}&format=markdown`); pre.textContent = await r.text(); }
+  catch (e) { pre.textContent = "Could not load the report: " + e.message; }
+});
+function setDl() { $("#repdl").href = intelBase() + `/api/v1/reports/blue-team?minutes=${range}&format=markdown`; }
+$("#seg").addEventListener("click", setDl); $("#intelApi").addEventListener("change", () => { setDl(); loadLayers(); }); setDl(); loadLayers();
+$("#api").addEventListener("change", () => loadCaptures().then(refresh));
+// A recorded capture doesn't change, so it is fetched once; Live refreshes every 5 seconds.
+loadCaptures().then(refresh); setInterval(() => { if (!capMode()) refresh(); }, 5000); setInterval(loadCaptures, 60000); // Refresh persisted sensor history every 5 seconds; ESP32 charts update on each 2-second poll.
+</script>
+</body>
+</html>

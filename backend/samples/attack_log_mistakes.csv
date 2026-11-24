@@ -1,0 +1,8 @@
+run_id,capture_id,scenario,tool,command,attacker_ip,target_device,start_ts,end_ts,notes
+run-101,cap-2026-11-20-a,brute force,hydra,,192.168.56.99,gw-01,2026-11-20T14:20:00Z,2026-11-20T14:25:00Z,scenario spelled wrong
+run-102,cap-2026-11-20-a,dos,hping3,,192.168.56.99,gw-01,2026-11-20 14:30:00,2026-11-20 14:35:00,no time zone
+run-103,cap-2026-11-20-a,mqtt_spoofing,mosquitto_pub,,192.168.56.10,gw-01,2026-11-20T14:40:00Z,2026-11-20T14:45:00Z,attacker_ip is the honeypot itself
+run-104,cap-2026-11-20-a,dos,hping3,,192.168.56.99,cam-02,2026-11-20T14:50:00Z,2026-11-20T14:48:00Z,ends before it starts
+run-105,cap-2026-11-20-a,vulnerability_scanning,nmap,,192.168.56.99,cam-01,2026-11-20T14:15:00Z,2026-11-20T14:20:00Z,overlaps run-001 (same attacker)
+run-106,cap-2026-11-20-a,dos,hping3,,192.168.56.99,gw-01,2026-11-20T15:30:00Z,2026-11-20T15:40:00Z,outside the capture (it ends 15:00)
+run-107,cap-2026-11-20-a,dos,hping3,,192.168.56.99,cam-02,2026-11-20T14:52:00Z,2026-11-20T14:55:00Z,unknown device

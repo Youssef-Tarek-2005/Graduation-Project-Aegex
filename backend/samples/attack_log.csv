@@ -1,0 +1,2 @@
+run_id,capture_id,scenario,tool,command,attacker_ip,target_device,start_ts,end_ts,notes
+run-001,cap-2026-11-20-a,bruteforce,hydra,hydra -l root -P passwords.txt ssh://192.168.56.10,192.168.56.99,gw-01,2026-11-20T14:10:00Z,2026-11-20T14:18:00Z,
