@@ -1,0 +1,63 @@
+# Aegex LSTM-AE / VAE / GAT - code, docs, result tables and the QUOTED trained bundles go to GitHub.
+# Datasets (GBs, their own licences), preprocessed data and other training runs stay local;
+# ORIGINALS_SHA256.txt (tracked) lets anyone check they downloaded the same originals.
+
+# ---- original datasets (anywhere in the tree) ----
+*.zip
+*.pcap
+*.pcapng
+*.parquet
+*.csv
+/gotham_2025/
+/kitsune_mirai_relabeled/
+
+# ---- generated data / trained models / runs ----
+/preprocessed/
+# trained bundles: only the runs quoted in results_summary are tracked (small: model.pt + bundle.json)
+/models/*/*
+!/models/lstm_ae/lstm_ae_v8/
+!/models/vae/vae_v5/
+!/models/gat/gat_v2/
+!/models/lstm_ae/lstm_ae_xiiotid_v1/
+!/models/vae/vae_xiiotid_v1/
+!/models/lstm_ae/lstm_ae_gotham_v1/
+!/models/vae/vae_gotham_v1/
+!/models/lstm_ae/lstm_ae_nftoniot_v1/
+!/models/vae/vae_nftoniot_v1/
+!/models/lstm_ae/lstm_ae_aci_kaggle_v1/
+!/models/vae/vae_aci_kaggle_v1/
+/model_results/*
+!/model_results/results_page/
+/live_results/
+/kaggle_results/
+/kaggle_push/
+
+# ---- result tables ARE tracked (small, quoted numbers) ----
+!/results_summary/
+!/results_summary/*.csv
+
+# ---- run logs (contain local paths; regenerate by re-running) ----
+*.log
+
+# ---- Python ----
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# ---- secrets: never commit ----
+.kaggle/
+kaggle.json
+access_token
+*.token
+.env
+*.env
+
+# ---- editors / OS ----
+.vscode/
+.idea/
+.claude/
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -1,0 +1,60 @@
+{
+  "_comment": "The contract between the two halves of the AI stack. The detection side writes this; the RAG side reads it. Required: id, attack_type, source, target. Everything in evidence is optional and is copied into the report untouched.",
+  "detections": [
+    {
+      "id": "alert-001",
+      "attack_type": "Port_Scanning",
+      "source": "192.168.1.47",
+      "target": "192.168.1.50",
+      "detected_at": "2026-11-15T03:12:44Z",
+      "evidence": {
+        "reconstruction_error": 0.0831,
+        "threshold": 0.0003,
+        "graph_probability": 0.994,
+        "verdict": "both layers agree"
+      }
+    },
+    {
+      "id": "alert-002",
+      "attack_type": "DDoS_ICMP",
+      "source": "164.248.116.173",
+      "target": "192.168.1.50",
+      "detected_at": "2026-11-15T03:19:02Z",
+      "evidence": {
+        "reconstruction_error": 113008208.0,
+        "threshold": 0.0003,
+        "graph_probability": 1.0,
+        "verdict": "both layers agree"
+      }
+    },
+    {
+      "id": "alert-003",
+      "attack_type": "SQL_injection",
+      "source": "10.0.0.31",
+      "target": "192.168.1.50",
+      "detected_at": "2026-11-15T04:02:17Z",
+      "evidence": {
+        "reconstruction_error": 0.0042,
+        "threshold": 0.0003,
+        "graph_probability": 0.871,
+        "verdict": "both layers agree"
+      }
+    },
+    {
+      "id": "alert-004",
+      "attack_type": "Password",
+      "source": "10.0.0.31",
+      "target": "192.168.1.50",
+      "evidence": {
+        "graph_probability": 0.66,
+        "verdict": "layer 1 only (graph layer disagrees)"
+      }
+    },
+    {
+      "id": "alert-005",
+      "attack_type": "Backdoor",
+      "source": "172.16.4.9",
+      "target": "192.168.1.50"
+    }
+  ]
+}

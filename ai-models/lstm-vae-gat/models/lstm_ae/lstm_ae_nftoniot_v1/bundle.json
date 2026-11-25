@@ -1,0 +1,515 @@
+{
+ "bundle_format": 1,
+ "model_type": "lstm_autoencoder",
+ "run": "lstm_ae_nftoniot_v1",
+ "created": "2026-11-25T01:41:56",
+ "torch": "2.14.1+cu126",
+ "train_datasets": [
+  "nf_toniot"
+ ],
+ "init": {
+  "n_features": 50,
+  "hidden": 64,
+  "latent": 16,
+  "layers": 1,
+  "dropout": 0.0
+ },
+ "window": 32,
+ "stride": 16,
+ "snapshot_seconds": 60.0,
+ "hparams": {
+  "hidden": 64,
+  "latent": 16,
+  "layers": 1,
+  "dropout": 0.0,
+  "lr": 0.001,
+  "batch": 256,
+  "per_dataset": 20000,
+  "seed": 0
+ },
+ "score_agg": "topk:8",
+ "threshold_mode": "per_dataset",
+ "per_dataset_threshold_source": {
+  "nf_toniot": "val clean normal (66434 windows)"
+ },
+ "threshold": 1.0053913593292236,
+ "threshold_rule": "window-weighted quantile 0.99 of val clean-benign window scores (topk:8 of per-flow errors)",
+ "per_dataset_thresholds": {
+  "nf_toniot": 1.0053913593292236
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "train_loss": 0.4705372227191925,
+   "val_loss": 0.319711584116485,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.25681806454658507,
+   "val_loss": 0.2536444959983276,
+   "seconds": 1.0
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.22712626016139983,
+   "val_loss": 0.24062101040035105,
+   "seconds": 1.0
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.21519848809242248,
+   "val_loss": 0.232754703954917,
+   "seconds": 1.0
+  },
+  {
+   "epoch": 5,
+   "train_loss": 0.20830114064216615,
+   "val_loss": 0.22810352491535668,
+   "seconds": 1.0
+  },
+  {
+   "epoch": 6,
+   "train_loss": 0.20407037982940673,
+   "val_loss": 0.2247766541887975,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 7,
+   "train_loss": 0.2007115436553955,
+   "val_loss": 0.22271010700314936,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 8,
+   "train_loss": 0.20111950097084044,
+   "val_loss": 0.22170581231322456,
+   "seconds": 1.0
+  },
+  {
+   "epoch": 9,
+   "train_loss": 0.19695932788848877,
+   "val_loss": 0.2194147684905778,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 10,
+   "train_loss": 0.19546814169883728,
+   "val_loss": 0.2177217626853257,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 11,
+   "train_loss": 0.19243951964378356,
+   "val_loss": 0.22047495091248553,
+   "seconds": 1.0
+  },
+  {
+   "epoch": 12,
+   "train_loss": 0.18050683534145356,
+   "val_loss": 0.213897450680137,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 13,
+   "train_loss": 0.17377621397972107,
+   "val_loss": 0.20478574450974407,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 14,
+   "train_loss": 0.17004945945739747,
+   "val_loss": 0.1868203934729152,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 15,
+   "train_loss": 0.17177695345878602,
+   "val_loss": 0.1840025216318464,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 16,
+   "train_loss": 0.16598285279273986,
+   "val_loss": 0.17839890720638577,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 17,
+   "train_loss": 0.1622342308998108,
+   "val_loss": 0.1745058642408406,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 18,
+   "train_loss": 0.1620086151123047,
+   "val_loss": 0.17279383804426857,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 19,
+   "train_loss": 0.15784533076286317,
+   "val_loss": 0.169259382984482,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 20,
+   "train_loss": 0.15420313199758529,
+   "val_loss": 0.16779417024641483,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 21,
+   "train_loss": 0.15331099946498872,
+   "val_loss": 0.16559809124175764,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 22,
+   "train_loss": 0.15184926252365114,
+   "val_loss": 0.16724415453089686,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 23,
+   "train_loss": 0.151507271194458,
+   "val_loss": 0.16653750018574298,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 24,
+   "train_loss": 0.1498159128189087,
+   "val_loss": 0.16304861561372203,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 25,
+   "train_loss": 0.14768166794776916,
+   "val_loss": 0.16073495870347185,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 26,
+   "train_loss": 0.14535032551288604,
+   "val_loss": 0.1600433244219732,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 27,
+   "train_loss": 0.1472627542257309,
+   "val_loss": 0.16282084255803667,
+   "seconds": 1.0
+  },
+  {
+   "epoch": 28,
+   "train_loss": 0.14554249053001403,
+   "val_loss": 0.15836322287722154,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 29,
+   "train_loss": 0.1474465356826782,
+   "val_loss": 0.15853359091047511,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 30,
+   "train_loss": 0.14189107131958006,
+   "val_loss": 0.15581508007167572,
+   "seconds": 1.0
+  },
+  {
+   "epoch": 31,
+   "train_loss": 0.1423365647315979,
+   "val_loss": 0.1534715473509541,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 32,
+   "train_loss": 0.14284857966899872,
+   "val_loss": 0.15665795506980112,
+   "seconds": 1.0
+  },
+  {
+   "epoch": 33,
+   "train_loss": 0.13925515382289885,
+   "val_loss": 0.15718796341196856,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 34,
+   "train_loss": 0.1408936336874962,
+   "val_loss": 0.15330302992438322,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 35,
+   "train_loss": 0.1370003755569458,
+   "val_loss": 0.15224122104071003,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 36,
+   "train_loss": 0.13915076808929444,
+   "val_loss": 0.150975252292843,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 37,
+   "train_loss": 0.13856247656345366,
+   "val_loss": 0.15262440699146515,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 38,
+   "train_loss": 0.13741039242744446,
+   "val_loss": 0.14405197342505308,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 39,
+   "train_loss": 0.13599001417160034,
+   "val_loss": 0.14083494461149165,
+   "seconds": 1.1
+  },
+  {
+   "epoch": 40,
+   "train_loss": 0.13649419095516205,
+   "val_loss": 0.1454780262838769,
+   "seconds": 1.1
+  }
+ ],
+ "pipeline": {
+  "feature_order": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s",
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "continuous": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s"
+  ],
+  "binary": [
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "tcp_udp_icmp_timeouts": {
+   "tcp": 300.0,
+   "udp": 60.0,
+   "icmp": 60.0,
+   "arp": 60.0,
+   "other": 60.0
+  },
+  "active_timeout": 120.0,
+  "service_ports": {
+   "dns": [
+    53
+   ],
+   "http": [
+    80,
+    8000,
+    8008,
+    8080,
+    8081
+   ],
+   "https": [
+    443,
+    8443
+   ],
+   "telnet": [
+    23,
+    2323
+   ],
+   "ssh": [
+    22
+   ],
+   "smb_rpc": [
+    135,
+    137,
+    138,
+    139,
+    445
+   ],
+   "mqtt": [
+    1883,
+    8883
+   ],
+   "modbus": [
+    502
+   ],
+   "ssdp_mdns": [
+    1900,
+    5353
+   ],
+   "ntp": [
+    123
+   ],
+   "ftp": [
+    20,
+    21
+   ],
+   "smtp": [
+    25,
+    465,
+    587
+   ],
+   "rdp": [
+    3389
+   ],
+   "metasploit": [
+    4444
+   ]
+  },
+  "min_device_flows": 3,
+  "scaler_min_scale": 0.1,
+  "scaler_tail_start": 3.0,
+  "device_context": {
+   "enabled": true,
+   "new_peer_gap": 300.0,
+   "rate_window": "10s",
+   "context_window": "60s"
+  }
+ },
+ "scalers": {
+  "nf_toniot": {
+   "method": "robust (x-median)/max(IQR, min_scale), log soft tails beyond tail_start, clipped",
+   "clip": 10.0,
+   "min_scale": 0.1,
+   "tail_start": 3.0,
+   "fit_on": "train split, benign flows only",
+   "center": {
+    "log_duration": 0.0009995002765208483,
+    "log_fwd_pkts": 0.6931471824645996,
+    "log_bwd_pkts": 0.0,
+    "log_fwd_bytes": 4.276666164398193,
+    "log_bwd_bytes": 0.0,
+    "fwd_mean_pkt": 4.248495101928711,
+    "bwd_mean_pkt": 0.0,
+    "log_pkt_rate": 6.216606140136719,
+    "log_byte_rate": 10.859018325805664,
+    "fwd_byte_share": 1.0,
+    "fwd_pkt_share": 1.0,
+    "log_iat_device": 0.0,
+    "log_iat_pair": 0.0,
+    "log_dev_flows_10s": 6.5525078773498535,
+    "log_dev_new_peers_60s": 0.0,
+    "log_dev_new_ports_60s": 4.744932174682617,
+    "dev_reply_share_60s": 0.4204545319080353
+   },
+   "scale": {
+    "log_duration": 0.1,
+    "log_fwd_pkts": 0.1,
+    "log_bwd_pkts": 0.6931471824645996,
+    "log_fwd_bytes": 1.6882190704345703,
+    "log_bwd_bytes": 3.97029185295105,
+    "fwd_mean_pkt": 0.8401293754577637,
+    "bwd_mean_pkt": 3.97029185295105,
+    "log_pkt_rate": 0.6921486854553223,
+    "log_byte_rate": 1.0210351943969727,
+    "fwd_byte_share": 0.5,
+    "fwd_pkt_share": 0.5,
+    "log_iat_device": 0.1,
+    "log_iat_pair": 0.1,
+    "log_dev_flows_10s": 3.449080467224121,
+    "log_dev_new_peers_60s": 0.6931471824645996,
+    "log_dev_new_ports_60s": 5.108971118927002,
+    "dev_reply_share_60s": 0.8314061451965244
+   },
+   "fit_rows": 1200063
+  }
+ },
+ "scaler_note": "inputs were scaled per dataset on its own benign traffic; for new traffic calibrate on that network's benign traffic (score_traffic.py --calibrate)"
+}

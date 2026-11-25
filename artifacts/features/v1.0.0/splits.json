@@ -1,0 +1,18 @@
+{
+  "unit": "capture",
+  "feature_version": "1.0.0",
+  "zero_day": null,
+  "train": [
+    "cap-2026-11-20-a",
+    "cap-demo-01",
+    "cap-demo-02",
+    "cap-demo-03",
+    "cap-demo-04"
+  ],
+  "val": [
+    "cap-demo-05"
+  ],
+  "test": [
+    "cap-demo-06"
+  ]
+}

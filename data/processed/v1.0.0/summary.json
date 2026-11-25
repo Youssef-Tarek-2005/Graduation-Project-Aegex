@@ -1,0 +1,73 @@
+{
+  "feature_version": "1.0.0",
+  "zero_day": null,
+  "warnings": [],
+  "splits": {
+    "train": {
+      "captures": [
+        "cap-2026-11-20-a",
+        "cap-demo-01",
+        "cap-demo-02",
+        "cap-demo-03",
+        "cap-demo-04"
+      ],
+      "windows": 3240,
+      "attack_windows": 34,
+      "sequences": 2805,
+      "attack_sequences": 166,
+      "X_shape": [
+        2805,
+        30,
+        24
+      ],
+      "flows": 431,
+      "attack_flows": 341,
+      "scenarios": [
+        "bruteforce",
+        "mqtt_spoofing",
+        "vulnerability_scanning"
+      ]
+    },
+    "val": {
+      "captures": [
+        "cap-demo-05"
+      ],
+      "windows": 540,
+      "attack_windows": 7,
+      "sequences": 453,
+      "attack_sequences": 36,
+      "X_shape": [
+        453,
+        30,
+        24
+      ],
+      "flows": 1521,
+      "attack_flows": 1500,
+      "scenarios": [
+        "dos"
+      ]
+    },
+    "test": {
+      "captures": [
+        "cap-demo-06"
+      ],
+      "windows": 540,
+      "attack_windows": 34,
+      "sequences": 453,
+      "attack_sequences": 145,
+      "X_shape": [
+        453,
+        30,
+        24
+      ],
+      "flows": 1851,
+      "attack_flows": 1830,
+      "scenarios": [
+        "bruteforce",
+        "dos",
+        "mqtt_spoofing",
+        "vulnerability_scanning"
+      ]
+    }
+  }
+}

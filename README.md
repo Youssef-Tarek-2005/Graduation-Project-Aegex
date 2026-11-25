@@ -74,17 +74,17 @@ AEGEX/
 |---|---|---|
 | Attacker entry layer (Wi-Fi, Bluetooth) | Simulated | Events are tagged `wifi` or `bluetooth`. There is no real radio interface. |
 | Normal users | Simulated | Benign phone and dashboard traffic over both channels. |
-| Camera and sensor honeypots | Simulated, plus real services | The simulator still tags camera/sensor events, and no physical camera runs. Real Cowrie (SSH/Telnet), Mosquitto (MQTT) and Zeek (network monitor) containers now feed real events in; see [docs/HONEYPOTS.md](docs/HONEYPOTS.md). Your ESP32 CSV is the real sensor data. |
+| Camera and sensor honeypots | Simulated, plus real services | The simulator still tags camera/sensor events, and no physical camera runs. Real Cowrie (SSH/Telnet), Mosquitto (MQTT) and Zeek (network monitor) containers now feed real events in; see [docs/HONEYPOTS.md](docs/HONEYPOTS.md). The ESP32 CSV is the real sensor data. |
 | Attack scenarios (all 7) | Yes | Scanning, DDoS, Mirai, ransomware, sensor manipulation, unauthorized camera access and zero-day, each with its own event pattern. |
 | Four collection layers | Mostly | Network, device logs, sessions and telemetry are all present. The media layer holds stream metadata (frame rate, bitrate, authenticated or not), not real video, image or audio files. |
 | Unified event store | Mostly | Time-ordered and labeled, but spread across Elasticsearch, MinIO and Postgres rather than one store. |
 | Cleaning, feature extraction, sequence and graph | Yes | All three steps are separate in the pipeline. |
-| LSTM autoencoder, VAE, temporal GAT | Skipped | You asked to ignore these. The Kafka handoff is where they would plug in. |
+| LSTM autoencoder, VAE, temporal GAT | Separate | Built in `ai-models/lstm-vae-gat/` (LSTM-AE → VAE → temporal GAT, trained and benchmarked on 7 datasets, scores pcaps); `ai-models/` also has E-GraphSAGE. Not yet connected to the main pipeline. The Kafka handoff is where they would plug in. |
 | Continuous learning and feedback loop | Skipped | Part of the AI block. |
 | Attack analysis (category, severity, confidence) | Yes, rule-based | Signature rules, not a model. |
 | Layered knowledge base | Partly | All five layers exist, but as a small curated seed. The threat feeds are placeholder IPs, not live feeds. |
 | Vector store and semantic retriever | Simplified | A keyword search, not embeddings. |
-| RAG-LLM | Skipped | The report is template-based, but its findings are linked to knowledge-base entries. |
+| RAG-LLM | Separate | Built in ai-models/ (Layer 4, RAG with Ollama), not yet connected to the main pipeline. The main report is still template-based, with findings linked to knowledge-base entries. |
 | Monitoring dashboard | Yes | Now shows layers, scenarios, detections, knowledge-base search and the report. |
 | Blue team report | Yes | Findings, recommendations and mitigation steps, as JSON or a downloadable markdown file. |
 

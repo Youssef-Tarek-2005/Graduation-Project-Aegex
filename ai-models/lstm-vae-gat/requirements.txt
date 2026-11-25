@@ -1,0 +1,8 @@
+# Aegex - everything (preprocessing + models). Tested with Python 3.13 and the versions in brackets.
+#   python -m venv .venv ; .venv\Scripts\pip install -r requirements.txt
+# For a GPU build of torch, install it first from https://pytorch.org (e.g. the cu126 wheel).
+numpy>=2.0          # 2.5.5
+pandas>=2.2         # 3.1.1
+pyarrow>=15         # 26.0.1
+scikit-learn>=1.5   # 1.9.1
+torch>=2.5          # 2.14.1+cu126
