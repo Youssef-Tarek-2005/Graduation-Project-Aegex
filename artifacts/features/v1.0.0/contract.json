@@ -1,0 +1,199 @@
+{
+  "contract": "aegex-feature-contract",
+  "feature_version": "1.0.0",
+  "status": "draft - agree with A, C, D, E before implementing",
+  "owner": "Task B",
+  "rule": "Any change to a feature name, its order, its transform or a vocabulary bumps feature_version. Models store the feature_version they were trained on; the backend refuses inference input whose feature_version differs from the active model's.",
+
+  "event_types": {
+    "_doc": "Allowed events.event_type values and their collection layer. Source-specific fields go to events.payload.",
+    "conn":              {"layer": "network_traffic",     "sources": ["zeek"]},
+    "dns":               {"layer": "network_traffic",     "sources": ["zeek"]},
+    "http_request":      {"layer": "network_traffic",     "sources": ["zeek", "camera"]},
+    "ids_alert":         {"layer": "network_traffic",     "sources": ["suricata"]},
+    "device_log":        {"layer": "device_service_logs", "sources": ["syslog", "camera", "esp32"]},
+    "mqtt_connect":      {"layer": "device_service_logs", "sources": ["mosquitto"]},
+    "mqtt_subscribe":    {"layer": "device_service_logs", "sources": ["mosquitto"]},
+    "mqtt_publish":      {"layer": "device_service_logs", "sources": ["mosquitto", "mqtt"]},
+    "ble_event":         {"layer": "device_service_logs", "sources": ["ble"]},
+    "login_failed":      {"layer": "session_interaction", "sources": ["cowrie", "camera"]},
+    "login_success":     {"layer": "session_interaction", "sources": ["cowrie", "camera"]},
+    "session_open":      {"layer": "session_interaction", "sources": ["cowrie"]},
+    "session_close":     {"layer": "session_interaction", "sources": ["cowrie"]},
+    "command":           {"layer": "session_interaction", "sources": ["cowrie"]},
+    "file_download":     {"layer": "session_interaction", "sources": ["cowrie"]},
+    "sensor_reading":    {"layer": "telemetry_media",     "sources": ["esp32"]},
+    "media_stream":      {"layer": "telemetry_media",     "sources": ["camera"]}
+  },
+
+  "forbidden_as_features": {
+    "_doc": "Never feed these to a model. They identify WHO/WHEN, not WHAT, so the model memorizes the lab setup instead of learning attacks. IPs may be used as graph node identity (Task D) but never as numeric/categorical inputs.",
+    "fields": ["src_ip", "dst_ip", "src_port", "mac", "flow_id", "event_id", "uid", "ts", "ts_start", "ts_end", "capture_id", "run_id", "label", "scenario", "suricata alert signature (it is another detector's answer)"]
+  },
+
+  "categorical_vocabularies": {
+    "_doc": "Fixed vocabularies -> one-hot in exactly this order. Unseen values map to 'other'; missing to 'none' (service only).",
+    "proto":          ["tcp", "udp", "icmp", "other"],
+    "service":        ["http", "ssh", "telnet", "mqtt", "dns", "rtsp", "ssl", "dhcp", "ntp", "other", "none"],
+    "conn_state":     ["S0", "S1", "SF", "REJ", "S2", "S3", "RSTO", "RSTR", "RSTOS0", "RSTRH", "SH", "SHR", "OTH", "other"],
+    "dst_port_class": ["well_known", "registered", "dynamic"],
+    "device_type":    ["esp32_sensor", "ip_camera", "gateway", "other"]
+  },
+
+  "flow_features": {
+    "_doc": "One vector per flow (Zeek conn.log row). Stored in flows.features, used as GAT edge features. Order below is the vector order.",
+    "unit": "one network connection",
+    "numeric": [
+      {"name": "duration_s",        "from": "conn.duration",                                   "fill_missing": 0, "transform": "log1p", "scale": "standard"},
+      {"name": "orig_bytes",        "from": "conn.orig_bytes",                                 "fill_missing": 0, "transform": "log1p", "scale": "standard"},
+      {"name": "resp_bytes",        "from": "conn.resp_bytes",                                 "fill_missing": 0, "transform": "log1p", "scale": "standard"},
+      {"name": "orig_pkts",         "from": "conn.orig_pkts",                                  "fill_missing": 0, "transform": "log1p", "scale": "standard"},
+      {"name": "resp_pkts",         "from": "conn.resp_pkts",                                  "fill_missing": 0, "transform": "log1p", "scale": "standard"},
+      {"name": "bytes_per_sec",     "from": "(orig_bytes + resp_bytes) / max(duration_s, 0.001)", "fill_missing": 0, "transform": "log1p", "scale": "standard"},
+      {"name": "pkts_per_sec",      "from": "(orig_pkts + resp_pkts) / max(duration_s, 0.001)",   "fill_missing": 0, "transform": "log1p", "scale": "standard"},
+      {"name": "bytes_ratio_out",   "from": "orig_bytes / (orig_bytes + resp_bytes + 1)",       "fill_missing": 0, "transform": "none",  "scale": "none"},
+      {"name": "mean_pkt_size_orig","from": "orig_bytes / max(orig_pkts, 1)",                   "fill_missing": 0, "transform": "log1p", "scale": "standard"}
+    ],
+    "one_hot": [
+      {"name": "proto",          "from": "conn.proto"},
+      {"name": "service",        "from": "conn.service (first value if comma-separated)"},
+      {"name": "conn_state",     "from": "conn.conn_state"},
+      {"name": "dst_port_class", "from": "conn.id.resp_p: <1024 well_known, <49152 registered, else dynamic"}
+    ],
+    "dimension": 41,
+    "dimension_breakdown": "9 numeric + 4 proto + 11 service + 14 conn_state + 3 dst_port_class"
+  },
+
+  "window_features": {
+    "_doc": "One vector per (device, window). Stored in feature_windows.features. Input to LSTM-AE / VAE. Order below is the vector order.",
+    "entity_type": "device",
+    "window_seconds": 10,
+    "window_alignment": "tumbling, aligned to epoch (floor(ts / 10s))",
+    "empty_window_rule": "Inside a capture, a window with no events is REAL zero activity -> all counts 0 (valid). Outside captures nothing is generated; sequences never cross capture boundaries.",
+    "numeric": [
+      {"name": "n_conn_in",               "from": "count conn with dst = device",                                  "transform": "log1p", "scale": "standard"},
+      {"name": "n_unique_src_ip",         "from": "distinct src_ip of those conns",                                "transform": "log1p", "scale": "standard"},
+      {"name": "n_unique_dst_port",       "from": "distinct dst_port on the device (scans light this up)",        "transform": "log1p", "scale": "standard"},
+      {"name": "ratio_failed_conn",       "from": "share of conns with conn_state in {S0,REJ,RSTOS0,RSTRH,SH,SHR,OTH}; 0 if no conns", "transform": "none", "scale": "none"},
+      {"name": "bytes_in_total",          "from": "sum orig_bytes of inbound conns",                               "transform": "log1p", "scale": "standard"},
+      {"name": "bytes_out_total",         "from": "sum resp_bytes of inbound conns",                               "transform": "log1p", "scale": "standard"},
+      {"name": "pkts_in_total",           "from": "sum orig_pkts of inbound conns",                                "transform": "log1p", "scale": "standard"},
+      {"name": "mean_conn_duration",      "from": "mean duration_s of inbound conns; 0 if none",                   "transform": "log1p", "scale": "standard"},
+      {"name": "n_ssh_telnet_conn",       "from": "inbound conns with service ssh/telnet or dst_port in {22,23,2222,2223}", "transform": "log1p", "scale": "standard"},
+      {"name": "n_login_failed",          "from": "count events login_failed",                                    "transform": "log1p", "scale": "standard"},
+      {"name": "n_login_success",         "from": "count events login_success",                                   "transform": "log1p", "scale": "standard"},
+      {"name": "n_commands",              "from": "count events command",                                         "transform": "log1p", "scale": "standard"},
+      {"name": "n_mqtt_connect",          "from": "count events mqtt_connect",                                    "transform": "log1p", "scale": "standard"},
+      {"name": "n_mqtt_publish",          "from": "count events mqtt_publish (excluding the device's own telemetry topic)", "transform": "log1p", "scale": "standard"},
+      {"name": "n_mqtt_subscribe",        "from": "count events mqtt_subscribe",                                  "transform": "log1p", "scale": "standard"},
+      {"name": "n_http_rtsp_req",         "from": "count events http_request + media_stream requests",            "transform": "log1p", "scale": "standard"},
+      {"name": "sensor_n_readings",       "from": "count sensor_reading (a DoS'd ESP32 sends fewer); 0 for non-sensor devices", "transform": "none", "scale": "standard"},
+      {"name": "sensor_smoke_delta_max",  "from": "max |change| between consecutive smoke readings; 0 if <2 readings",       "transform": "none", "scale": "standard"},
+      {"name": "sensor_temp_delta_max",   "from": "max |change| between consecutive temperature readings; 0 if <2 readings", "transform": "none", "scale": "standard"},
+      {"name": "sensor_humidity_delta_max","from": "max |change| between consecutive humidity readings; 0 if <2 readings",   "transform": "none", "scale": "standard"}
+    ],
+    "one_hot": [
+      {"name": "device_type", "from": "devices.device_type"}
+    ],
+    "dimension": 24,
+    "dimension_breakdown": "20 numeric + 4 device_type"
+  },
+
+  "scaling": {
+    "method": "sklearn StandardScaler on numeric columns whose scale = 'standard', AFTER the transform; one-hot and scale = 'none' columns pass through unchanged",
+    "fit_on": "TRAIN split, label = 0 rows only (the normal traffic the autoencoders learn from)",
+    "never_fit_on": "validation, test, or any attack data",
+    "artifacts": {
+      "_doc": "Published by B for every feature_version; C/D load these, never re-fit their own.",
+      "dir": "artifacts/features/v{feature_version}/",
+      "files": {
+        "flow_scaler.joblib": "fitted scaler for flow numeric features",
+        "window_scaler.joblib": "fitted scaler for window numeric features",
+        "feature_order.json": "{\"flow\": [41 names], \"window\": [24 names]} - the exact column order of every vector",
+        "contract.json": "copy of this file as it was at fit time"
+      }
+    }
+  },
+
+  "labeling": {
+    "source_of_truth": "attack_runs table (Task A's attack log)",
+    "flow_rule": "label = 1 if attacker_ip is src_ip OR dst_ip AND ts_start is within [start_ts, end_ts] of a run; scenario/run_id copied from the run. Every other flow inside a capture = 0. SQL: CALL label_capture('<capture_id>')",
+    "event_rule": "same rule on events.ts and events.src_ip/dst_ip",
+    "window_rule": "label = 1 if any labeled-1 flow or event touches the device in that window; scenario = the scenario with the most attack rows in the window",
+    "live_data": "label = NULL (unlabeled) until an analyst labels the alert (alerts.analyst_label)",
+    "clock_rule": "All devices NTP-synced; all timestamps stored as UTC. Attack logs record start/end in UTC with a 2-second safety margin added on each side."
+  },
+
+  "splits": {
+    "unit": "whole capture or whole attack run - NEVER random rows (neighbouring flows are near-duplicates; random splits leak and inflate scores)",
+    "train": "~70% of capture time, chronologically first; models C use only its label = 0 rows",
+    "validation": "~15%, used to choose thresholds and early stopping",
+    "test": "~15%, chronologically last; must contain at least one run of every scenario",
+    "zero_day_holdout": "optional: hold one scenario (e.g. mqtt_spoofing) out of train/val entirely, test-only",
+    "file": "artifacts/features/v{feature_version}/splits.json -> {\"train\": [capture_ids/run_ids], \"val\": [...], \"test\": [...]}"
+  },
+
+  "outputs": {
+    "_doc": "Dataset exports B delivers (parquet = pandas.read_parquet / numpy.load). All under data/processed/v{feature_version}/.",
+    "flows.parquet": {
+      "for": "everyone",
+      "columns": ["flow_id", "ts_start", "capture_id", "device_id", "src_ip", "dst_ip", "dst_port", "proto", "service", "label", "scenario", "run_id", "split", "<41 flow feature columns>"]
+    },
+    "windows.parquet": {
+      "for": "Task C",
+      "columns": ["entity_id", "window_start", "capture_id", "label", "scenario", "split", "<24 window feature columns>"]
+    },
+    "sequences_{split}.npz": {
+      "for": "Task C (LSTM-AE, VAE)",
+      "arrays": {
+        "X": "float32 [N, T, F] with T = 30 windows (5 minutes), F = 24",
+        "y": "int8 [N] - 1 if any window in the sequence is an attack",
+        "y_window": "int8 [N, T] - per-window labels (for point-wise evaluation)",
+        "entity_id": "str [N]",
+        "window_start": "datetime64 [N] - start of the first window"
+      },
+      "sequence_length": 30,
+      "stride": 1,
+      "rule": "consecutive windows of ONE device inside ONE capture; never crosses captures"
+    },
+    "edges_{split}.parquet": {
+      "for": "Task D (Temporal GAT)",
+      "columns": ["src_ip", "dst_ip", "dst_port", "proto", "src_node", "dst_node", "ts", "device_id", "label", "scenario", "<41 flow feature columns as edge features>"],
+      "node_id_rule": "default: 'dev:<device_id>' if the IP belongs to a known device, else 'ip:<address>'. Optional service nodes 'svc:<device_id>:<port>/<proto>' are D's choice - raw columns are included so D can rebuild the graph any way.",
+      "ts": "float seconds since epoch (UTC), sorted ascending"
+    },
+    "nodes.parquet": {
+      "for": "Task D",
+      "columns": ["node_id", "node_type (device | internal_ip | external_ip)", "device_type", "first_seen", "last_seen"]
+    }
+  },
+
+  "alert_format": {
+    "_doc": "What D's inference writes via POST /api/v1/alerts and E reads via GET /api/v1/alerts/{id}. Mirrors the alerts table.",
+    "example": {
+      "model_name": "lstm_ae",
+      "model_version": "3",
+      "feature_version": "1.0.0",
+      "entity_type": "device",
+      "entity_id": "esp32-smoke-01",
+      "device_id": "esp32-smoke-01",
+      "src_ips": ["192.168.50.66"],
+      "window_start": "2026-11-20T10:05:00Z",
+      "window_end": "2026-11-20T10:10:00Z",
+      "score": 0.0123,
+      "threshold": 0.0041,
+      "is_anomaly": true,
+      "predicted_scenario": null,
+      "severity": "high",
+      "evidence": {
+        "top_features": [
+          {"name": "n_unique_dst_port", "value": 87, "contribution": 0.41},
+          {"name": "ratio_failed_conn", "value": 0.93, "contribution": 0.22}
+        ],
+        "flow_ids": ["CHhAvVGS1DHFjwGM9"],
+        "event_ids": [],
+        "attention_edges": []
+      }
+    }
+  }
+}
