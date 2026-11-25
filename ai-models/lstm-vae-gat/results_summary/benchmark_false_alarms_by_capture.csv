@@ -1,0 +1,237 @@
+benchmark_run,dataset,normal_capture,method,false_alarm_rate,false_alarms_per_hour,quoted
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,LSTM-AE,0.0138,4.2925,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,VAE,0.0495,15.3816,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,LSTM or VAE,0.0634,19.6741,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,one-line rule,0.0265,8.2273,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,LSTM-AE,0.015,4.6502,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,VAE,0.0173,5.3657,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,LSTM or VAE,0.0323,10.0159,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,one-line rule,0.0265,8.2273,yes
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,benign,LSTM-AE,0.0253,40.5309,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,benign,VAE,0.0585,93.5328,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,benign,LSTM or VAE,0.0819,130.9459,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,benign,one-line rule,0.0,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,benign,LSTM-AE,0.0097,15.5888,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,benign,VAE,0.0019,3.1178,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,benign,LSTM or VAE,0.0117,18.7066,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,benign,one-line rule,0.0,0.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-29,LSTM-AE,0.0145,146.8766,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-29,VAE,0.0353,357.9767,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-29,LSTM or VAE,0.0407,412.7064,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-29,one-line rule,0.0044,44.1188,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-29,LSTM-AE,0.1182,1197.3512,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-29,VAE,0.1032,1045.4484,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-29,LSTM or VAE,0.1182,1197.3512,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-29,one-line rule,0.0044,44.1188,no
+lstm_ae_v7__vae_v3,kitsune,mirai,LSTM-AE,0.4588,433.139,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,LSTM-AE,0.0006,36.0662,no
+lstm_ae_v7__vae_v3,kitsune,mirai,VAE,0.2473,233.489,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,VAE,0.0105,613.1249,no
+lstm_ae_v7__vae_v3,kitsune,mirai,LSTM or VAE,0.5484,517.7365,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,LSTM or VAE,0.0105,613.1249,no
+lstm_ae_v7__vae_v3,kitsune,mirai,one-line rule,0.2509,236.8729,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,one-line rule,0.0003,18.0331,no
+lstm_ae_v7__vae_v3,edge,normal_soil_moisture,LSTM-AE,0.0241,56.0038,no
+lstm_ae_v7__vae_v3,edge,normal_sound_sensor,LSTM-AE,0.0011,11.8185,no
+lstm_ae_v7__vae_v3,edge,normal_temperature_and_humidity,LSTM-AE,0.0572,0.0729,no
+lstm_ae_v7__vae_v3,edge,normal_water_level,LSTM-AE,0.0029,27.8842,no
+lstm_ae_v7__vae_v3,edge,normal_soil_moisture,VAE,0.0105,24.5017,no
+lstm_ae_v7__vae_v3,edge,normal_sound_sensor,VAE,0.0034,35.4556,no
+lstm_ae_v7__vae_v3,edge,normal_temperature_and_humidity,VAE,0.0846,0.1077,no
+lstm_ae_v7__vae_v3,edge,normal_water_level,VAE,0.0051,48.7974,no
+lstm_ae_v7__vae_v3,edge,normal_soil_moisture,LSTM or VAE,0.0286,66.5046,no
+lstm_ae_v7__vae_v3,edge,normal_sound_sensor,LSTM or VAE,0.0034,35.4556,no
+lstm_ae_v7__vae_v3,edge,normal_temperature_and_humidity,LSTM or VAE,0.0858,0.1093,no
+lstm_ae_v7__vae_v3,edge,normal_water_level,LSTM or VAE,0.0051,48.7974,no
+lstm_ae_v7__vae_v3,edge,normal_soil_moisture,one-line rule,0.0361,84.0058,no
+lstm_ae_v7__vae_v3,edge,normal_sound_sensor,one-line rule,0.0022,23.637,no
+lstm_ae_v7__vae_v3,edge,normal_temperature_and_humidity,one-line rule,0.0697,0.0887,no
+lstm_ae_v7__vae_v3,edge,normal_water_level,one-line rule,0.0015,13.9421,no
+lstm_ae_v7__vae_v3,iot23,CTU-Honeypot-Capture-4-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-Honeypot-Capture-5-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-Honeypot-Capture-4-1,VAE,1.0,1.6434,no
+lstm_ae_v7__vae_v3,iot23,CTU-Honeypot-Capture-5-1,VAE,1.0,33.9385,no
+lstm_ae_v7__vae_v3,iot23,CTU-Honeypot-Capture-4-1,LSTM or VAE,1.0,1.6434,no
+lstm_ae_v7__vae_v3,iot23,CTU-Honeypot-Capture-5-1,LSTM or VAE,1.0,33.9385,no
+lstm_ae_v7__vae_v3,iot23,CTU-Honeypot-Capture-4-1,one-line rule,0.0,0.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-Honeypot-Capture-5-1,one-line rule,0.8462,28.7172,no
+lstm_ae_v8__vae_v4,kitsune,mirai,LSTM-AE,0.3154,297.7831,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,LSTM-AE,0.0005,27.0496,no
+lstm_ae_v8__vae_v4,kitsune,mirai,VAE,0.2545,240.2568,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,VAE,0.0099,577.0587,no
+lstm_ae_v8__vae_v4,kitsune,mirai,LSTM or VAE,0.448,422.9873,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,LSTM or VAE,0.0099,577.0587,no
+lstm_ae_v8__vae_v4,kitsune,mirai,one-line rule,0.2509,236.8729,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,one-line rule,0.0003,18.0331,no
+lstm_ae_v8__vae_v4,edge,normal_soil_moisture,LSTM-AE,0.0346,80.5055,no
+lstm_ae_v8__vae_v4,edge,normal_sound_sensor,LSTM-AE,0.0011,11.8185,no
+lstm_ae_v8__vae_v4,edge,normal_temperature_and_humidity,LSTM-AE,0.0659,0.084,no
+lstm_ae_v8__vae_v4,edge,normal_water_level,LSTM-AE,0.0029,27.8842,no
+lstm_ae_v8__vae_v4,edge,normal_soil_moisture,VAE,0.0136,31.5022,no
+lstm_ae_v8__vae_v4,edge,normal_sound_sensor,VAE,0.009,94.5482,no
+lstm_ae_v8__vae_v4,edge,normal_temperature_and_humidity,VAE,0.0846,0.1077,no
+lstm_ae_v8__vae_v4,edge,normal_water_level,VAE,0.0059,55.7684,no
+lstm_ae_v8__vae_v4,edge,normal_soil_moisture,LSTM or VAE,0.0377,87.506,no
+lstm_ae_v8__vae_v4,edge,normal_sound_sensor,LSTM or VAE,0.009,94.5482,no
+lstm_ae_v8__vae_v4,edge,normal_temperature_and_humidity,LSTM or VAE,0.0896,0.1141,no
+lstm_ae_v8__vae_v4,edge,normal_water_level,LSTM or VAE,0.0059,55.7684,no
+lstm_ae_v8__vae_v4,edge,normal_soil_moisture,one-line rule,0.0361,84.0058,no
+lstm_ae_v8__vae_v4,edge,normal_sound_sensor,one-line rule,0.0022,23.637,no
+lstm_ae_v8__vae_v4,edge,normal_temperature_and_humidity,one-line rule,0.0697,0.0887,no
+lstm_ae_v8__vae_v4,edge,normal_water_level,one-line rule,0.0015,13.9421,no
+lstm_ae_v8__vae_v4,iot23,CTU-Honeypot-Capture-4-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-Honeypot-Capture-5-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-Honeypot-Capture-4-1,VAE,0.0,0.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-Honeypot-Capture-5-1,VAE,0.3077,10.4426,no
+lstm_ae_v8__vae_v4,iot23,CTU-Honeypot-Capture-4-1,LSTM or VAE,0.0,0.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-Honeypot-Capture-5-1,LSTM or VAE,0.3077,10.4426,no
+lstm_ae_v8__vae_v4,iot23,CTU-Honeypot-Capture-4-1,one-line rule,0.0,0.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-Honeypot-Capture-5-1,one-line rule,0.8462,28.7172,no
+lstm_ae_v8__vae_v5,kitsune,mirai,LSTM-AE,0.3154,297.7831,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,LSTM-AE,0.0005,27.0496,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,VAE,0.3728,351.9254,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,VAE,0.0135,784.4392,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,LSTM or VAE,0.5125,483.8975,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,LSTM or VAE,0.0135,784.4392,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,one-line rule,0.2509,236.8729,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,one-line rule,0.0003,18.0331,yes
+lstm_ae_v8__vae_v5,edge,normal_soil_moisture,LSTM-AE,0.0346,80.5055,yes
+lstm_ae_v8__vae_v5,edge,normal_sound_sensor,LSTM-AE,0.0011,11.8185,yes
+lstm_ae_v8__vae_v5,edge,normal_temperature_and_humidity,LSTM-AE,0.0659,0.084,yes
+lstm_ae_v8__vae_v5,edge,normal_water_level,LSTM-AE,0.0029,27.8842,yes
+lstm_ae_v8__vae_v5,edge,normal_soil_moisture,VAE,0.0136,31.5022,yes
+lstm_ae_v8__vae_v5,edge,normal_sound_sensor,VAE,0.009,94.5482,yes
+lstm_ae_v8__vae_v5,edge,normal_temperature_and_humidity,VAE,0.0846,0.1077,yes
+lstm_ae_v8__vae_v5,edge,normal_water_level,VAE,0.0066,62.7395,yes
+lstm_ae_v8__vae_v5,edge,normal_soil_moisture,LSTM or VAE,0.0377,87.506,yes
+lstm_ae_v8__vae_v5,edge,normal_sound_sensor,LSTM or VAE,0.009,94.5482,yes
+lstm_ae_v8__vae_v5,edge,normal_temperature_and_humidity,LSTM or VAE,0.0883,0.1125,yes
+lstm_ae_v8__vae_v5,edge,normal_water_level,LSTM or VAE,0.0066,62.7395,yes
+lstm_ae_v8__vae_v5,edge,normal_soil_moisture,one-line rule,0.0361,84.0058,yes
+lstm_ae_v8__vae_v5,edge,normal_sound_sensor,one-line rule,0.0022,23.637,yes
+lstm_ae_v8__vae_v5,edge,normal_temperature_and_humidity,one-line rule,0.0697,0.0887,yes
+lstm_ae_v8__vae_v5,edge,normal_water_level,one-line rule,0.0015,13.9421,yes
+lstm_ae_v8__vae_v5,iot23,CTU-Honeypot-Capture-4-1,LSTM-AE,0.0,0.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-Honeypot-Capture-5-1,LSTM-AE,0.0,0.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-Honeypot-Capture-4-1,VAE,0.0,0.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-Honeypot-Capture-5-1,VAE,0.1154,3.916,yes
+lstm_ae_v8__vae_v5,iot23,CTU-Honeypot-Capture-4-1,LSTM or VAE,0.0,0.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-Honeypot-Capture-5-1,LSTM or VAE,0.1154,3.916,yes
+lstm_ae_v8__vae_v5,iot23,CTU-Honeypot-Capture-4-1,one-line rule,0.0,0.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-Honeypot-Capture-5-1,one-line rule,0.8462,28.7172,yes
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,LSTM-AE,0.2079,196.2661,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,LSTM-AE,0.0005,27.0496,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,VAE,0.1864,175.9627,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,VAE,0.0036,207.3805,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,LSTM or VAE,0.3226,304.5509,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,LSTM or VAE,0.0036,207.3805,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,one-line rule,0.2509,236.8729,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,one-line rule,0.0003,18.0331,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_soil_moisture,LSTM-AE,0.0286,66.5046,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_sound_sensor,LSTM-AE,0.0,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_temperature_and_humidity,LSTM-AE,0.0622,0.0792,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_water_level,LSTM-AE,0.0022,20.9132,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_soil_moisture,VAE,0.0075,17.5012,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_sound_sensor,VAE,0.0022,23.637,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_temperature_and_humidity,VAE,0.0597,0.076,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_water_level,VAE,0.0022,20.9132,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_soil_moisture,LSTM or VAE,0.0301,70.0048,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_sound_sensor,LSTM or VAE,0.0022,23.637,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_temperature_and_humidity,LSTM or VAE,0.0746,0.0951,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_water_level,LSTM or VAE,0.0022,20.9132,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_soil_moisture,one-line rule,0.0361,84.0058,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_sound_sensor,one-line rule,0.0022,23.637,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_temperature_and_humidity,one-line rule,0.0697,0.0887,no
+lstm_ae_v8__vae_v5__recal_dev,edge,normal_water_level,one-line rule,0.0015,13.9421,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-Honeypot-Capture-4-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-Honeypot-Capture-5-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-Honeypot-Capture-4-1,VAE,0.0,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-Honeypot-Capture-5-1,VAE,0.3846,13.0533,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-Honeypot-Capture-4-1,LSTM or VAE,0.0,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-Honeypot-Capture-5-1,LSTM or VAE,0.3846,13.0533,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-Honeypot-Capture-4-1,one-line rule,0.0,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-Honeypot-Capture-5-1,one-line rule,0.8462,28.7172,no
+lstm_ae_v9__vae_v6,kitsune,mirai,LSTM-AE,0.2939,277.4797,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,LSTM-AE,0.0005,27.0496,no
+lstm_ae_v9__vae_v6,kitsune,mirai,VAE,0.3835,362.0771,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,VAE,0.015,874.6046,no
+lstm_ae_v9__vae_v6,kitsune,mirai,LSTM or VAE,0.5197,490.6653,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,LSTM or VAE,0.015,874.6046,no
+lstm_ae_v9__vae_v6,kitsune,mirai,one-line rule,0.2509,236.8729,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,one-line rule,0.0003,18.0331,no
+lstm_ae_v9__vae_v6,edge,normal_soil_moisture,LSTM-AE,0.0286,66.5046,no
+lstm_ae_v9__vae_v6,edge,normal_sound_sensor,LSTM-AE,0.0022,23.637,no
+lstm_ae_v9__vae_v6,edge,normal_temperature_and_humidity,LSTM-AE,0.0684,0.0871,no
+lstm_ae_v9__vae_v6,edge,normal_water_level,LSTM-AE,0.0022,20.9132,no
+lstm_ae_v9__vae_v6,edge,normal_soil_moisture,VAE,0.0166,38.5026,no
+lstm_ae_v9__vae_v6,edge,normal_sound_sensor,VAE,0.0067,70.9111,no
+lstm_ae_v9__vae_v6,edge,normal_temperature_and_humidity,VAE,0.0833,0.1061,no
+lstm_ae_v9__vae_v6,edge,normal_water_level,VAE,0.0051,48.7974,no
+lstm_ae_v9__vae_v6,edge,normal_soil_moisture,LSTM or VAE,0.0346,80.5055,no
+lstm_ae_v9__vae_v6,edge,normal_sound_sensor,LSTM or VAE,0.0067,70.9111,no
+lstm_ae_v9__vae_v6,edge,normal_temperature_and_humidity,LSTM or VAE,0.0896,0.1141,no
+lstm_ae_v9__vae_v6,edge,normal_water_level,LSTM or VAE,0.0051,48.7974,no
+lstm_ae_v9__vae_v6,edge,normal_soil_moisture,one-line rule,0.0361,84.0058,no
+lstm_ae_v9__vae_v6,edge,normal_sound_sensor,one-line rule,0.0022,23.637,no
+lstm_ae_v9__vae_v6,edge,normal_temperature_and_humidity,one-line rule,0.0697,0.0887,no
+lstm_ae_v9__vae_v6,edge,normal_water_level,one-line rule,0.0015,13.9421,no
+lstm_ae_v9__vae_v6,iot23,CTU-Honeypot-Capture-4-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-Honeypot-Capture-5-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-Honeypot-Capture-4-1,VAE,0.0,0.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-Honeypot-Capture-5-1,VAE,0.0769,2.6107,no
+lstm_ae_v9__vae_v6,iot23,CTU-Honeypot-Capture-4-1,LSTM or VAE,0.0,0.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-Honeypot-Capture-5-1,LSTM or VAE,0.0769,2.6107,no
+lstm_ae_v9__vae_v6,iot23,CTU-Honeypot-Capture-4-1,one-line rule,0.0,0.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-Honeypot-Capture-5-1,one-line rule,0.8462,28.7172,no
+lstm_ae_v9__vae_v6,xiiotid,all,LSTM-AE,0.0474,0.2925,no
+lstm_ae_v9__vae_v6,xiiotid,all,VAE,0.0702,0.4336,no
+lstm_ae_v9__vae_v6,xiiotid,all,LSTM or VAE,0.0982,0.606,no
+lstm_ae_v9__vae_v6,xiiotid,all,one-line rule,0.0072,0.0444,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,LSTM-AE,0.2186,206.4178,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,LSTM-AE,0.0005,27.0496,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,VAE,0.1326,125.2042,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,VAE,0.004,234.4301,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,LSTM or VAE,0.2903,274.0958,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,LSTM or VAE,0.004,234.4301,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,one-line rule,0.2509,236.8729,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,one-line rule,0.0003,18.0331,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_soil_moisture,LSTM-AE,0.0271,63.0043,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_sound_sensor,LSTM-AE,0.0,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_temperature_and_humidity,LSTM-AE,0.0622,0.0792,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_water_level,LSTM-AE,0.0022,20.9132,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_soil_moisture,VAE,0.0075,17.5012,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_sound_sensor,VAE,0.0034,35.4556,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_temperature_and_humidity,VAE,0.0585,0.0745,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_water_level,VAE,0.0037,34.8553,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_soil_moisture,LSTM or VAE,0.0301,70.0048,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_sound_sensor,LSTM or VAE,0.0034,35.4556,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_temperature_and_humidity,LSTM or VAE,0.0721,0.0919,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_water_level,LSTM or VAE,0.0037,34.8553,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_soil_moisture,one-line rule,0.0361,84.0058,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_sound_sensor,one-line rule,0.0022,23.637,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_temperature_and_humidity,one-line rule,0.0697,0.0887,no
+lstm_ae_v9__vae_v6__recal_dev,edge,normal_water_level,one-line rule,0.0015,13.9421,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-Honeypot-Capture-4-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-Honeypot-Capture-5-1,LSTM-AE,0.0,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-Honeypot-Capture-4-1,VAE,0.0,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-Honeypot-Capture-5-1,VAE,0.5,16.9693,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-Honeypot-Capture-4-1,LSTM or VAE,0.0,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-Honeypot-Capture-5-1,LSTM or VAE,0.5,16.9693,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-Honeypot-Capture-4-1,one-line rule,0.0,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-Honeypot-Capture-5-1,one-line rule,0.8462,28.7172,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,LSTM-AE,0.0072,0.0444,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,VAE,0.0076,0.047,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,LSTM or VAE,0.0144,0.0888,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,one-line rule,0.0072,0.0444,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,LSTM-AE,0.0381,0.2351,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,VAE,0.0804,0.4963,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,LSTM or VAE,0.105,0.6477,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,one-line rule,0.0072,0.0444,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,LSTM-AE,0.0444,0.2742,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,VAE,0.0258,0.1593,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,LSTM or VAE,0.0673,0.4153,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,one-line rule,0.0072,0.0444,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,LSTM-AE,0.0051,0.0313,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,VAE,0.0114,0.0705,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,LSTM or VAE,0.0165,0.1019,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,one-line rule,0.0072,0.0444,yes

@@ -1,0 +1,157 @@
+vae_run,dataset,class,test_windows,lstm_flagged,vae_flagged,meaning
+vae_gotham_v1,gotham,benign (clean),824,0.0182,0.0777,false-alarm rate
+vae_gotham_v1,gotham,benign (compromised device),99,0.1111,0.1313,false-alarm rate
+vae_gotham_v1,gotham,ddos,59210,0.3747,1.0,detection rate
+vae_gotham_v1,gotham,mirai,903,0.6312,1.0,detection rate
+vae_gotham_v1,gotham,other,3,0.0,0.3333,detection rate
+vae_gotham_v1,gotham,scanning,44,0.0909,1.0,detection rate
+vae_nftoniot_v1,nf_toniot,benign (clean),65810,0.0283,0.0187,false-alarm rate
+vae_nftoniot_v1,nf_toniot,benign (compromised device),69710,0.0334,0.7331,false-alarm rate
+vae_nftoniot_v1,nf_toniot,ddos,42270,0.0737,1.0,detection rate
+vae_nftoniot_v1,nf_toniot,other,58279,0.4104,0.9895,detection rate
+vae_nftoniot_v1,nf_toniot,ransomware,39,0.4103,1.0,detection rate
+vae_nftoniot_v1,nf_toniot,scanning,22066,0.0052,0.8748,detection rate
+vae_v1,edge,benign (clean),6361,0.0146,0.0197,false-alarm rate
+vae_v1,edge,ddos,63875,1.0,1.0,detection rate
+vae_v1,edge,ransomware,13,0.8462,1.0,detection rate
+vae_v1,edge,scanning,136,0.9706,1.0,detection rate
+vae_v1,iot23,benign (clean),43,0.0,1.0,false-alarm rate
+vae_v1,iot23,ddos,20553,0.9997,1.0,detection rate
+vae_v1,iot23,mirai,109433,0.3692,1.0,detection rate
+vae_v1,kitsune,benign (clean),6778,0.021,0.0196,false-alarm rate
+vae_v1,kitsune,ddos,615,1.0,1.0,detection rate
+vae_v1,kitsune,mirai,192,1.0,1.0,detection rate
+vae_v1,kitsune,scanning,617,1.0,1.0,detection rate
+vae_v2,edge,benign (clean),6361,0.0011,0.006,false-alarm rate
+vae_v2,edge,ddos,63875,0.1755,1.0,detection rate
+vae_v2,edge,ransomware,13,0.0,0.8462,detection rate
+vae_v2,edge,scanning,136,0.1618,0.9779,detection rate
+vae_v2,iot23,benign (clean),43,0.0,0.6512,false-alarm rate
+vae_v2,iot23,ddos,20553,0.0,1.0,detection rate
+vae_v2,iot23,mirai,109433,0.0,0.9993,detection rate
+vae_v2,kitsune,benign (clean),6778,0.0003,0.0053,false-alarm rate
+vae_v2,kitsune,ddos,615,0.9577,1.0,detection rate
+vae_v2,kitsune,mirai,192,0.0,1.0,detection rate
+vae_v2,kitsune,scanning,617,0.9968,1.0,detection rate
+vae_v2_zeroday_ddos,edge,benign (clean),6361,0.0011,0.006,false-alarm rate
+vae_v2_zeroday_ddos,edge,ddos,63875,0.1755,1.0,detection rate
+vae_v2_zeroday_ddos,edge,ransomware,13,0.0,0.8462,detection rate
+vae_v2_zeroday_ddos,edge,scanning,136,0.1618,0.9779,detection rate
+vae_v2_zeroday_ddos,iot23,benign (clean),43,0.0,0.6512,false-alarm rate
+vae_v2_zeroday_ddos,iot23,ddos,20553,0.0,1.0,detection rate
+vae_v2_zeroday_ddos,iot23,mirai,109433,0.0,0.9993,detection rate
+vae_v2_zeroday_ddos,kitsune,benign (clean),6778,0.0003,0.0053,false-alarm rate
+vae_v2_zeroday_ddos,kitsune,ddos,615,0.9577,1.0,detection rate
+vae_v2_zeroday_ddos,kitsune,mirai,192,0.0,1.0,detection rate
+vae_v2_zeroday_ddos,kitsune,scanning,617,0.9968,1.0,detection rate
+vae_v2_zeroday_mirai,edge,benign (clean),6361,0.0011,0.006,false-alarm rate
+vae_v2_zeroday_mirai,edge,ddos,63875,0.1755,1.0,detection rate
+vae_v2_zeroday_mirai,edge,ransomware,13,0.0,0.8462,detection rate
+vae_v2_zeroday_mirai,edge,scanning,136,0.1618,0.9779,detection rate
+vae_v2_zeroday_mirai,iot23,benign (clean),43,0.0,0.6512,false-alarm rate
+vae_v2_zeroday_mirai,iot23,ddos,20553,0.0,1.0,detection rate
+vae_v2_zeroday_mirai,iot23,mirai,109433,0.0,0.9993,detection rate
+vae_v2_zeroday_mirai,kitsune,benign (clean),6778,0.0003,0.0053,false-alarm rate
+vae_v2_zeroday_mirai,kitsune,ddos,615,0.9577,1.0,detection rate
+vae_v2_zeroday_mirai,kitsune,mirai,192,0.0,1.0,detection rate
+vae_v2_zeroday_mirai,kitsune,scanning,617,0.9968,1.0,detection rate
+vae_v3,edge,benign (clean),6361,0.0145,0.0197,false-alarm rate
+vae_v3,edge,ddos,63875,1.0,1.0,detection rate
+vae_v3,edge,ransomware,13,0.8462,1.0,detection rate
+vae_v3,edge,scanning,136,0.9706,1.0,detection rate
+vae_v3,iot23,benign (clean),43,0.0,1.0,false-alarm rate
+vae_v3,iot23,ddos,20553,0.9997,1.0,detection rate
+vae_v3,iot23,mirai,109433,0.8723,1.0,detection rate
+vae_v3,kitsune,benign (clean),6778,0.021,0.0167,false-alarm rate
+vae_v3,kitsune,ddos,615,1.0,1.0,detection rate
+vae_v3,kitsune,mirai,192,1.0,1.0,detection rate
+vae_v3,kitsune,scanning,617,1.0,1.0,detection rate
+vae_v3_zeroday_ddos,edge,benign (clean),6361,0.0145,0.0197,false-alarm rate
+vae_v3_zeroday_ddos,edge,ddos,63875,1.0,1.0,detection rate
+vae_v3_zeroday_ddos,edge,ransomware,13,0.8462,1.0,detection rate
+vae_v3_zeroday_ddos,edge,scanning,136,0.9706,1.0,detection rate
+vae_v3_zeroday_ddos,iot23,benign (clean),43,0.0,1.0,false-alarm rate
+vae_v3_zeroday_ddos,iot23,ddos,20553,0.9997,1.0,detection rate
+vae_v3_zeroday_ddos,iot23,mirai,109433,0.8723,1.0,detection rate
+vae_v3_zeroday_ddos,kitsune,benign (clean),6778,0.021,0.0167,false-alarm rate
+vae_v3_zeroday_ddos,kitsune,ddos,615,1.0,1.0,detection rate
+vae_v3_zeroday_ddos,kitsune,mirai,192,1.0,1.0,detection rate
+vae_v3_zeroday_ddos,kitsune,scanning,617,1.0,1.0,detection rate
+vae_v3_zeroday_mirai,edge,benign (clean),6361,0.0145,0.0197,false-alarm rate
+vae_v3_zeroday_mirai,edge,ddos,63875,1.0,1.0,detection rate
+vae_v3_zeroday_mirai,edge,ransomware,13,0.8462,1.0,detection rate
+vae_v3_zeroday_mirai,edge,scanning,136,0.9706,1.0,detection rate
+vae_v3_zeroday_mirai,iot23,benign (clean),43,0.0,1.0,false-alarm rate
+vae_v3_zeroday_mirai,iot23,ddos,20553,0.9997,1.0,detection rate
+vae_v3_zeroday_mirai,iot23,mirai,109433,0.8723,1.0,detection rate
+vae_v3_zeroday_mirai,kitsune,benign (clean),6778,0.021,0.0167,false-alarm rate
+vae_v3_zeroday_mirai,kitsune,ddos,615,1.0,1.0,detection rate
+vae_v3_zeroday_mirai,kitsune,mirai,192,1.0,1.0,detection rate
+vae_v3_zeroday_mirai,kitsune,scanning,617,1.0,1.0,detection rate
+vae_v4,edge,benign (clean),6361,0.0192,0.0211,false-alarm rate
+vae_v4,edge,ddos,63875,0.9999,1.0,detection rate
+vae_v4,edge,ransomware,13,0.8462,1.0,detection rate
+vae_v4,edge,scanning,136,0.2794,1.0,detection rate
+vae_v4,iot23,benign (clean),43,0.0,0.3953,false-alarm rate
+vae_v4,iot23,ddos,20553,0.1584,0.9829,detection rate
+vae_v4,iot23,mirai,109433,0.0468,0.9992,detection rate
+vae_v4,kitsune,benign (clean),6778,0.0155,0.0145,false-alarm rate
+vae_v4,kitsune,ddos,615,1.0,1.0,detection rate
+vae_v4,kitsune,mirai,192,0.8542,1.0,detection rate
+vae_v4,kitsune,scanning,617,1.0,1.0,detection rate
+vae_v5,edge,benign (clean),6361,0.0192,0.0215,false-alarm rate
+vae_v5,edge,ddos,63875,0.9999,1.0,detection rate
+vae_v5,edge,ransomware,13,0.8462,1.0,detection rate
+vae_v5,edge,scanning,136,0.2794,1.0,detection rate
+vae_v5,iot23,benign (clean),43,0.0,0.1163,false-alarm rate
+vae_v5,iot23,ddos,20553,0.1584,1.0,detection rate
+vae_v5,iot23,mirai,109433,0.0468,0.9999,detection rate
+vae_v5,kitsune,benign (clean),6778,0.0155,0.0201,false-alarm rate
+vae_v5,kitsune,ddos,615,1.0,1.0,detection rate
+vae_v5,kitsune,mirai,192,0.8542,1.0,detection rate
+vae_v5,kitsune,scanning,617,1.0,1.0,detection rate
+vae_v6,edge,benign (clean),6361,0.0197,0.0209,false-alarm rate
+vae_v6,edge,ddos,63875,0.9999,1.0,detection rate
+vae_v6,edge,ransomware,13,0.8462,1.0,detection rate
+vae_v6,edge,scanning,136,0.2794,1.0,detection rate
+vae_v6,iot23,benign (clean),43,0.0,0.093,false-alarm rate
+vae_v6,iot23,ddos,20553,0.0913,1.0,detection rate
+vae_v6,iot23,mirai,109433,0.0004,0.8966,detection rate
+vae_v6,kitsune,benign (clean),6778,0.0146,0.0196,false-alarm rate
+vae_v6,kitsune,ddos,615,0.9984,1.0,detection rate
+vae_v6,kitsune,mirai,192,0.8542,1.0,detection rate
+vae_v6,kitsune,scanning,617,1.0,1.0,detection rate
+vae_v6,xiiotid,benign (clean),2012,0.0517,0.0333,false-alarm rate
+vae_v6,xiiotid,benign (compromised device),872,0.0092,0.1422,false-alarm rate
+vae_v6,xiiotid,ddos,1327,0.0,1.0,detection rate
+vae_v6,xiiotid,other,825,0.0012,1.0,detection rate
+vae_v6,xiiotid,ransomware,1,0.0,1.0,detection rate
+vae_v6,xiiotid,scanning,876,0.0,0.9555,detection rate
+vae_xiiotid_v1,xiiotid,benign (clean),2012,0.0427,0.0283,false-alarm rate
+vae_xiiotid_v1,xiiotid,benign (compromised device),872,0.0126,0.1766,false-alarm rate
+vae_xiiotid_v1,xiiotid,ddos,1327,0.0,1.0,detection rate
+vae_xiiotid_v1,xiiotid,other,825,0.0,1.0,detection rate
+vae_xiiotid_v1,xiiotid,ransomware,1,0.0,1.0,detection rate
+vae_xiiotid_v1,xiiotid,scanning,876,0.0,0.9566,detection rate
+vae_zeroday_ddos,edge,benign (clean),6361,0.0146,0.0197,false-alarm rate
+vae_zeroday_ddos,edge,ddos,63875,1.0,1.0,detection rate
+vae_zeroday_ddos,edge,ransomware,13,0.8462,1.0,detection rate
+vae_zeroday_ddos,edge,scanning,136,0.9706,1.0,detection rate
+vae_zeroday_ddos,iot23,benign (clean),43,0.0,1.0,false-alarm rate
+vae_zeroday_ddos,iot23,ddos,20553,0.9997,1.0,detection rate
+vae_zeroday_ddos,iot23,mirai,109433,0.3692,1.0,detection rate
+vae_zeroday_ddos,kitsune,benign (clean),6778,0.021,0.0196,false-alarm rate
+vae_zeroday_ddos,kitsune,ddos,615,1.0,1.0,detection rate
+vae_zeroday_ddos,kitsune,mirai,192,1.0,1.0,detection rate
+vae_zeroday_ddos,kitsune,scanning,617,1.0,1.0,detection rate
+vae_zeroday_mirai,edge,benign (clean),6361,0.0146,0.0197,false-alarm rate
+vae_zeroday_mirai,edge,ddos,63875,1.0,1.0,detection rate
+vae_zeroday_mirai,edge,ransomware,13,0.8462,1.0,detection rate
+vae_zeroday_mirai,edge,scanning,136,0.9706,1.0,detection rate
+vae_zeroday_mirai,iot23,benign (clean),43,0.0,1.0,false-alarm rate
+vae_zeroday_mirai,iot23,ddos,20553,0.9997,1.0,detection rate
+vae_zeroday_mirai,iot23,mirai,109433,0.3692,1.0,detection rate
+vae_zeroday_mirai,kitsune,benign (clean),6778,0.021,0.0196,false-alarm rate
+vae_zeroday_mirai,kitsune,ddos,615,1.0,1.0,detection rate
+vae_zeroday_mirai,kitsune,mirai,192,1.0,1.0,detection rate
+vae_zeroday_mirai,kitsune,scanning,617,1.0,1.0,detection rate

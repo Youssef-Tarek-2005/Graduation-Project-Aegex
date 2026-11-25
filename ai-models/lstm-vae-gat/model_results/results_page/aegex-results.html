@@ -1,0 +1,483 @@
+<title>Aegex Detection Results</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">
+<style>
+/* Layout: one reading column (~760px) with wider data blocks; lab-report tone, cool slate neutrals, one signal-blue accent. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#18202b; --muted:#5a6676; --line:#dde2ea; --soft:#eef1f5;
+  --accent:#2457c5; --accent-soft:#e3ebfb;
+  --good:#1d7a4a; --good-soft:#e2f3ea; --warn:#9a6200; --warn-soft:#fbf0dc; --bad:#b4332b; --bad-soft:#f9e3e1;
+  --bar-det:#2457c5; --bar-fa:#c4572f;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11161d; --surface:#18202a; --ink:#e6ebf2; --muted:#9aa7b8; --line:#2a3542; --soft:#1e2733;
+  --accent:#7ea4f5; --accent-soft:#1f2c47;
+  --good:#5cc78f; --good-soft:#163326; --warn:#e2ad55; --warn-soft:#3a2d14; --bad:#ef8a80; --bad-soft:#3c1d1b;
+  --bar-det:#7ea4f5; --bar-fa:#ec9466; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11161d; --surface:#18202a; --ink:#e6ebf2; --muted:#9aa7b8; --line:#2a3542; --soft:#1e2733;
+  --accent:#7ea4f5; --accent-soft:#1f2c47;
+  --good:#5cc78f; --good-soft:#163326; --warn:#e2ad55; --warn-soft:#3a2d14; --bad:#ef8a80; --bad-soft:#3c1d1b;
+  --bar-det:#7ea4f5; --bar-fa:#ec9466; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:860px;margin:0 auto;padding-block:40px 64px;display:grid;gap:56px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,5vw,2.75rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.6rem;font-weight:700}
+h3{font-size:1.1rem;font-weight:600}
+p{margin:0;max-width:68ch}
+section{display:grid;gap:18px;min-width:0}
+.eyebrow{font:500 .75rem/1 var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--accent)}
+.lede{font-size:1.12rem;color:var(--muted)}
+.muted{color:var(--muted)}
+.mono,td.num,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+small,.note{font-size:.86rem;color:var(--muted)}
+a{color:var(--accent)}
+
+/* pipeline strip */
+.pipe{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.step{flex:1 1 140px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:4px}
+.step b{font-family:var(--display);font-weight:600;font-size:1rem}
+.step span{font-size:.82rem;color:var(--muted);line-height:1.4}
+.step.next{border-style:dashed;background:transparent}
+.step.next b{color:var(--muted)}
+
+/* headline facts */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:2px}
+.fact .v{font:600 1.7rem/1.1 var(--display)}
+.fact .k{font-size:.85rem;color:var(--muted)}
+
+/* glossary */
+dl.gloss{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:10px 22px;margin:0}
+dl.gloss dt{font-weight:600}
+dl.gloss dd{margin:0;color:var(--muted)}
+@media (max-width:560px){dl.gloss{grid-template-columns:1fr} dl.gloss dd{margin-bottom:6px}}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .74rem/1.3 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--soft);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;white-space:nowrap}
+th.num{text-align:right}
+
+/* chips */
+.chip{display:inline-block;font:500 .74rem/1 var(--mono);padding:4px 7px;border-radius:999px;white-space:nowrap}
+.good{background:var(--good-soft);color:var(--good)}
+.warn{background:var(--warn-soft);color:var(--warn)}
+.bad{background:var(--bad-soft);color:var(--bad)}
+.info{background:var(--accent-soft);color:var(--accent)}
+
+/* bar charts (0-100 % scale, drawn to scale) */
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.84rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.group{display:grid;gap:6px}
+.group h4{margin:0;font:600 .95rem/1.2 var(--display)}
+.row{display:grid;grid-template-columns:minmax(92px,150px) 1fr 64px;gap:10px;align-items:center;font-size:.85rem}
+.row .lbl{color:var(--muted)}
+.track{position:relative;height:14px;background:var(--soft);border-radius:3px;overflow:hidden}
+.fill{position:absolute;inset:0 auto 0 0;border-radius:3px}
+.fill.det{background:var(--bar-det)} .fill.fa{background:var(--bar-fa)}
+.row .val{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.axis{display:grid;grid-template-columns:minmax(92px,150px) 1fr 64px;gap:10px;font:400 .72rem/1 var(--mono);color:var(--muted)}
+.axis .ticks{display:flex;justify-content:space-between}
+
+/* before/after cards */
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:10px;min-width:0}
+.ba{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:baseline;font-size:.9rem}
+.ba .from{font-family:var(--mono);color:var(--muted);text-decoration:line-through}
+.ba .to{font-family:var(--mono);font-weight:500}
+
+/* journey */
+ol.journey{list-style:none;margin:0;padding:0;display:grid;gap:0;border-left:2px solid var(--line)}
+ol.journey li{position:relative;padding:0 0 18px 20px;display:grid;gap:4px}
+ol.journey li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+ol.journey li b{font-family:var(--display);font-weight:600}
+ol.journey li p{color:var(--muted);font-size:.93rem}
+
+ul.plain{margin:0;padding-left:20px;display:grid;gap:8px}
+ul.plain li{max-width:68ch}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 8px 8px 0}
+.callout p{color:var(--ink)}
+footer{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+</style>
+
+<main>
+
+<header style="display:grid;gap:14px">
+  <div class="eyebrow">Aegex · GP27/CyS08 · results as of 25 Nov 2026</div>
+  <h1>How well does Aegex detect IoT attacks?</h1>
+  <p class="lede">All numbers on this page come from a realistic benchmark: real attack traffic hidden inside the real normal traffic of a busy device, test data only, alarm lines set on validation data. On Edge-IIoTset and Kitsune the VAE catches almost every attack window while flagging about 1–8 % of normal windows. The GAT then names the attacking host with far fewer false alarms than the window alerts alone. On X-IIoTID, a 32-device industrial network added this week, the VAE catches 90.7 % of mixed-in attacks at 1.1 % false alarms once its alarm lines are set per device. Two more networks followed: on Gotham, the only one with Mirai, DDoS and scanning together, the VAE catches 96.5 % at 0.19 % false alarms, and on ACI-IoT-2023 (70 devices, run on Kaggle) 80.3 % at 1.7 %. On NF-ToN-IoT-v3, a busy 55-device network whose attacks are naturally mixed with normal traffic, it catches 94.2 % at 3.5 % false alarms, including 93–99 % of ransomware, which gives ransomware its second source. IoT-23 remains weak, and the GAT does not recognise attack types it was never trained on.</p>
+</header>
+
+<section>
+  <div class="eyebrow">Headline</div>
+  <h2>The numbers to quote</h2>
+  <div class="facts">
+    <div class="fact"><span class="v">99.9 %</span><span class="k">Edge attack windows caught by the VAE (normal flagged 0.7–8.5 %)</span></div>
+    <div class="fact"><span class="v">100 %</span><span class="k">Kitsune attack windows caught by the VAE (normal flagged 1.4 %*)</span></div>
+    <div class="fact"><span class="v">90.7 %</span><span class="k">X-IIoTID attack windows caught by the VAE (normal flagged 1.1 %, per-device alarm lines)</span></div>
+    <div class="fact"><span class="v">96.5 %</span><span class="k">Gotham attack windows caught by the VAE: Mirai, DDoS and scanning on one network (normal flagged 0.19 %)</span></div>
+    <div class="fact"><span class="v">80.3 %</span><span class="k">ACI-IoT-2023 attack windows caught by the VAE (normal flagged 1.7 %)</span></div>
+    <div class="fact"><span class="v">94.2 %</span><span class="k">NF-ToN-IoT attack windows caught by the VAE, ransomware 93–99 % (normal flagged 3.5 %)</span></div>
+    <div class="fact"><span class="v">84–99 %</span><span class="k">attacking/target hosts found by the GAT, at 0–2.1 % false alarms</span></div>
+    <div class="fact"><span class="v">282 / 282</span><span class="k">injected attacks with at least one alert (all seven networks)</span></div>
+  </div>
+  <p class="note">* On Kitsune's separate Mirai network the normal traffic is noisy: 37 % of its normal windows are flagged without per-network calibration.</p>
+</section>
+
+<section>
+  <div class="eyebrow">What was built</div>
+  <h2>The detection pipeline so far</h2>
+  <div class="pipe">
+    <div class="step"><b>Capture</b><span>pcap or flow logs from the network</span></div>
+    <div class="step"><b>Flows</b><span>packets grouped into two-way connections (5-tuple, 120 s records)</span></div>
+    <div class="step"><b>50 features</b><span>sizes, rates, timing, TCP flags, service, device behaviour</span></div>
+    <div class="step"><b>LSTM autoencoder</b><span>reads 32 flows of one device at a time</span></div>
+    <div class="step"><b>VAE</b><span>confidence, closest known attack, zero-day flag</span></div>
+    <div class="step"><b>Temporal GAT</b><span>every 60 s: which hosts are attacker and target</span></div>
+    <div class="step next"><b>Analysis · RAG report</b><span>next: attack analysis, Blue Team report</span></div>
+  </div>
+  <p class="note">The LSTM and VAE learn only from normal traffic, so they can react to attacks they were never shown. The GAT is trained with attack labels; it turns window alerts into a short list of hosts and connections.</p>
+</section>
+
+<section>
+  <div class="eyebrow">Reading the numbers</div>
+  <h2>Terms used on this page</h2>
+  <dl class="gloss">
+    <dt>Window</dt><dd>32 consecutive connections of one device. The models judge windows, not single packets.</dd>
+    <dt>Detection rate</dt><dd>Of the attack windows, the share the system flagged. Higher is better.</dd>
+    <dt>False-alarm rate</dt><dd>Of the normal windows, the share the system wrongly flagged. Lower is better; the target is about 1 %.</dd>
+    <dt>ROC-AUC</dt><dd>How well the scores separate attacks from normal traffic, ignoring where the alarm line is drawn. 1.0 is perfect, 0.5 is guessing.</dd>
+    <dt>Calibration</dt><dd>Setting the alarm line from a sample of the target network's own normal traffic before monitoring it.</dd>
+    <dt>Per-device alarm line</dt><dd>After calibration, each device with enough normal traffic also gets its own line from that traffic, never lower than the network's. Devices that are noisy by nature stop flooding the alerts.</dd>
+    <dt>Noise floor</dt><dd>Share of windows flagged when plain normal traffic is inserted exactly the way attacks are. It shows how much the insertion itself triggers; a detector is only credible well above it.</dd>
+    <dt>One-line rule</dt><dd>The single best window statistic with a 1 % false-alarm line, chosen on validation data. A model that cannot beat it adds nothing.</dd>
+  </dl>
+</section>
+
+<section>
+  <div class="eyebrow">Data</div>
+  <h2>Seven datasets, 58 million connections</h2>
+  <div class="facts">
+    <div class="fact"><span class="v">58.1 M</span><span class="k">connections processed</span></div>
+    <div class="fact"><span class="v">3.63 M</span><span class="k">device windows for the models</span></div>
+    <div class="fact"><span class="v">4</span><span class="k">attack types: DDoS, scanning, Mirai, ransomware</span></div>
+    <div class="fact"><span class="v">87</span><span class="k">devices on Gotham's normal capture, the largest network (ACI-IoT-2023: 70)</span></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Dataset</th><th>What it is</th><th class="num">Connections</th><th class="num">Normal</th><th>Attacks it contributes</th></tr></thead>
+    <tbody>
+      <tr><td><b>Edge-IIoTset</b></td><td>Industrial IoT sensors on a lab network; each attack recorded in its own file</td><td class="num">7.50 M</td><td class="num">675,186</td><td>DDoS 6.81 M · scanning 13,354 · ransomware 971</td></tr>
+      <tr><td><b>IoT-23</b></td><td>Real IoT devices infected with Mirai, plus clean honeypot devices</td><td class="num">13.87 M</td><td class="num">19,124</td><td>Mirai 11.65 M · DDoS 2.20 M</td></tr>
+      <tr><td><b>Kitsune</b></td><td>Camera network; Mirai infection, SSDP flood and OS scan captures</td><td class="num">871,015</td><td class="num">726,790</td><td>scanning 65,583 · DDoS 65,538 · Mirai 13,104</td></tr>
+      <tr><td><b>X-IIoTID</b></td><td>Industrial IoT network with 32 devices, three months of traffic and a full attack campaign (Kaggle, usability 7.65)</td><td class="num">629,056</td><td class="num">307,087</td><td>DDoS 141,261 · scanning 93,445 (+ 87,262 out-of-scope attacks)</td></tr>
+      <tr><td><b>Gotham 2025</b></td><td>Emulated smart-city IoT network (Cardiff / Toshiba, Zenodo): 87 devices, real Mirai source code, per-device captures merged and de-duplicated</td><td class="num">6.50 M</td><td class="num">83,952</td><td>DDoS 6.31 M (Mirai + Merlin floods) · Mirai infection 93,063 · scanning 4,484</td></tr>
+      <tr><td><b>ACI-IoT-2023</b></td><td>Army Cyber Institute smart-home lab, 70 devices, one week; processed on Kaggle without downloading it (usability 9.41)</td><td class="num">1.23 M</td><td class="num">329,295</td><td>scanning 590,271 (incl. vulnerability scan 39,537) · DoS floods 305,460</td></tr>
+      <tr><td><b>NF-ToN-IoT-v3</b></td><td>UNSW ToN-IoT testbed as NetFlow records, 55 devices over one week; attacks run while the network keeps working (Kaggle, usability 8.24)</td><td class="num">27.52 M</td><td class="num">16.79 M</td><td>DDoS 4.14 M · scanning 1.36 M · ransomware 3,971 (+ 5.22 M out-of-scope attacks)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">X-IIoTID, Gotham, ACI-IoT-2023 and NF-ToN-IoT-v3 each have their own pair of models (see their sections below); adding X-IIoTID to the shared models made IoT-23 worse. X-IIoTID's ransomware is unusable (1 connection with traffic counts), so ransomware comes from Edge-IIoTset and NF-ToN-IoT-v3. Tests always use the latest 15 % of each traffic type, never a random sample, so models are judged on traffic that comes after what they learned from.</p>
+</section>
+
+<section>
+  <div class="eyebrow">Main result · realistic benchmark</div>
+  <h2>Stages 1 and 2: attack windows caught</h2>
+  <p>202 test scenarios. Each takes up to 300 real attack connections from a dataset's test split, hides them in the real normal traffic of a busy device (the attacker's address becomes that device's), and runs the unchanged pipeline at normal speed and 10× or 100× slower. Every attack type counts equally.</p>
+  <div class="chart" role="img" aria-label="Bar chart: window detection of LSTM, VAE and the one-line rule, and the VAE noise floor, per dataset">
+    <div class="legend"><span><i style="background:var(--bar-det)"></i>Attack windows caught</span><span><i style="background:var(--bar-fa)"></i>Normal traffic flagged (noise floor or false alarms)</span></div>
+    <div class="group"><h4>Edge-IIoTset · 152 scenarios</h4>
+      <div class="row"><span class="lbl">VAE</span><div class="track"><div class="fill det" style="width:99.9%"></div></div><span class="val">99.9 %</span></div>
+      <div class="row"><span class="lbl">LSTM</span><div class="track"><div class="fill det" style="width:46.8%"></div></div><span class="val">46.8 %</span></div>
+      <div class="row"><span class="lbl">LSTM + VAE together</span><div class="track"><div class="fill det" style="width:100%"></div></div><span class="val">100 %</span></div>
+      <div class="row"><span class="lbl">One-line rule</span><div class="track"><div class="fill det" style="width:32%"></div></div><span class="val">32.0 %</span></div>
+      <div class="row"><span class="lbl">VAE noise floor</span><div class="track"><div class="fill fa" style="width:27%"></div></div><span class="val">6–27 %</span></div>
+      <div class="row"><span class="lbl">VAE false alarms</span><div class="track"><div class="fill fa" style="width:8.5%"></div></div><span class="val">0.7–8.5 %</span></div>
+    </div>
+    <div class="group"><h4>Kitsune · 22 scenarios</h4>
+      <div class="row"><span class="lbl">VAE</span><div class="track"><div class="fill det" style="width:100%"></div></div><span class="val">100 %</span></div>
+      <div class="row"><span class="lbl">LSTM</span><div class="track"><div class="fill det" style="width:80.4%"></div></div><span class="val">80.4 %</span></div>
+      <div class="row"><span class="lbl">LSTM + VAE together</span><div class="track"><div class="fill det" style="width:100%"></div></div><span class="val">100 %</span></div>
+      <div class="row"><span class="lbl">One-line rule</span><div class="track"><div class="fill det" style="width:34.5%"></div></div><span class="val">34.5 %</span></div>
+      <div class="row"><span class="lbl">VAE noise floor</span><div class="track"><div class="fill fa" style="width:91.5%"></div></div><span class="val">30–92 %</span></div>
+      <div class="row"><span class="lbl">VAE false alarms</span><div class="track"><div class="fill fa" style="width:1.4%"></div></div><span class="val">1.4 %*</span></div>
+    </div>
+    <div class="group"><h4>IoT-23 · 28 scenarios</h4>
+      <div class="row"><span class="lbl">VAE</span><div class="track"><div class="fill det" style="width:83.6%"></div></div><span class="val">83.6 %</span></div>
+      <div class="row"><span class="lbl">LSTM</span><div class="track"><div class="fill det" style="width:48.1%"></div></div><span class="val">48.1 %</span></div>
+      <div class="row"><span class="lbl">LSTM + VAE together</span><div class="track"><div class="fill det" style="width:89.1%"></div></div><span class="val">89.1 %</span></div>
+      <div class="row"><span class="lbl">One-line rule</span><div class="track"><div class="fill det" style="width:98.8%"></div></div><span class="val">98.8 %</span></div>
+      <div class="row"><span class="lbl">VAE noise floor</span><div class="track"><div class="fill fa" style="width:0%"></div></div><span class="val">0 %</span></div>
+      <div class="row"><span class="lbl">VAE false alarms</span><div class="track"><div class="fill fa" style="width:11.5%"></div></div><span class="val">0–11.5 %†</span></div>
+    </div>
+    <div class="axis"><span></span><div class="ticks"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 %</span></div><span></span></div>
+  </div>
+  <p class="note">* Kitsune's ssdp_flood network; on its Mirai network 37 % of normal windows are flagged without calibration. † IoT-23 has only 30 clean normal test windows. 95 % intervals for VAE detection: Edge 99.8–100 %, Kitsune 100 %, IoT-23 78–88 %.</p>
+
+  <h3>By attack, normal speed</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Network · attack</th><th class="num">VAE</th><th class="num">LSTM</th><th class="num">One-line rule</th></tr></thead>
+    <tbody>
+      <tr><td>Edge · port scan</td><td class="num"><span class="chip good">100 %</span></td><td class="num">17.4 %</td><td class="num">16.6 %</td></tr>
+      <tr><td>Edge · OS fingerprinting</td><td class="num"><span class="chip good">99.4 %</span></td><td class="num">29.2 %</td><td class="num">26.6 %</td></tr>
+      <tr><td>Edge · vulnerability scanner</td><td class="num"><span class="chip good">100 %</span></td><td class="num">44.9 %</td><td class="num">6.0 %</td></tr>
+      <tr><td>Edge · ransomware</td><td class="num"><span class="chip good">99.8 %</span></td><td class="num">32.4 %</td><td class="num">21.3 %</td></tr>
+      <tr><td>Edge · HTTP flood (75× slower)</td><td class="num"><span class="chip good">100 %</span></td><td class="num">34.2 %</td><td class="num">15.5 %</td></tr>
+      <tr><td>Edge · ICMP / SYN / UDP floods</td><td class="num"><span class="chip good">100 %</span></td><td class="num">95–100 %</td><td class="num">95–99 %</td></tr>
+      <tr><td>Kitsune · Mirai</td><td class="num"><span class="chip good">100 %</span></td><td class="num">55.2 %</td><td class="num">57.7 %</td></tr>
+      <tr><td>Kitsune · OS scan</td><td class="num"><span class="chip good">100 %</span></td><td class="num">100 %</td><td class="num">78.4 %</td></tr>
+      <tr><td>Kitsune · SSDP flood</td><td class="num"><span class="chip good">100 %</span></td><td class="num">100 %</td><td class="num">0 %</td></tr>
+      <tr><td>IoT-23 · DDoS (34-1)</td><td class="num"><span class="chip warn">87.7 %</span></td><td class="num">93.8 %</td><td class="num">98.8 %</td></tr>
+      <tr><td>IoT-23 · Mirai (34-1)</td><td class="num"><span class="chip bad">46.9 %</span></td><td class="num">0 %</td><td class="num">92.2 %</td></tr>
+      <tr><td>IoT-23 · Mirai (48-1)</td><td class="num"><span class="chip good">91.4 %</span></td><td class="num">6.2 %</td><td class="num">100 %</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Detection = share of windows holding at least one attack connection that are flagged; most of these windows also contain normal connections. Full table with 10× and 100× speeds: <span class="mono">model_results\benchmark\lstm_ae_v8__vae_v5\report.txt</span>.</p>
+  <div class="callout"><p>Read the VAE against its noise floor. On Edge-IIoTset it flags 99.9 % of attack windows but only 6–27 % of inserted normal traffic, so the detection is real: these sensors only ever send MQTT readings, and attacks bring web requests, resets and floods. On Kitsune it also flags 92 % of another device's normal traffic inserted the same way, so there it means "this device is doing something new", which is not always an attack. On IoT-23 a one-line rule beats both models.</p></div>
+</section>
+
+<section>
+  <div class="eyebrow">New network · X-IIoTID</div>
+  <h2>A 32-device network: calibration matters more than the model</h2>
+  <p>X-IIoTID is an industrial IoT network recorded over three months, with real timestamps and addresses, many devices and a complete attack campaign: reconnaissance, a compromised host, lateral movement, command and control, then a DDoS. It gets its own pair of models (<span class="mono">lstm_ae_xiiotid_v1</span>, <span class="mono">vae_xiiotid_v1</span>). Same benchmark as above: 12 attacks (DDoS and scanning, three speeds) hidden in 383 hours of normal test traffic.</p>
+  <div class="chart" role="img" aria-label="Bar chart: X-IIoTID VAE detection and false alarms with saved, recalibrated and per-device alarm lines, and the one-line rule">
+    <div class="legend"><span><i style="background:var(--bar-det)"></i>Attack windows caught</span><span><i style="background:var(--bar-fa)"></i>Normal windows flagged</span></div>
+    <div class="group"><h4>VAE · alarm line saved in the model</h4>
+      <div class="row"><span class="lbl">Caught</span><div class="track"><div class="fill det" style="width:97.2%"></div></div><span class="val">97.2 %</span></div>
+      <div class="row"><span class="lbl">False alarms</span><div class="track"><div class="fill fa" style="width:8.0%"></div></div><span class="val">8.0 %</span></div>
+    </div>
+    <div class="group"><h4>VAE · recalibrated on the network's normal traffic</h4>
+      <div class="row"><span class="lbl">Caught</span><div class="track"><div class="fill det" style="width:90.7%"></div></div><span class="val">90.7 %</span></div>
+      <div class="row"><span class="lbl">False alarms</span><div class="track"><div class="fill fa" style="width:2.6%"></div></div><span class="val">2.6 %</span></div>
+    </div>
+    <div class="group"><h4>VAE · recalibrated + per-device alarm lines</h4>
+      <div class="row"><span class="lbl">Caught</span><div class="track"><div class="fill det" style="width:90.7%"></div></div><span class="val">90.7 %</span></div>
+      <div class="row"><span class="lbl">False alarms</span><div class="track"><div class="fill fa" style="width:1.14%"></div></div><span class="val">1.1 %</span></div>
+    </div>
+    <div class="group"><h4>LSTM + VAE together · recalibrated + per-device</h4>
+      <div class="row"><span class="lbl">Caught</span><div class="track"><div class="fill det" style="width:92.7%"></div></div><span class="val">92.7 %</span></div>
+      <div class="row"><span class="lbl">False alarms</span><div class="track"><div class="fill fa" style="width:1.65%"></div></div><span class="val">1.65 %</span></div>
+    </div>
+    <div class="group"><h4>One-line rule (no model)</h4>
+      <div class="row"><span class="lbl">Caught</span><div class="track"><div class="fill det" style="width:74.5%"></div></div><span class="val">74.5 %</span></div>
+      <div class="row"><span class="lbl">False alarms</span><div class="track"><div class="fill fa" style="width:0.72%"></div></div><span class="val">0.7 %</span></div>
+    </div>
+    <div class="axis"><span></span><div class="ticks"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 %</span></div><span></span></div>
+  </div>
+  <p class="note">95 % interval for the 90.7 %: 89.6–91.8 %. Inserted normal traffic (noise floor) is flagged 0 % in all three controls with per-device lines. DDoS 83–88 %, scanning 95 %. When attack connections are a minority of a window, 25–50 % of DDoS and 33 % of scan windows are caught.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>What we found</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>The dataset's own test split is too easy</td><td>VAE 98.7 % caught, but a one-line timing rule gets 95.7 %. X-IIoTID rounds timestamps to the second, so 99 % of DDoS and 91 % of scan connections share a second with the previous one; only 36 % of normal ones do. Mixed into normal traffic, the rule falls to 74.5 %.</td></tr>
+      <tr><td>The LSTM alone catches almost nothing</td><td>0–5 % caught. Floods and scans are repetitive and easy to rebuild, and the network's varied normal traffic sets the alarm line high. The VAE, which reads the LSTM's summaries, is what detects. Plain explanation: <a href="https://claude.ai/artifact/AKqM11YLDxLbkBmbC8Gkbd">X-IIoTID LSTM Blind Spot</a>.</td></tr>
+      <tr><td>False alarms came from two chatty devices, not from time</td><td>188 of 190 false alarms were on two devices that send a lot of discovery and multicast traffic to many peers; every other device stayed at 0–1.3 %. Per-device alarm lines fixed it without losing a single detection.</td></tr>
+      <tr><td>One shared model for all four networks is worse</td><td>Training one pair on all four datasets cut IoT-23 detection from 83.6 % to 60.3 % and did not improve X-IIoTID (90.3 % vs 90.7 %), so the networks keep separate models.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><p>Per-device alarm lines also work on live captures (<span class="mono">score_traffic.py --calibrate normal.pcap --recalibrate-threshold --per-device</span>). On Kitsune's 21-device Mirai capture they removed the remaining false alarms (0.19 % → 0 %) with the same detection. They are not a universal default: on Edge-IIoTset recalibration costs detection (99.9 % → 85.9 %), and IoT-23 has too little normal traffic to calibrate on.</p></div>
+</section>
+
+<section>
+  <div class="eyebrow">New networks · Gotham and ACI-IoT-2023</div>
+  <h2>Mirai, DDoS and scanning on one network, and a 70-device home lab</h2>
+  <p><b>Gotham</b> is the only dataset with Mirai's full life cycle (scanning, brute force, infection, command traffic, floods) next to Merlin floods and network scans, all on one 87-device network. <b>ACI-IoT-2023</b> adds a real vulnerability scan, port and OS scans, ping sweeps and five kinds of floods on a 70-device smart-home lab; it was processed and tested on Kaggle, without downloading the data. Same benchmark as above, alarm lines recalibrated on each network's own normal traffic. "LSTM + VAE together" raises an alert when either model flags a window.</p>
+  <div class="chart" role="img" aria-label="Bar chart: Gotham and ACI-IoT-2023 detection and false alarms for VAE, LSTM, both together and the one-line rule">
+    <div class="legend"><span><i style="background:var(--bar-det)"></i>Attack windows caught</span><span><i style="background:var(--bar-fa)"></i>Normal windows flagged</span></div>
+    <div class="group"><h4>Gotham · 28 attacks · recalibrated</h4>
+      <div class="row"><span class="lbl">VAE</span><div class="track"><div class="fill det" style="width:96.5%"></div></div><span class="val">96.5 %</span></div>
+      <div class="row"><span class="lbl">LSTM</span><div class="track"><div class="fill det" style="width:28.4%"></div></div><span class="val">28.4 %</span></div>
+      <div class="row"><span class="lbl">LSTM + VAE together</span><div class="track"><div class="fill det" style="width:96.5%"></div></div><span class="val">96.5 %</span></div>
+      <div class="row"><span class="lbl">One-line rule</span><div class="track"><div class="fill det" style="width:9.6%"></div></div><span class="val">9.6 %</span></div>
+      <div class="row"><span class="lbl">VAE false alarms</span><div class="track"><div class="fill fa" style="width:0.19%"></div></div><span class="val">0.19 %</span></div>
+      <div class="row"><span class="lbl">Together false alarms</span><div class="track"><div class="fill fa" style="width:1.17%"></div></div><span class="val">1.17 %</span></div>
+    </div>
+    <div class="group"><h4>ACI-IoT-2023 · 12 attacks · recalibrated + per-device</h4>
+      <div class="row"><span class="lbl">VAE</span><div class="track"><div class="fill det" style="width:80.3%"></div></div><span class="val">80.3 %</span></div>
+      <div class="row"><span class="lbl">LSTM</span><div class="track"><div class="fill det" style="width:1.6%"></div></div><span class="val">1.6 %</span></div>
+      <div class="row"><span class="lbl">LSTM + VAE together</span><div class="track"><div class="fill det" style="width:81.1%"></div></div><span class="val">81.1 %</span></div>
+      <div class="row"><span class="lbl">One-line rule</span><div class="track"><div class="fill det" style="width:60.4%"></div></div><span class="val">60.4 %</span></div>
+      <div class="row"><span class="lbl">VAE false alarms</span><div class="track"><div class="fill fa" style="width:1.73%"></div></div><span class="val">1.73 %</span></div>
+      <div class="row"><span class="lbl">Together false alarms</span><div class="track"><div class="fill fa" style="width:3.23%"></div></div><span class="val">3.23 %</span></div>
+    </div>
+    <div class="axis"><span></span><div class="ticks"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 %</span></div><span></span></div>
+  </div>
+  <p class="note">95 % intervals for the VAE: Gotham 95.4–97.7 %, ACI 73.1–87.8 %. Inserted normal traffic (noise floor) is flagged 0 % in all three controls on both networks. One-line rule false alarms: Gotham 0 %, ACI 2.65 %.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Network · attack (recalibrated)</th><th class="num">VAE</th><th class="num">LSTM</th><th class="num">Together</th><th class="num">One-line rule</th></tr></thead>
+    <tbody>
+      <tr><td>Gotham · Mirai infection (scan, brute force, infection, C&amp;C)</td><td class="num"><span class="chip good">96–98 %</span></td><td class="num">30–62 %</td><td class="num">96–98 %</td><td class="num">0 %</td></tr>
+      <tr><td>Gotham · Mirai floods</td><td class="num"><span class="chip good">97.6 %</span></td><td class="num">63–66 %</td><td class="num">97.6 %</td><td class="num">29.3 %</td></tr>
+      <tr><td>Gotham · Merlin floods</td><td class="num"><span class="chip good">93–98 %</span></td><td class="num">0 %</td><td class="num">93–98 %</td><td class="num">0–29 %</td></tr>
+      <tr><td>Gotham · network scanning</td><td class="num"><span class="chip good">93–98 %</span></td><td class="num">0 %</td><td class="num">93–98 %</td><td class="num">0–29 %</td></tr>
+      <tr><td>ACI · scanning (incl. vulnerability scan)</td><td class="num"><span class="chip good">84–91 %</span></td><td class="num">2–5 %</td><td class="num">86–91 %</td><td class="num">73–86 %</td></tr>
+      <tr><td>ACI · DoS floods</td><td class="num"><span class="chip warn">51–88 %</span></td><td class="num">0 %</td><td class="num">51–88 %</td><td class="num">32–64 %</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><p>Both networks show the same thing as X-IIoTID: the VAE does the detecting and clearly beats the one-line rule, while the LSTM's own alarm is weak on varied networks because simple, repetitive attacks are easy to rebuild. Calibration matters: with the alarm lines saved in the models, Gotham reached an unrealistic 100 % at 5.9 % false alarms and ACI 91.8 % at 5.0 %; recalibrating on each network's own normal traffic gave the numbers above. Slowed-down attacks (100×) and windows where attack traffic is a minority are the hard cases.</p></div>
+</section>
+
+<section>
+  <div class="eyebrow">New network · NF-ToN-IoT-v3</div>
+  <h2>A busy 55-device network, and a second source for ransomware</h2>
+  <p>NF-ToN-IoT-v3 has by far the most normal traffic of any dataset (1.2 M clean normal connections to learn from, 26 devices with long histories), and its attacks happen while the network keeps working, so most attack windows already mix attack and normal connections. It gets its own pair of models (<span class="mono">lstm_ae_nftoniot_v1</span>, <span class="mono">vae_nftoniot_v1</span>). Benchmark: 28 attacks (scanning, DDoS and ransomware from their own days, three speeds) hidden in the normal traffic of 29 April, with the alarm lines saved in the models.</p>
+  <div class="chart" role="img" aria-label="Bar chart: NF-ToN-IoT detection and false alarms for VAE, LSTM, both together and the one-line rule, plus the VAE noise floor">
+    <div class="legend"><span><i style="background:var(--bar-det)"></i>Attack windows caught</span><span><i style="background:var(--bar-fa)"></i>Normal traffic flagged (false alarms or noise floor)</span></div>
+    <div class="group"><h4>NF-ToN-IoT-v3 · 28 attacks</h4>
+      <div class="row"><span class="lbl">VAE</span><div class="track"><div class="fill det" style="width:94.2%"></div></div><span class="val">94.2 %</span></div>
+      <div class="row"><span class="lbl">LSTM</span><div class="track"><div class="fill det" style="width:18.4%"></div></div><span class="val">18.4 %</span></div>
+      <div class="row"><span class="lbl">LSTM + VAE together</span><div class="track"><div class="fill det" style="width:94.2%"></div></div><span class="val">94.2 %</span></div>
+      <div class="row"><span class="lbl">One-line rule</span><div class="track"><div class="fill det" style="width:24.6%"></div></div><span class="val">24.6 %</span></div>
+      <div class="row"><span class="lbl">VAE false alarms</span><div class="track"><div class="fill fa" style="width:3.53%"></div></div><span class="val">3.5 %</span></div>
+      <div class="row"><span class="lbl">VAE noise floor</span><div class="track"><div class="fill fa" style="width:75%"></div></div><span class="val">20–75 %</span></div>
+    </div>
+    <div class="axis"><span></span><div class="ticks"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 %</span></div><span></span></div>
+  </div>
+  <p class="note">95 % interval for the VAE: 88.5–98.5 %. LSTM false alarms 1.45 %, one-line rule 0.44 %. Noise floor: the device's own normal traffic replayed is flagged 20–22 %, another device's 75 %.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Attack (VAE)</th><th class="num">Normal speed</th><th class="num">10× slower</th><th class="num">100× slower</th><th class="num">LSTM, normal speed</th></tr></thead>
+    <tbody>
+      <tr><td>Scanning, 23 Apr</td><td class="num"><span class="chip good">96.6 %</span></td><td class="num">94.7 %</td><td class="num">100 %</td><td class="num">2.3 %</td></tr>
+      <tr><td>Scanning, 24 Apr</td><td class="num"><span class="chip good">91.2 %</span></td><td class="num"><span class="chip warn">58.7 %</span></td><td class="num"><span class="chip warn">64.4 %</span></td><td class="num">5.3 %</td></tr>
+      <tr><td>DDoS, 25 and 26 Apr</td><td class="num"><span class="chip good">100 %</span></td><td class="num">100 %</td><td class="num">100 %</td><td class="num">1–5 %</td></tr>
+      <tr><td>Ransomware, 28 Apr</td><td class="num"><span class="chip good">93.1 %</span></td><td class="num">98.9 %</td><td class="num">n/a</td><td class="num">32.8 %</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><p>No single statistic gives the attacks away here: the best one-line rule catches 0 % on the dataset's own test split and 24.6 % in the benchmark, so the VAE's 94.2 % is real detection. The cost is false alarms: 3.5 % is above the 1 % target, and on a network this busy that is several hundred flagged windows an hour. As on Kitsune, the VAE also flags most of another device's normal traffic when it appears on a new host, so here an alert often means "this device is doing something new". Recalibrating per device did not help on this network: the normal traffic available for calibration is dominated by one device's very repetitive connections, which pulled the alarm lines down to almost zero, so the alarm lines saved in the models are used.</p></div>
+</section>
+
+<section>
+  <div class="eyebrow">Stage 3 · temporal GAT</div>
+  <h2>Which host is attacking, every minute</h2>
+  <p>Same benchmark, judged per host per 60 seconds. The comparison is the window alerts alone: a host counts as flagged if the LSTM or VAE raised any alert for it in that minute.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Network</th><th class="num">GAT finds attacker / target</th><th class="num">GAT false alarms</th><th class="num">Window alerts find</th><th class="num">Window alerts false alarms</th><th class="num">True attacker ranked first</th></tr></thead>
+    <tbody>
+      <tr><td>Edge-IIoTset</td><td class="num">84.0 %</td><td class="num">2.1 %</td><td class="num">29.2 %</td><td class="num">9.1 %</td><td class="num">95.3 %</td></tr>
+      <tr><td>Kitsune</td><td class="num">99.4 %</td><td class="num">0.5 %</td><td class="num">16.7 %</td><td class="num">24.8 %</td><td class="num">97.0 %</td></tr>
+      <tr><td>IoT-23</td><td class="num">99.0 %</td><td class="num">0.0 %</td><td class="num">19.2 %</td><td class="num">3.5 %</td><td class="num">100 %</td></tr>
+    </tbody>
+  </table></div>
+  <p>Hosts that only received extra normal traffic are flagged 0–6 % of the time (another device's traffic: Edge 12.5 %, Kitsune 41 %), so the GAT is not keying on how attacks were inserted.</p>
+  <h3>Attack types it never saw in training</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Network · attack</th><th class="num">Type in training</th><th class="num">Type removed from training</th></tr></thead>
+    <tbody>
+      <tr><td>Edge · scanning</td><td class="num">81.8 %</td><td class="num"><span class="chip bad">21.5 %</span></td></tr>
+      <tr><td>Edge · DDoS</td><td class="num">89.4 %</td><td class="num"><span class="chip warn">67.5 %</span></td></tr>
+      <tr><td>Edge · ransomware</td><td class="num">86.1 %</td><td class="num"><span class="chip good">82.6 %</span></td></tr>
+      <tr><td>Kitsune · scanning</td><td class="num">100 %</td><td class="num"><span class="chip warn">69.2 %</span></td></tr>
+      <tr><td>Kitsune · Mirai</td><td class="num">99.7 %</td><td class="num"><span class="chip bad">57.6 %</span></td></tr>
+      <tr><td>IoT-23 · Mirai</td><td class="num">98.9 %</td><td class="num"><span class="chip bad">4.1 %</span></td></tr>
+      <tr><td>IoT-23 · DDoS</td><td class="num">100 %</td><td class="num"><span class="chip bad">61.1 %</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><p>The GAT is a supervised attributor: excellent at locating known attack types, poor at unknown ones. Zero-day detection therefore has to come from the VAE, which learns only normal traffic. Interactive replay: <a href="https://claude.ai/artifact/GoUYcJYmgC2XXBTCibNQDg">Aegex GAT Monitor</a>.</p></div>
+</section>
+
+<section>
+  <div class="eyebrow">Reality check</div>
+  <h2>Why the datasets' own test splits are not quoted</h2>
+  <p>On the datasets' own test splits both models score close to 100 %. We checked what those test sets actually ask the models to do.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Check</th><th>Edge-IIoTset</th><th>Kitsune</th></tr></thead>
+    <tbody>
+      <tr><td>Test attack windows that are DDoS floods</td><td class="num">99.8 %</td><td class="num">45 %</td></tr>
+      <tr><td>Test attack windows that are 100 % attack traffic</td><td class="num">100 %</td><td class="num">92 %</td></tr>
+      <tr><td>Detection by a one-line rule on a single statistic (1 % false-alarm target)</td><td class="num">99.9 %</td><td class="num">55 %</td></tr>
+    </tbody>
+  </table></div>
+  <p>On Edge-IIoTset one number ("average packets per connection" in the window) separates the attacks almost perfectly, because its attack recordings contain no normal traffic. That is why the main result above uses the benchmark instead: there the same one-line rule falls to 32 %.</p>
+</section>
+
+<section>
+  <div class="eyebrow">Key finding</div>
+  <h2>A new network needs calibration, and the VAE keeps detection after it</h2>
+  <p class="note">Measured with the earlier models (lstm_ae_v7, vae_v3) on the dataset test splits; not yet repeated on the benchmark.</p>
+  <p>Kitsune's Mirai capture is effectively a different network from its other captures (22 devices, many protocols). With the shared alarm line, both models flag too much of its normal traffic. Setting the line from that network's own earliest normal traffic fixes it.</p>
+  <div class="pair">
+    <div class="card"><h3>LSTM autoencoder</h3>
+      <div class="ba"><span>False alarms</span><span class="from">42.6 %</span><span class="to">0 %</span></div>
+      <div class="ba"><span>Attacks caught</span><span class="from">100 %</span><span class="to">49.7 %</span></div>
+      <span class="chip bad">loses half the attacks</span></div>
+    <div class="card"><h3>VAE</h3>
+      <div class="ba"><span>False alarms</span><span class="from">16.9 %</span><span class="to">0.4 %</span></div>
+      <div class="ba"><span>Attacks caught</span><span class="from">100 %</span><span class="to">100 %</span></div>
+      <span class="chip good">keeps every attack</span></div>
+  </div>
+  <div class="callout"><p>For the honeypot this means: record a period of normal traffic first and calibrate on it (<span class="mono">score_traffic.py --calibrate</span>). On a Kitsune network held out of training entirely, calibration cut false alarms from 6.2 % to 0.1 % while still catching 99.9 % of the attacks.</p></div>
+</section>
+
+<section>
+  <div class="eyebrow">Zero-day</div>
+  <h2>Spotting an attack type the system was never told about</h2>
+  <p class="note">Measured with the earlier VAE (vae_v3) on the dataset test splits.</p>
+  <p>We hid one attack type from the VAE's list of known attacks and checked how often its windows were marked as a possible zero-day (anomalous and unlike every known type).</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Hidden attack type</th><th class="num">Kitsune</th><th class="num">Edge-IIoTset</th><th class="num">IoT-23</th></tr></thead>
+    <tbody>
+      <tr><td>DDoS</td><td class="num">100 %</td><td class="num">86 %</td><td class="num">18 %</td></tr>
+      <tr><td>Mirai</td><td class="num">79 %</td><td class="num">n/a</td><td class="num">0.06 %</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Even when not marked as zero-day, these windows were still flagged as anomalous 100 % of the time. The zero-day mark stays off when a new attack resembles a known one: Mirai's spreading looks like scanning, and IoT-23's floods come from the same bots as its Mirai traffic.</p>
+</section>
+
+<section>
+  <div class="eyebrow">How we got here</div>
+  <h2>Problems found and fixed</h2>
+  <p>Several early results were too good to be true. Each one was traced to a cause and fixed in the code, and the fix is now part of every run.</p>
+  <ol class="journey">
+    <li><b>IoT-23 labelled 8.25 M Mirai scans as normal</b><p>The same behaviour is labelled malicious in another IoT-23 capture. Relabelled by behaviour, keeping the original label for traceability. The in-capture baseline dropped from a memorised 1.000 to an honest 0.926.</p></li>
+    <li><b>Scaling made attacks look 100 % detectable</b><p>Very regular sensor traffic made tiny deviations look extreme. Edge-IIoTset DDoS detection fell from 100 % to 38 % after a small change to the training data. A minimum scale and soft limits fixed it: 100 % and stable.</p></li>
+    <li><b>Single connections could not show scanning or floods</b><p>Added device-behaviour features: connections per 10 s, new hosts and ports per minute, share of replies. IoT-23 DDoS detection went from 0.6 % to 95 %.</p></li>
+    <li><b>Infected devices were teaching the model what "normal" is</b><p>90 % of IoT-23's normal-labelled traffic came from the bots themselves. Those devices are now excluded from the normal reference. IoT-23 ROC-AUC went from 0.21 to 0.9998.</p></li>
+    <li><b>One large capture defined "normal" for a whole dataset</b><p>Kitsune's headline 1.7 % false alarms hid 22 to 44 % on its Mirai network. Training now samples every capture equally and every report lists false alarms per capture.</p></li>
+    <li><b>Dataset test splits were trivially easy</b><p>A one-line rule matched the models. Built the realistic benchmark: real attacks hidden in real normal traffic, test data only. This is now the only source of quoted numbers.</p></li>
+    <li><b>Averaging hid small attacks inside a window</b><p>A fast port scan on a busy sensor was caught 5 % of the time. Windows are now scored by their 8 most unusual connections, and the VAE also sees each feature's most extreme value. Chosen on validation scenarios only.</p></li>
+    <li><b>The VAE had a hair trigger</b><p>Inputs that are almost always zero in normal traffic let one telnet connection set off an alarm on its own. Each input's influence is now capped, so a window must be unusual in several ways at once.</p></li>
+    <li><b>Was the benchmark detecting its own insertion?</b><p>Added controls: plain normal traffic inserted the same way. They set a noise floor for every result and show the GAT is not keying on the insertion.</p></li>
+    <li><b>X-IIoTID's rounded timestamps made attacks look trivial</b><p>Timing alone caught 95.7 % of attack windows on its own test split. Running it through the benchmark instead showed the real picture: the rule drops to 74.5 %, the VAE stays at 90.7 %.</p></li>
+    <li><b>Two chatty devices caused nearly all X-IIoTID false alarms</b><p>Lowering one network-wide alarm line would have cost detection. Each device now gets its own line from its own normal traffic, never below the network's: false alarms went from 2.6 % to 1.1 % with no attacks lost.</p></li>
+    <li><b>One model for every network was tried and rejected</b><p>Adding X-IIoTID to the shared models made IoT-23 clearly worse (83.6 % → 60.3 %), so it was rolled back.</p></li>
+    <li><b>ACI-IoT-2023 wrote its dates day-first</b><p>"2023-01-11" means 1 November. The reader tries both orders and keeps the date inside the capture week; all 1.23 M rows were placed correctly, run on Kaggle without downloading the data.</p></li>
+    <li><b>Gotham's saved alarm line gave a fake 100 %</b><p>With the line stored in the model, 6 % of plain normal traffic was flagged too. Recalibrating on the network's own normal traffic brought it to 96.5 % caught, 0.19 % false alarms and a 0 % noise floor.</p></li>
+    <li><b>Recalibration can break on a one-sided calibration sample</b><p>On NF-ToN-IoT the normal traffic available for calibration came almost entirely from one device's repetitive connections; the recalibrated alarm lines dropped about 100-fold and flagged everything. That run was discarded and the saved alarm lines kept, so calibration data must cover the network's devices.</p></li>
+  </ol>
+</section>
+
+<section>
+  <div class="eyebrow">Limits</div>
+  <h2>What these numbers do not show yet</h2>
+  <ul class="plain">
+    <li><b>The benchmark is still built from lab recordings.</b> Most normal test periods last only 4–20 minutes, so "100× slower" attacks often had to run faster than that, and the honeypot's own traffic will be the real test.</li>
+    <li><b>Edge-IIoTset is easy.</b> Its sensors only send MQTT readings, so almost any attack stands out; its near-100 % reflects the data more than the model.</li>
+    <li><b>Kitsune's VAE flags any new behaviour.</b> Another device's normal traffic is flagged 92 % of the time, and its Mirai network needs calibration (37 % false alarms without it).</li>
+    <li><b>The GAT mostly does not generalise to unseen attack types</b> (4–69 % when a type is left out of training; ransomware is the exception at 83 %).</li>
+    <li><b>Ransomware still has few examples:</b> 971 connections in Edge-IIoTset (7 test windows) and 3,971 in NF-ToN-IoT-v3 (4 injected attacks). Two sources now agree (99.8 % and 93–99 %), but neither number is statistically strong.</li>
+    <li><b>NF-ToN-IoT-v3 has 3.5 % false alarms</b>, above the 1 % target, a 75 % noise floor for another device's traffic, and only 1.8 hours of normal test traffic. Its slowed-down scans from 24 April are caught 59–64 % of the time.</li>
+    <li><b>IoT-23 has almost no clean normal traffic.</b> Its false-alarm numbers are unreliable, a one-line rule beats the models there, and it may be replaced by a better dataset.</li>
+    <li><b>X-IIoTID rests on 12 injected attacks</b>, always placed on the busiest devices, never on the two chatty ones that got higher alarm lines. Its LSTM alone is not useful there, and its ransomware data is unusable.</li>
+    <li><b>Gotham's devices are emulated</b>, so their normal traffic is very regular and foreign traffic stands out more than on real hardware; its false-alarm figure rests on only 18 minutes of normal test traffic (513 windows). ACI's rests on 2.8 hours, and its floods come from a single attacker, not a botnet.</li>
+    <li><b>The LSTM's own alarm is weak on varied networks</b> (1.6 % on ACI, 4.8 % on X-IIoTID, 28 % on Gotham): it rebuilds simple, repetitive attacks too well. It is still needed as the stage that summarises each window for the VAE.</li>
+    <li><b>"Closest known attack" works within a dataset but transfers poorly across them;</b> Kitsune's SSDP flood does not resemble the other datasets' floods.</li>
+    <li><b>Not yet built:</b> the attack-analysis stage, the RAG-LLM Blue Team report, and live scoring through the GAT. Their inputs are already produced by this pipeline.</li>
+  </ul>
+</section>
+
+<footer>
+  Models: LSTM autoencoder <span class="mono">lstm_ae_v8</span>, VAE <span class="mono">vae_v5</span>, temporal GAT <span class="mono">gat_v2</span>, trained 20 Nov 2026 on an RTX 4060; X-IIoTID: <span class="mono">lstm_ae_xiiotid_v1</span> + <span class="mono">vae_xiiotid_v1</span>, trained 24 Nov 2026; Gotham: <span class="mono">lstm_ae_gotham_v1</span> + <span class="mono">vae_gotham_v1</span>; ACI-IoT-2023: <span class="mono">lstm_ae_aci_kaggle_v1</span> + <span class="mono">vae_aci_kaggle_v1</span> (trained on Kaggle); NF-ToN-IoT-v3: <span class="mono">lstm_ae_nftoniot_v1</span> + <span class="mono">vae_nftoniot_v1</span>, 25 Nov 2026. Alarm lines are set from validation data only; test data was never used to tune anything. Full numbers: <span class="mono">model_results\benchmark\</span>, <span class="mono">model_results\gat\</span> and <span class="mono">model_results\shortcut_checks\</span> in the project folder.
+</footer>
+
+</main>
