@@ -3,20 +3,15 @@
 Copy these out of your local run. Every file is small — the largest is a few
 hundred KB — so they belong in git.
 
+The anomaly-detection layer (LSTM autoencoder → VAE → temporal GAT) keeps its own
+trained bundles in `../lstm-vae-gat/models/`.
+
 From `PoC_results/`:
 
-    autoencoder.keras
-    scaler.pkl
-    summary.json
     type_classifier.keras
     type_scaler.pkl
     type_classes.json
     type_report.csv
-    comparison.csv
-    per_attack_type.csv
-    fig1_training.png
-    fig2_separation.png
-    fig3_per_attack.png
 
 From `EGraphSAGE_results/`:
 

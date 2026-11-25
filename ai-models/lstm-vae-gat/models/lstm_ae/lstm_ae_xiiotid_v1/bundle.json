@@ -1,0 +1,515 @@
+{
+ "bundle_format": 1,
+ "model_type": "lstm_autoencoder",
+ "run": "lstm_ae_xiiotid_v1",
+ "created": "2026-11-24T16:43:27",
+ "torch": "2.14.1+cu126",
+ "train_datasets": [
+  "xiiotid"
+ ],
+ "init": {
+  "n_features": 50,
+  "hidden": 64,
+  "latent": 16,
+  "layers": 1,
+  "dropout": 0.0
+ },
+ "window": 32,
+ "stride": 16,
+ "snapshot_seconds": 60.0,
+ "hparams": {
+  "hidden": 64,
+  "latent": 16,
+  "layers": 1,
+  "dropout": 0.0,
+  "lr": 0.001,
+  "batch": 256,
+  "per_dataset": 20000,
+  "seed": 0
+ },
+ "score_agg": "topk:8",
+ "threshold_mode": "per_dataset",
+ "per_dataset_threshold_source": {
+  "xiiotid": "val clean normal (2066 windows)"
+ },
+ "threshold": 1.862059235572815,
+ "threshold_rule": "window-weighted quantile 0.99 of val clean-benign window scores (topk:8 of per-flow errors)",
+ "per_dataset_thresholds": {
+  "xiiotid": 1.862059235572815
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "train_loss": 0.5445319108420998,
+   "val_loss": 0.3492690930963428,
+   "seconds": 1.3
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.26235159414607767,
+   "val_loss": 0.28095890408325924,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.22786898605196634,
+   "val_loss": 0.2693822510582859,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.21890017919677324,
+   "val_loss": 0.26379441018356053,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 5,
+   "train_loss": 0.21335509718313114,
+   "val_loss": 0.2578404331669962,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 6,
+   "train_loss": 0.20785839932899539,
+   "val_loss": 0.2538517792416161,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 7,
+   "train_loss": 0.20369700799635593,
+   "val_loss": 0.2532971416616277,
+   "seconds": 0.6
+  },
+  {
+   "epoch": 8,
+   "train_loss": 0.20114123349683116,
+   "val_loss": 0.2473468855923828,
+   "seconds": 0.6
+  },
+  {
+   "epoch": 9,
+   "train_loss": 0.19754307577691488,
+   "val_loss": 0.2447206970826711,
+   "seconds": 0.7
+  },
+  {
+   "epoch": 10,
+   "train_loss": 0.19487835251866328,
+   "val_loss": 0.24308545868965506,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 11,
+   "train_loss": 0.19296703858148107,
+   "val_loss": 0.24431754250765939,
+   "seconds": 0.6
+  },
+  {
+   "epoch": 12,
+   "train_loss": 0.19070455427836286,
+   "val_loss": 0.23859171563419554,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 13,
+   "train_loss": 0.18812298733134603,
+   "val_loss": 0.23497676375477114,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 14,
+   "train_loss": 0.1867947968349787,
+   "val_loss": 0.23506613305250557,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 15,
+   "train_loss": 0.18469354264335605,
+   "val_loss": 0.2329333575684956,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 16,
+   "train_loss": 0.18374952770377087,
+   "val_loss": 0.23218684995051975,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 17,
+   "train_loss": 0.18263862909696993,
+   "val_loss": 0.23250965168395343,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 18,
+   "train_loss": 0.18179480380705312,
+   "val_loss": 0.2302608221405549,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 19,
+   "train_loss": 0.18109742476722895,
+   "val_loss": 0.22883803609489045,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 20,
+   "train_loss": 0.18049639832877298,
+   "val_loss": 0.22941164196908856,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 21,
+   "train_loss": 0.1792563168568016,
+   "val_loss": 0.22804905380895912,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 22,
+   "train_loss": 0.178351284954635,
+   "val_loss": 0.22650893893945306,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 23,
+   "train_loss": 0.1771503378641113,
+   "val_loss": 0.22880303651402775,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 24,
+   "train_loss": 0.17787624428806342,
+   "val_loss": 0.22695212088622665,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 25,
+   "train_loss": 0.17684708483619718,
+   "val_loss": 0.22525158669091383,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 26,
+   "train_loss": 0.17717036365840352,
+   "val_loss": 0.22395505754223918,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 27,
+   "train_loss": 0.1745515890479597,
+   "val_loss": 0.2216671944558909,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 28,
+   "train_loss": 0.17462779212659946,
+   "val_loss": 0.22272281399982127,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 29,
+   "train_loss": 0.17376888304397173,
+   "val_loss": 0.22199268654380572,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 30,
+   "train_loss": 0.17384420820446903,
+   "val_loss": 0.2217776477695258,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 31,
+   "train_loss": 0.17316129065318078,
+   "val_loss": 0.22133874845224913,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 32,
+   "train_loss": 0.17263381151039564,
+   "val_loss": 0.22025518792842327,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 33,
+   "train_loss": 0.1723257889581281,
+   "val_loss": 0.22065183440990122,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 34,
+   "train_loss": 0.1726632361990273,
+   "val_loss": 0.22199036280089487,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 35,
+   "train_loss": 0.17202168258943998,
+   "val_loss": 0.22082452221375973,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 36,
+   "train_loss": 0.17164936404998798,
+   "val_loss": 0.21866905327574399,
+   "seconds": 0.5
+  },
+  {
+   "epoch": 37,
+   "train_loss": 0.17099475745884343,
+   "val_loss": 0.21799903571917176,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 38,
+   "train_loss": 0.17072085545393434,
+   "val_loss": 0.22283553692098845,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 39,
+   "train_loss": 0.17054227846433723,
+   "val_loss": 0.2185739051949121,
+   "seconds": 0.4
+  },
+  {
+   "epoch": 40,
+   "train_loss": 0.16976244481157565,
+   "val_loss": 0.21871842664208024,
+   "seconds": 0.4
+  }
+ ],
+ "pipeline": {
+  "feature_order": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s",
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "continuous": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s"
+  ],
+  "binary": [
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "tcp_udp_icmp_timeouts": {
+   "tcp": 300.0,
+   "udp": 60.0,
+   "icmp": 60.0,
+   "arp": 60.0,
+   "other": 60.0
+  },
+  "active_timeout": 120.0,
+  "service_ports": {
+   "dns": [
+    53
+   ],
+   "http": [
+    80,
+    8000,
+    8008,
+    8080,
+    8081
+   ],
+   "https": [
+    443,
+    8443
+   ],
+   "telnet": [
+    23,
+    2323
+   ],
+   "ssh": [
+    22
+   ],
+   "smb_rpc": [
+    135,
+    137,
+    138,
+    139,
+    445
+   ],
+   "mqtt": [
+    1883,
+    8883
+   ],
+   "modbus": [
+    502
+   ],
+   "ssdp_mdns": [
+    1900,
+    5353
+   ],
+   "ntp": [
+    123
+   ],
+   "ftp": [
+    20,
+    21
+   ],
+   "smtp": [
+    25,
+    465,
+    587
+   ],
+   "rdp": [
+    3389
+   ],
+   "metasploit": [
+    4444
+   ]
+  },
+  "min_device_flows": 3,
+  "scaler_min_scale": 0.1,
+  "scaler_tail_start": 3.0,
+  "device_context": {
+   "enabled": true,
+   "new_peer_gap": 300.0,
+   "rate_window": "10s",
+   "context_window": "60s"
+  }
+ },
+ "scalers": {
+  "xiiotid": {
+   "method": "robust (x-median)/max(IQR, min_scale), log soft tails beyond tail_start, clipped",
+   "clip": 10.0,
+   "min_scale": 0.1,
+   "tail_start": 3.0,
+   "fit_on": "train split, benign flows only",
+   "center": {
+    "log_duration": 0.00019698060350492597,
+    "log_fwd_pkts": 1.0986123085021973,
+    "log_bwd_pkts": 0.6931471824645996,
+    "log_fwd_bytes": 4.875197410583496,
+    "log_bwd_bytes": 4.18965482711792,
+    "fwd_mean_pkt": 4.18965482711792,
+    "bwd_mean_pkt": 4.18965482711792,
+    "log_pkt_rate": 7.423353672027588,
+    "log_byte_rate": 11.6286039352417,
+    "fwd_byte_share": 0.5,
+    "fwd_pkt_share": 0.5,
+    "log_iat_device": 0.6931471824645996,
+    "log_iat_pair": 0.6931471824645996,
+    "log_dev_flows_10s": 1.6094379425048828,
+    "log_dev_new_peers_60s": 0.0,
+    "log_dev_new_ports_60s": 0.0,
+    "dev_reply_share_60s": 1.0
+   },
+   "scale": {
+    "log_duration": 0.9924514930680743,
+    "log_fwd_pkts": 1.2527629137039185,
+    "log_bwd_pkts": 1.0986123085021973,
+    "log_fwd_bytes": 2.5473122596740723,
+    "log_bwd_bytes": 2.1544275283813477,
+    "fwd_mean_pkt": 0.27625322341918945,
+    "bwd_mean_pkt": 0.5525655746459961,
+    "log_pkt_rate": 3.5201172828674316,
+    "log_byte_rate": 2.310330390930176,
+    "fwd_byte_share": 0.19061166048049927,
+    "fwd_pkt_share": 0.11538463830947876,
+    "log_iat_device": 1.945910096168518,
+    "log_iat_pair": 2.397895336151123,
+    "log_dev_flows_10s": 1.3862943649291992,
+    "log_dev_new_peers_60s": 0.1,
+    "log_dev_new_ports_60s": 0.1,
+    "dev_reply_share_60s": 0.25
+   },
+   "fit_rows": 168729
+  }
+ },
+ "scaler_note": "inputs were scaled per dataset on its own benign traffic; for new traffic calibrate on that network's benign traffic (score_traffic.py --calibrate)"
+}

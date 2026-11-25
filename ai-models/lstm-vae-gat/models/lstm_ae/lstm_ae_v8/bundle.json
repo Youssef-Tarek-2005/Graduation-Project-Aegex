@@ -1,0 +1,583 @@
+{
+ "bundle_format": 1,
+ "model_type": "lstm_autoencoder",
+ "run": "lstm_ae_v8",
+ "created": "2026-11-20T14:41:44",
+ "torch": "2.14.1+cu126",
+ "train_datasets": [
+  "kitsune",
+  "edge",
+  "iot23"
+ ],
+ "init": {
+  "n_features": 50,
+  "hidden": 64,
+  "latent": 16,
+  "layers": 1,
+  "dropout": 0.0
+ },
+ "window": 32,
+ "stride": 16,
+ "snapshot_seconds": 60.0,
+ "hparams": {
+  "hidden": 64,
+  "latent": 16,
+  "layers": 1,
+  "dropout": 0.0,
+  "lr": 0.001,
+  "batch": 256,
+  "per_dataset": 20000,
+  "seed": 0
+ },
+ "score_agg": "topk:8",
+ "threshold_mode": "per_dataset",
+ "per_dataset_threshold_source": {
+  "kitsune": "val clean normal (6716 windows)",
+  "edge": "val clean normal (6291 windows)",
+  "iot23": "LOW CONFIDENCE: train+val clean normal (86 windows)"
+ },
+ "threshold": 1.3811514377593994,
+ "threshold_rule": "window-weighted quantile 0.99 of val clean-benign window scores (topk:8 of per-flow errors)",
+ "per_dataset_thresholds": {
+  "kitsune": 1.4650124311447144,
+  "edge": 1.2538765668869019,
+  "iot23": 0.8181851506233215
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "train_loss": 0.2058978696643848,
+   "val_loss": 0.5542643666267395,
+   "seconds": 2.3
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.09372908112889802,
+   "val_loss": 0.43815678358078003,
+   "seconds": 2.0
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.08158625336164058,
+   "val_loss": 0.38109561800956726,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.07654575885758094,
+   "val_loss": 0.3596591353416443,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 5,
+   "train_loss": 0.07248183896898783,
+   "val_loss": 0.3231845200061798,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 6,
+   "train_loss": 0.0712482715015319,
+   "val_loss": 0.30533725023269653,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 7,
+   "train_loss": 0.06998060475869419,
+   "val_loss": 0.2938726246356964,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 8,
+   "train_loss": 0.06909696895330594,
+   "val_loss": 0.2826968729496002,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 9,
+   "train_loss": 0.068796239077914,
+   "val_loss": 0.275139182806015,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 10,
+   "train_loss": 0.06801490457186574,
+   "val_loss": 0.27544787526130676,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 11,
+   "train_loss": 0.06744563929667455,
+   "val_loss": 0.2680477499961853,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 12,
+   "train_loss": 0.0671104845468281,
+   "val_loss": 0.279208779335022,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 13,
+   "train_loss": 0.06669510390387524,
+   "val_loss": 0.26199689507484436,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 14,
+   "train_loss": 0.06682871606144045,
+   "val_loss": 0.26226258277893066,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 15,
+   "train_loss": 0.06613147240464874,
+   "val_loss": 0.26550978422164917,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 16,
+   "train_loss": 0.06615853217977084,
+   "val_loss": 0.2638569474220276,
+   "seconds": 1.9
+  },
+  {
+   "epoch": 17,
+   "train_loss": 0.06630527046816305,
+   "val_loss": 0.2500530183315277,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 18,
+   "train_loss": 0.06579370779390702,
+   "val_loss": 0.2524472773075104,
+   "seconds": 1.9
+  },
+  {
+   "epoch": 19,
+   "train_loss": 0.06565898927606285,
+   "val_loss": 0.24978220462799072,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 20,
+   "train_loss": 0.0648579582421767,
+   "val_loss": 0.25564679503440857,
+   "seconds": 1.8
+  },
+  {
+   "epoch": 21,
+   "train_loss": 0.06444824735459923,
+   "val_loss": 0.24901069700717926,
+   "seconds": 1.7
+  },
+  {
+   "epoch": 22,
+   "train_loss": 0.06431692080076422,
+   "val_loss": 0.24430133402347565,
+   "seconds": 1.7
+  },
+  {
+   "epoch": 23,
+   "train_loss": 0.06454986911659315,
+   "val_loss": 0.24808187782764435,
+   "seconds": 1.5
+  },
+  {
+   "epoch": 24,
+   "train_loss": 0.06399687103669091,
+   "val_loss": 0.24540796875953674,
+   "seconds": 1.6
+  },
+  {
+   "epoch": 25,
+   "train_loss": 0.06410027375701885,
+   "val_loss": 0.248399019241333,
+   "seconds": 1.5
+  },
+  {
+   "epoch": 26,
+   "train_loss": 0.0633132908605199,
+   "val_loss": 0.24292537569999695,
+   "seconds": 1.6
+  },
+  {
+   "epoch": 27,
+   "train_loss": 0.06334530174054004,
+   "val_loss": 0.24683605134487152,
+   "seconds": 1.5
+  },
+  {
+   "epoch": 28,
+   "train_loss": 0.06325902708476384,
+   "val_loss": 0.2582673728466034,
+   "seconds": 1.6
+  },
+  {
+   "epoch": 29,
+   "train_loss": 0.06360178626274346,
+   "val_loss": 0.24919278919696808,
+   "seconds": 1.5
+  },
+  {
+   "epoch": 30,
+   "train_loss": 0.06282390013064962,
+   "val_loss": 0.2412346452474594,
+   "seconds": 1.5
+  },
+  {
+   "epoch": 31,
+   "train_loss": 0.06245060304105609,
+   "val_loss": 0.24572622776031494,
+   "seconds": 1.5
+  },
+  {
+   "epoch": 32,
+   "train_loss": 0.062323273867606666,
+   "val_loss": 0.25171834230422974,
+   "seconds": 1.5
+  },
+  {
+   "epoch": 33,
+   "train_loss": 0.06220277983775954,
+   "val_loss": 0.24966226518154144,
+   "seconds": 1.5
+  },
+  {
+   "epoch": 34,
+   "train_loss": 0.06236069392305444,
+   "val_loss": 0.2598441541194916,
+   "seconds": 1.5
+  },
+  {
+   "epoch": 35,
+   "train_loss": 0.06255261977938005,
+   "val_loss": 0.25547149777412415,
+   "seconds": 1.5
+  }
+ ],
+ "pipeline": {
+  "feature_order": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s",
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "continuous": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s"
+  ],
+  "binary": [
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "tcp_udp_icmp_timeouts": {
+   "tcp": 300.0,
+   "udp": 60.0,
+   "icmp": 60.0,
+   "arp": 60.0,
+   "other": 60.0
+  },
+  "active_timeout": 120.0,
+  "service_ports": {
+   "dns": [
+    53
+   ],
+   "http": [
+    80,
+    8000,
+    8008,
+    8080,
+    8081
+   ],
+   "https": [
+    443,
+    8443
+   ],
+   "telnet": [
+    23,
+    2323
+   ],
+   "ssh": [
+    22
+   ],
+   "smb_rpc": [
+    135,
+    137,
+    138,
+    139,
+    445
+   ],
+   "mqtt": [
+    1883,
+    8883
+   ],
+   "modbus": [
+    502
+   ],
+   "ssdp_mdns": [
+    1900,
+    5353
+   ],
+   "ntp": [
+    123
+   ],
+   "ftp": [
+    20,
+    21
+   ],
+   "smtp": [
+    25,
+    465,
+    587
+   ],
+   "rdp": [
+    3389
+   ],
+   "metasploit": [
+    4444
+   ]
+  },
+  "min_device_flows": 3,
+  "scaler_min_scale": 0.1,
+  "scaler_tail_start": 3.0,
+  "device_context": {
+   "enabled": true,
+   "new_peer_gap": 300.0,
+   "rate_window": "10s",
+   "context_window": "60s"
+  }
+ },
+ "scalers": {
+  "kitsune": {
+   "method": "robust (x-median)/max(IQR, min_scale), log soft tails beyond tail_start, clipped",
+   "clip": 10.0,
+   "min_scale": 0.1,
+   "tail_start": 3.0,
+   "fit_on": "train split, benign flows only",
+   "center": {
+    "log_duration": 0.0,
+    "log_fwd_pkts": 0.6931471824645996,
+    "log_bwd_pkts": 0.0,
+    "log_fwd_bytes": 4.442651271820068,
+    "log_bwd_bytes": 0.0,
+    "fwd_mean_pkt": 4.442651271820068,
+    "bwd_mean_pkt": 0.0,
+    "log_pkt_rate": 6.908754825592041,
+    "log_byte_rate": 11.338583946228027,
+    "fwd_byte_share": 1.0,
+    "fwd_pkt_share": 1.0,
+    "log_iat_device": 0.00022003613412380219,
+    "log_iat_pair": 0.00022098960471339524,
+    "log_dev_flows_10s": 6.782192230224609,
+    "log_dev_new_peers_60s": 0.0,
+    "log_dev_new_ports_60s": 8.061487197875977,
+    "dev_reply_share_60s": 0.0
+   },
+   "scale": {
+    "log_duration": 0.1,
+    "log_fwd_pkts": 0.40546512603759766,
+    "log_bwd_pkts": 0.1,
+    "log_fwd_bytes": 0.6872472763061523,
+    "log_bwd_bytes": 0.1,
+    "fwd_mean_pkt": 0.1,
+    "bwd_mean_pkt": 0.1,
+    "log_pkt_rate": 0.34101390838623047,
+    "log_byte_rate": 0.3464021682739258,
+    "fwd_byte_share": 0.1,
+    "fwd_pkt_share": 0.1,
+    "log_iat_device": 0.1,
+    "log_iat_pair": 0.1,
+    "log_dev_flows_10s": 0.8173692226409912,
+    "log_dev_new_peers_60s": 0.1,
+    "log_dev_new_ports_60s": 0.48578500747680664,
+    "dev_reply_share_60s": 0.1
+   },
+   "fit_rows": 321272
+  },
+  "edge": {
+   "method": "robust (x-median)/max(IQR, min_scale), log soft tails beyond tail_start, clipped",
+   "clip": 10.0,
+   "min_scale": 0.1,
+   "tail_start": 3.0,
+   "fit_on": "train split, benign flows only",
+   "center": {
+    "log_duration": 0.03487270697951317,
+    "log_fwd_pkts": 2.1972246170043945,
+    "log_bwd_pkts": 2.1972246170043945,
+    "log_fwd_bytes": 5.945420742034912,
+    "log_bwd_bytes": 5.820083141326904,
+    "fwd_mean_pkt": 3.8712010383605957,
+    "bwd_mean_pkt": 3.761200189590454,
+    "log_pkt_rate": 6.109178066253662,
+    "log_byte_rate": 9.905086517333984,
+    "fwd_byte_share": 0.5365517139434814,
+    "fwd_pkt_share": 0.5,
+    "log_iat_device": 0.02196403592824936,
+    "log_iat_pair": 0.021966835483908653,
+    "log_dev_flows_10s": 6.100318908691406,
+    "log_dev_new_peers_60s": 0.0,
+    "log_dev_new_ports_60s": 0.0,
+    "dev_reply_share_60s": 0.9996622800827026
+   },
+   "scale": {
+    "log_duration": 0.1,
+    "log_fwd_pkts": 0.10536050796508789,
+    "log_bwd_pkts": 0.2231435775756836,
+    "log_fwd_bytes": 0.10161018371582031,
+    "log_bwd_bytes": 0.23851299285888672,
+    "fwd_mean_pkt": 0.1,
+    "bwd_mean_pkt": 0.1,
+    "log_pkt_rate": 0.2179417610168457,
+    "log_byte_rate": 0.21056365966796875,
+    "fwd_byte_share": 0.1,
+    "fwd_pkt_share": 0.1,
+    "log_iat_device": 0.1,
+    "log_iat_pair": 0.1,
+    "log_dev_flows_10s": 1.5853886604309082,
+    "log_dev_new_peers_60s": 0.1,
+    "log_dev_new_ports_60s": 0.1,
+    "dev_reply_share_60s": 0.1
+   },
+   "fit_rows": 472629
+  },
+  "iot23": {
+   "method": "robust (x-median)/max(IQR, min_scale), log soft tails beyond tail_start, clipped",
+   "clip": 10.0,
+   "min_scale": 0.1,
+   "tail_start": 3.0,
+   "fit_on": "train split, benign flows only",
+   "center": {
+    "log_duration": 0.0869397297501564,
+    "log_fwd_pkts": 1.0986123085021973,
+    "log_bwd_pkts": 0.6931471824645996,
+    "log_fwd_bytes": 5.153291702270508,
+    "log_bwd_bytes": 4.510859489440918,
+    "fwd_mean_pkt": 4.343805313110352,
+    "bwd_mean_pkt": 4.343805313110352,
+    "log_pkt_rate": 3.761727809906006,
+    "log_byte_rate": 8.90372896194458,
+    "fwd_byte_share": 0.5401808023452759,
+    "fwd_pkt_share": 0.5683229863643646,
+    "log_iat_device": 0.7096075415611267,
+    "log_iat_pair": 5.268056392669678,
+    "log_dev_flows_10s": 1.0986123085021973,
+    "log_dev_new_peers_60s": 1.0986123085021973,
+    "log_dev_new_ports_60s": 0.6931471824645996,
+    "dev_reply_share_60s": 0.9114378988742828
+   },
+   "scale": {
+    "log_duration": 1.5723867823835462,
+    "log_fwd_pkts": 1.2527629137039185,
+    "log_bwd_pkts": 1.0986123085021973,
+    "log_fwd_bytes": 2.489693522453308,
+    "log_bwd_bytes": 5.7491534948349,
+    "fwd_mean_pkt": 0.6771469116210938,
+    "bwd_mean_pkt": 4.9108147621154785,
+    "log_pkt_rate": 5.135221242904663,
+    "log_byte_rate": 4.273002862930298,
+    "fwd_byte_share": 0.5999999940395355,
+    "fwd_pkt_share": 0.5,
+    "log_iat_device": 4.81931933388114,
+    "log_iat_pair": 4.624987900257111,
+    "log_dev_flows_10s": 0.9162907600402832,
+    "log_dev_new_peers_60s": 0.6931471824645996,
+    "log_dev_new_ports_60s": 0.40546512603759766,
+    "dev_reply_share_60s": 0.3529411554336548
+   },
+   "fit_rows": 1380
+  }
+ },
+ "scaler_note": "inputs were scaled per dataset on its own benign traffic; for new traffic calibrate on that network's benign traffic (score_traffic.py --calibrate)"
+}

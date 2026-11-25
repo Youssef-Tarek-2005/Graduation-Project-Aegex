@@ -1,4 +1,0 @@
-Method,Detection %,False positive %,Scored rows
-Autoencoder,77.89,4.96,603558
-Isolation Forest,0.91,4.98,50000
-One-Class SVM,54.18,5.28,50000

@@ -1,12 +1,12 @@
 # AI Models — Detection & Threat Intelligence
 
-The machine-learning half of Aegex: four models that take raw network flows
-from the honeypot and turn them into a written incident report backed by
+The machine-learning half of Aegex: models that take raw network traffic
+from the honeypot and turn it into a written incident report backed by
 MITRE ATT&CK and CISA sources.
 
 ```
-flow ──▶ 1. autoencoder ──▶ 2. E-GraphSAGE ──▶ 3. type classifier ──▶ 4. RAG ──▶ report
-         is it anomalous?    is it an attack?    which attack?          grounded answer
+traffic ──▶ 1. LSTM-AE → VAE → temporal GAT ──▶ 2. E-GraphSAGE ──▶ 3. type classifier ──▶ 4. RAG ──▶ report
+            is it anomalous? which device?        is it an attack?    which attack?          grounded answer
 ```
 
 All four run locally. No cloud API, no API key, and no honeypot data leaves
@@ -31,29 +31,31 @@ and point the scripts at it.
 
 ---
 
-## Layer 1 — Autoencoder (anomaly detection)
+## Layer 1 — LSTM autoencoder → VAE → temporal GAT (anomaly detection)
 
-Trained on **normal traffic only**, so it has never seen an attack during
-training. It learns to rebuild normal flows and fails to rebuild anything
-unusual; the reconstruction error is the anomaly score. The threshold is the
-95th percentile of the error on training traffic.
+Lives in **[`lstm-vae-gat/`](lstm-vae-gat/README.md)** and replaces the earlier
+per-flow Keras autoencoder. It works on **sequences**, not single flows:
+each device's traffic is cut into windows of 32 flows, and devices form a
+communication graph every 60 s.
 
-That is why it can flag attacks it was never shown.
+- **LSTM autoencoder**: trained on normal traffic only; rebuilds each
+  device's flow sequence and flags what it cannot rebuild.
+- **VAE**: scores every window again from the LSTM's summary plus window
+  statistics. It adds a calibrated confidence, the closest known attack class
+  and a **zero-day flag** (far from normal traffic *and* from every known attack).
+- **Temporal GAT**: points at *which device* is attacking or attacked, per minute.
 
-**Results on all 2,219,201 flows**
+Data: 7 public IoT datasets, all read through one shared feature extractor
+(Kitsune, Edge-IIoTset, IoT-23, X-IIoTID, Gotham 2025, ACI-IoT-2023,
+NF-ToN-IoT-v3). Each dataset is one plug-in file, so it is easy to add or remove one.
+The same code scores a live **pcap** from the honeypot.
 
-| Model | Detection | False positives |
-|---|---|---|
-| **Autoencoder** | **77.89%** | 4.96% |
-| One-Class SVM | 54.18% | 5.28% |
-| Isolation Forest | 0.91% | 4.98% |
+**Realistic benchmark.** Real attack traffic is mixed into real normal traffic
+of each network, using test data only. Control injections give a noise floor. VAE detection:
+80–100 %, false alarms 0.2–10 % depending on the network. Full tables and the
+noise floor: `lstm-vae-gat/results_summary/`.
 
-Isolation Forest's 0.91% is not a bug. A controlled experiment showed it
-collapses on tightly clustered repetitive traffic — the shape floods and scans
-produce — reaching 0% on a tight cluster and 25.6% on diverse out-of-range
-attacks.
-
-→ `notebooks/02_autoencoder_full_dataset.ipynb`
+→ `lstm-vae-gat/README.md`, `lstm-vae-gat/HOW_TO_USE.md`
 
 ---
 
@@ -131,7 +133,10 @@ the evidence is too weak rather than inventing an answer.
 ## The bridge
 
 `scripts/detect_and_report.py` runs all four layers in one command and writes
-`incident_report.md`. Nothing in that report comes from the dataset's own
+`incident_report.md`. **Note:** its layer 1 still loads the earlier per-flow
+autoencoder from a local `PoC_results/` folder. Wiring it to
+`lstm-vae-gat/scripts/models/score_traffic.py` (window and device alerts) is
+still to do. Nothing in that report comes from the dataset's own
 labels — the attack type is predicted.
 
 ```bash
@@ -163,9 +168,8 @@ The script refuses to run rather than produce meaningless output.
 
 ```
 ai-models/
+├── lstm-vae-gat/                           layer 1: LSTM-AE → VAE → temporal GAT (own README)
 ├── notebooks/
-│   ├── 01_autoencoder_sample_colab.ipynb   first pass, sampled, Colab
-│   ├── 02_autoencoder_full_dataset.ipynb   full 2.2M flows, local
 │   ├── 03_gat_first_attempt.ipynb          GAT, superseded by E-GraphSAGE
 │   └── 04_egraphsage.ipynb                 graph layer + zero-day + sweep
 ├── scripts/
@@ -182,9 +186,6 @@ Small artifacts, committed so the pipeline runs without retraining.
 
 | File | What it is |
 |---|---|
-| `autoencoder.keras` | layer 1 network |
-| `scaler.pkl` | its MinMax scaler — **required**, carries the column order |
-| `summary.json` | the detection threshold |
 | `egraphsage.pt` | layer 2 weights |
 | `egs_scaler.pkl`, `egs_features.json` | its StandardScaler and feature order |
 | `type_classifier.keras` | layer 3 network |
@@ -221,7 +222,8 @@ errors — retrieval just quietly returns the wrong documents.
 
 | | |
 |---|---|
-| Layers 1–4 and the bridge between them | done |
+| Layers 1–4 | done |
+| Bridge using the new layer 1 (LSTM-AE / VAE / GAT) | to do |
 | ESP32 honeypot | implementation phase |
 | Live traffic capture and feature extraction | implementation phase |
 | OWASP IoT Top 10 in the knowledge base | planned |

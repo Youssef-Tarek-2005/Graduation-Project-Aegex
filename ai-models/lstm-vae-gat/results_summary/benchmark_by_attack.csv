@@ -1,0 +1,1329 @@
+benchmark_run,dataset,attack_capture,attack_class,slowdown,method,detection,quoted
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x1,LSTM-AE,0.0,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x10,LSTM-AE,0.0,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x100,LSTM-AE,0.0,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x1,LSTM-AE,0.0238,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x10,LSTM-AE,0.0238,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x100,LSTM-AE,0.0227,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x1,VAE,0.9524,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x10,VAE,0.9302,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x100,VAE,0.8302,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x1,VAE,0.9524,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x10,VAE,0.9524,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x100,VAE,0.9091,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x1,LSTM or VAE,0.9524,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x10,LSTM or VAE,0.9302,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x100,LSTM or VAE,0.8302,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x1,LSTM or VAE,0.9524,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x10,LSTM or VAE,0.9524,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x100,LSTM or VAE,0.9091,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x1,one-line rule,0.6429,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x10,one-line rule,0.3488,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,ddos,x100,one-line rule,0.3208,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x1,one-line rule,0.8571,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x10,one-line rule,0.7619,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1,aci,all,scanning,x100,one-line rule,0.7273,no
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x1,LSTM-AE,0.0,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x10,LSTM-AE,0.0,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x100,LSTM-AE,0.0,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x1,LSTM-AE,0.0238,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x10,LSTM-AE,0.0238,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x100,LSTM-AE,0.0455,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x1,VAE,0.881,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x10,VAE,0.8605,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x100,VAE,0.5094,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x1,VAE,0.881,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x10,VAE,0.9048,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x100,VAE,0.8409,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x1,LSTM or VAE,0.881,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x10,LSTM or VAE,0.8605,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x100,LSTM or VAE,0.5094,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x1,LSTM or VAE,0.9048,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x10,LSTM or VAE,0.9048,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x100,LSTM or VAE,0.8636,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x1,one-line rule,0.6429,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x10,one-line rule,0.3488,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,ddos,x100,one-line rule,0.3208,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x1,one-line rule,0.8571,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x10,one-line rule,0.7619,yes
+lstm_ae_aci_kaggle_v1__vae_aci_kaggle_v1__recal_dev,aci,all,scanning,x100,one-line rule,0.7273,yes
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,coap_amplification,scanning,x1,LSTM-AE,0.6078,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,coap_amplification,scanning,x10,LSTM-AE,0.4848,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x1,LSTM-AE,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x10,LSTM-AE,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x100,LSTM-AE,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x1,LSTM-AE,0.9512,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x10,LSTM-AE,0.9512,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x100,LSTM-AE,0.9512,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x1,LSTM-AE,0.5435,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x10,LSTM-AE,0.6596,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x100,LSTM-AE,0.7759,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x1,LSTM-AE,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x10,LSTM-AE,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x100,LSTM-AE,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,coap_amplification,scanning,x1,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,coap_amplification,scanning,x10,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x1,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x10,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x100,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x1,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x10,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x100,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x1,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x10,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x100,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x1,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x10,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x100,VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,coap_amplification,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,coap_amplification,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x1,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x10,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x100,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,coap_amplification,scanning,x1,one-line rule,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,coap_amplification,scanning,x10,one-line rule,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x1,one-line rule,0.2927,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x10,one-line rule,0.2927,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,merlin,ddos,x100,one-line rule,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x1,one-line rule,0.2927,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x10,one-line rule,0.2927,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_dos,ddos,x100,one-line rule,0.2927,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x1,one-line rule,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x10,one-line rule,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,mirai_infection,mirai,x100,one-line rule,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x1,one-line rule,0.2927,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x10,one-line rule,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1,gotham,network_scanning,scanning,x100,one-line rule,0.0,no
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,coap_amplification,scanning,x1,LSTM-AE,0.2941,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,coap_amplification,scanning,x10,LSTM-AE,0.1364,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x1,LSTM-AE,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x10,LSTM-AE,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x100,LSTM-AE,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x1,LSTM-AE,0.6341,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x10,LSTM-AE,0.6585,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x100,LSTM-AE,0.6585,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x1,LSTM-AE,0.3043,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x10,LSTM-AE,0.3404,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x100,LSTM-AE,0.6207,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x1,LSTM-AE,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x10,LSTM-AE,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x100,LSTM-AE,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,coap_amplification,scanning,x1,VAE,0.9804,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,coap_amplification,scanning,x10,VAE,0.9848,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x1,VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x10,VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x100,VAE,0.9302,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x1,VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x10,VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x100,VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x1,VAE,0.9565,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x10,VAE,0.9574,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x100,VAE,0.9828,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x1,VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x10,VAE,0.9318,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x100,VAE,0.9322,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,coap_amplification,scanning,x1,LSTM or VAE,0.9804,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,coap_amplification,scanning,x10,LSTM or VAE,0.9848,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x1,LSTM or VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x10,LSTM or VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x100,LSTM or VAE,0.9302,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x1,LSTM or VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x10,LSTM or VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x100,LSTM or VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x1,LSTM or VAE,0.9565,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x10,LSTM or VAE,0.9574,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x100,LSTM or VAE,0.9828,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x1,LSTM or VAE,0.9756,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x10,LSTM or VAE,0.9318,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x100,LSTM or VAE,0.9322,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,coap_amplification,scanning,x1,one-line rule,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,coap_amplification,scanning,x10,one-line rule,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x1,one-line rule,0.2927,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x10,one-line rule,0.2927,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,merlin,ddos,x100,one-line rule,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x1,one-line rule,0.2927,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x10,one-line rule,0.2927,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_dos,ddos,x100,one-line rule,0.2927,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x1,one-line rule,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x10,one-line rule,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,mirai_infection,mirai,x100,one-line rule,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x1,one-line rule,0.2927,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x10,one-line rule,0.0,yes
+lstm_ae_gotham_v1__vae_gotham_v1__recal_dev,gotham,network_scanning,scanning,x100,one-line rule,0.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x1,LSTM-AE,0.0226,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x10,LSTM-AE,0.0263,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x100,LSTM-AE,0.0698,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x1,LSTM-AE,0.0526,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x10,LSTM-AE,0.0326,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x100,LSTM-AE,0.0227,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x1,LSTM-AE,0.0458,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x10,LSTM-AE,0.1386,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x100,LSTM-AE,0.4043,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x1,LSTM-AE,0.0094,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x10,LSTM-AE,0.0074,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x100,LSTM-AE,0.0194,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-28,ransomware,x1,LSTM-AE,0.3276,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-28,ransomware,x10,LSTM-AE,0.573,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x1,VAE,0.9661,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x10,VAE,0.9474,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x100,VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x1,VAE,0.9123,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x10,VAE,0.587,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x100,VAE,0.6439,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x1,VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x10,VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x100,VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x1,VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x10,VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x100,VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-28,ransomware,x1,VAE,0.931,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-28,ransomware,x10,VAE,0.9888,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x1,LSTM or VAE,0.9661,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x10,LSTM or VAE,0.9474,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x100,LSTM or VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x1,LSTM or VAE,0.9123,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x10,LSTM or VAE,0.587,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x100,LSTM or VAE,0.6439,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x1,LSTM or VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x10,LSTM or VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x100,LSTM or VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x1,LSTM or VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x10,LSTM or VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x100,LSTM or VAE,1.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-28,ransomware,x1,LSTM or VAE,0.931,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-28,ransomware,x10,LSTM or VAE,0.9888,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x1,one-line rule,0.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x10,one-line rule,0.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-23,scanning,x100,one-line rule,0.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x1,one-line rule,0.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x10,one-line rule,0.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-24,scanning,x100,one-line rule,0.0,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x1,one-line rule,0.2288,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x10,one-line rule,0.3366,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-25,ddos,x100,one-line rule,0.8723,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x1,one-line rule,0.0597,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x10,one-line rule,0.0517,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-26,ddos,x100,one-line rule,0.3689,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-28,ransomware,x1,one-line rule,0.6897,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1,nf_toniot,day_2019-04-28,ransomware,x10,one-line rule,0.4944,yes
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x1,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x10,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x100,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x1,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x10,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x100,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x100,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x100,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-28,ransomware,x1,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-28,ransomware,x10,LSTM-AE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x1,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x10,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x100,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x1,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x10,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x100,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x1,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x10,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x100,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x1,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x10,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x100,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-28,ransomware,x1,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-28,ransomware,x10,VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-28,ransomware,x1,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-28,ransomware,x10,LSTM or VAE,1.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x1,one-line rule,0.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x10,one-line rule,0.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-23,scanning,x100,one-line rule,0.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x1,one-line rule,0.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x10,one-line rule,0.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-24,scanning,x100,one-line rule,0.0,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x1,one-line rule,0.2288,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x10,one-line rule,0.3366,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-25,ddos,x100,one-line rule,0.8723,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x1,one-line rule,0.0597,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x10,one-line rule,0.0517,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-26,ddos,x100,one-line rule,0.3689,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-28,ransomware,x1,one-line rule,0.6897,no
+lstm_ae_nftoniot_v1__vae_nftoniot_v1__recal_dev,nf_toniot,day_2019-04-28,ransomware,x10,one-line rule,0.4944,no
+lstm_ae_v7__vae_v3,kitsune,mirai,mirai,x1,LSTM-AE,0.467,no
+lstm_ae_v7__vae_v3,kitsune,mirai,mirai,x10,LSTM-AE,0.4054,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x1,LSTM-AE,0.9886,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x10,LSTM-AE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x100,LSTM-AE,0.6741,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x100,LSTM-AE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,mirai,mirai,x1,VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,mirai,mirai,x10,VAE,0.9975,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x1,VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x10,VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x1,VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x10,VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,mirai,mirai,x1,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,mirai,mirai,x10,LSTM or VAE,0.9975,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,kitsune,mirai,mirai,x1,one-line rule,0.5769,no
+lstm_ae_v7__vae_v3,kitsune,mirai,mirai,x10,one-line rule,0.0,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x1,one-line rule,0.7841,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x10,one-line rule,0.76,no
+lstm_ae_v7__vae_v3,kitsune,os_scan,scanning,x100,one-line rule,0.7545,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x1,one-line rule,0.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x10,one-line rule,0.0,no
+lstm_ae_v7__vae_v3,kitsune,ssdp_flood,ddos,x100,one-line rule,0.0,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x1,LSTM-AE,0.9638,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x10,LSTM-AE,0.6326,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x100,LSTM-AE,0.1694,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x10,LSTM-AE,0.9492,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x100,LSTM-AE,0.949,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x10,LSTM-AE,0.9435,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x100,LSTM-AE,0.9538,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x1,LSTM-AE,0.9938,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x10,LSTM-AE,0.9939,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x100,LSTM-AE,0.9946,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x1,LSTM-AE,0.2597,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x10,LSTM-AE,0.1371,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x100,LSTM-AE,0.1974,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x1,LSTM-AE,0.1652,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x10,LSTM-AE,0.1256,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x100,LSTM-AE,0.1623,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x1,LSTM-AE,0.2054,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x10,LSTM-AE,0.2073,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x100,LSTM-AE,0.5902,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x1,LSTM-AE,0.3488,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x10,LSTM-AE,0.4395,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x100,LSTM-AE,0.7812,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x1,VAE,0.9819,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x10,VAE,0.9924,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x100,VAE,0.7144,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x1,VAE,0.9943,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x10,VAE,0.9944,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x1,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x10,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x1,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x10,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x1,VAE,0.5519,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x10,VAE,0.5178,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x1,VAE,0.3704,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x10,VAE,0.7206,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x100,VAE,0.2928,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x1,VAE,0.4752,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x10,VAE,0.4436,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x1,VAE,0.9722,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x10,VAE,0.9727,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x1,LSTM or VAE,0.9819,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x10,LSTM or VAE,0.9924,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x100,LSTM or VAE,0.7144,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x1,LSTM or VAE,0.9943,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x10,LSTM or VAE,0.9944,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x1,LSTM or VAE,0.5519,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x10,LSTM or VAE,0.5228,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x1,LSTM or VAE,0.3713,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x10,LSTM or VAE,0.7206,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x100,LSTM or VAE,0.3043,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x1,LSTM or VAE,0.4851,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x10,LSTM or VAE,0.4436,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x1,LSTM or VAE,0.9722,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x10,LSTM or VAE,0.9727,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x1,one-line rule,0.9367,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x10,one-line rule,0.5909,no
+lstm_ae_v7__vae_v3,edge,ddos_http,ddos,x100,one-line rule,0.1549,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x1,one-line rule,0.9483,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v7__vae_v3,edge,ddos_icmp,ddos,x100,one-line rule,0.949,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x1,one-line rule,0.954,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v7__vae_v3,edge,ddos_tcp_syn,ddos,x100,one-line rule,0.9436,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x10,one-line rule,0.9818,no
+lstm_ae_v7__vae_v3,edge,ddos_udp,ddos,x100,one-line rule,0.9838,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x1,one-line rule,0.2662,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x10,one-line rule,0.1726,no
+lstm_ae_v7__vae_v3,edge,os_fingerprinting,scanning,x100,one-line rule,0.1447,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x1,one-line rule,0.1661,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x10,one-line rule,0.0939,no
+lstm_ae_v7__vae_v3,edge,port_scanning,scanning,x100,one-line rule,0.1333,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x1,one-line rule,0.2129,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x10,one-line rule,0.1891,no
+lstm_ae_v7__vae_v3,edge,ransomware,ransomware,x100,one-line rule,0.623,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x1,one-line rule,0.0602,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x10,one-line rule,0.0703,no
+lstm_ae_v7__vae_v3,edge,vulnerability_scanner,scanning,x100,one-line rule,0.2344,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM-AE,0.963,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM-AE,0.9506,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM-AE,0.9383,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM-AE,0.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM-AE,0.4691,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM-AE,0.5062,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM-AE,0.0119,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM or VAE,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,one-line rule,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,one-line rule,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,one-line rule,0.9219,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,one-line rule,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,one-line rule,1.0,no
+lstm_ae_v7__vae_v3,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,one-line rule,0.9881,no
+lstm_ae_v8__vae_v4,kitsune,mirai,mirai,x1,LSTM-AE,0.5522,no
+lstm_ae_v8__vae_v4,kitsune,mirai,mirai,x10,LSTM-AE,0.484,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x1,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x10,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x100,LSTM-AE,0.8214,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x100,LSTM-AE,0.9767,no
+lstm_ae_v8__vae_v4,kitsune,mirai,mirai,x1,VAE,0.9945,no
+lstm_ae_v8__vae_v4,kitsune,mirai,mirai,x10,VAE,0.9902,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,mirai,mirai,x1,LSTM or VAE,0.9945,no
+lstm_ae_v8__vae_v4,kitsune,mirai,mirai,x10,LSTM or VAE,0.9902,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,kitsune,mirai,mirai,x1,one-line rule,0.5769,no
+lstm_ae_v8__vae_v4,kitsune,mirai,mirai,x10,one-line rule,0.0,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x1,one-line rule,0.7841,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x10,one-line rule,0.76,no
+lstm_ae_v8__vae_v4,kitsune,os_scan,scanning,x100,one-line rule,0.7545,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x1,one-line rule,0.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x10,one-line rule,0.0,no
+lstm_ae_v8__vae_v4,kitsune,ssdp_flood,ddos,x100,one-line rule,0.0,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x1,LSTM-AE,0.9729,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x10,LSTM-AE,0.9451,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x100,LSTM-AE,0.3423,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x10,LSTM-AE,0.9548,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x100,LSTM-AE,0.949,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x10,LSTM-AE,0.9435,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x100,LSTM-AE,0.9538,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x100,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x1,LSTM-AE,0.2922,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x10,LSTM-AE,0.203,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x100,LSTM-AE,0.25,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x1,LSTM-AE,0.1739,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x10,LSTM-AE,0.4163,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x100,LSTM-AE,0.1913,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x1,LSTM-AE,0.3243,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x10,LSTM-AE,0.2691,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x100,LSTM-AE,0.6393,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x1,LSTM-AE,0.4491,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x10,LSTM-AE,0.6191,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x100,LSTM-AE,0.8281,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x10,VAE,0.9989,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x1,VAE,0.9975,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x1,one-line rule,0.9367,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x10,one-line rule,0.5909,no
+lstm_ae_v8__vae_v4,edge,ddos_http,ddos,x100,one-line rule,0.1549,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x1,one-line rule,0.9483,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v8__vae_v4,edge,ddos_icmp,ddos,x100,one-line rule,0.949,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x1,one-line rule,0.954,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v8__vae_v4,edge,ddos_tcp_syn,ddos,x100,one-line rule,0.9436,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x10,one-line rule,0.9818,no
+lstm_ae_v8__vae_v4,edge,ddos_udp,ddos,x100,one-line rule,0.9838,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x1,one-line rule,0.2662,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x10,one-line rule,0.1726,no
+lstm_ae_v8__vae_v4,edge,os_fingerprinting,scanning,x100,one-line rule,0.1447,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x1,one-line rule,0.1661,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x10,one-line rule,0.0939,no
+lstm_ae_v8__vae_v4,edge,port_scanning,scanning,x100,one-line rule,0.1333,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x1,one-line rule,0.2129,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x10,one-line rule,0.1891,no
+lstm_ae_v8__vae_v4,edge,ransomware,ransomware,x100,one-line rule,0.623,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x1,one-line rule,0.0602,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x10,one-line rule,0.0703,no
+lstm_ae_v8__vae_v4,edge,vulnerability_scanner,scanning,x100,one-line rule,0.2344,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM-AE,0.9383,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM-AE,0.9383,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM-AE,0.9012,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM-AE,0.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM-AE,0.0617,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM-AE,0.0494,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM-AE,0.0238,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,VAE,0.9383,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,VAE,0.9383,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,VAE,0.9383,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,VAE,0.0938,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,VAE,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,VAE,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,VAE,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM or VAE,0.963,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM or VAE,0.9753,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM or VAE,0.9753,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM or VAE,0.0938,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,one-line rule,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,one-line rule,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,one-line rule,0.9219,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,one-line rule,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,one-line rule,1.0,no
+lstm_ae_v8__vae_v4,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,one-line rule,0.9881,no
+lstm_ae_v8__vae_v5,kitsune,mirai,mirai,x1,LSTM-AE,0.5522,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,mirai,x10,LSTM-AE,0.484,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x1,LSTM-AE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x10,LSTM-AE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x100,LSTM-AE,0.8214,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x1,LSTM-AE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x10,LSTM-AE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x100,LSTM-AE,0.9767,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,mirai,x1,VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,mirai,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x1,VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x1,VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,mirai,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,mirai,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,mirai,x1,one-line rule,0.5769,yes
+lstm_ae_v8__vae_v5,kitsune,mirai,mirai,x10,one-line rule,0.0,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x1,one-line rule,0.7841,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x10,one-line rule,0.76,yes
+lstm_ae_v8__vae_v5,kitsune,os_scan,scanning,x100,one-line rule,0.7545,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x1,one-line rule,0.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x10,one-line rule,0.0,yes
+lstm_ae_v8__vae_v5,kitsune,ssdp_flood,ddos,x100,one-line rule,0.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x1,LSTM-AE,0.9729,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x10,LSTM-AE,0.9451,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x100,LSTM-AE,0.3423,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x1,LSTM-AE,0.954,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x10,LSTM-AE,0.9548,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x100,LSTM-AE,0.949,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x1,LSTM-AE,0.954,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x10,LSTM-AE,0.9435,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x100,LSTM-AE,0.9538,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x1,LSTM-AE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x10,LSTM-AE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x100,LSTM-AE,1.0,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x1,LSTM-AE,0.2922,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x10,LSTM-AE,0.203,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x100,LSTM-AE,0.25,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x1,LSTM-AE,0.1739,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x10,LSTM-AE,0.4163,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x100,LSTM-AE,0.1913,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x1,LSTM-AE,0.3243,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x10,LSTM-AE,0.2691,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x100,LSTM-AE,0.6393,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x1,LSTM-AE,0.4491,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x10,LSTM-AE,0.6191,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x100,LSTM-AE,0.8281,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x1,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x1,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x1,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x1,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x1,VAE,0.9935,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x1,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x10,VAE,0.9989,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x1,VAE,0.9975,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x1,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x10,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x100,VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x1,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x10,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x100,LSTM or VAE,1.0,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x1,one-line rule,0.9367,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x10,one-line rule,0.5909,yes
+lstm_ae_v8__vae_v5,edge,ddos_http,ddos,x100,one-line rule,0.1549,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x1,one-line rule,0.9483,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x10,one-line rule,0.9435,yes
+lstm_ae_v8__vae_v5,edge,ddos_icmp,ddos,x100,one-line rule,0.949,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x1,one-line rule,0.954,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x10,one-line rule,0.9435,yes
+lstm_ae_v8__vae_v5,edge,ddos_tcp_syn,ddos,x100,one-line rule,0.9436,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x1,one-line rule,0.9877,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x10,one-line rule,0.9818,yes
+lstm_ae_v8__vae_v5,edge,ddos_udp,ddos,x100,one-line rule,0.9838,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x1,one-line rule,0.2662,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x10,one-line rule,0.1726,yes
+lstm_ae_v8__vae_v5,edge,os_fingerprinting,scanning,x100,one-line rule,0.1447,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x1,one-line rule,0.1661,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x10,one-line rule,0.0939,yes
+lstm_ae_v8__vae_v5,edge,port_scanning,scanning,x100,one-line rule,0.1333,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x1,one-line rule,0.2129,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x10,one-line rule,0.1891,yes
+lstm_ae_v8__vae_v5,edge,ransomware,ransomware,x100,one-line rule,0.623,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x1,one-line rule,0.0602,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x10,one-line rule,0.0703,yes
+lstm_ae_v8__vae_v5,edge,vulnerability_scanner,scanning,x100,one-line rule,0.2344,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM-AE,0.9383,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM-AE,0.9383,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM-AE,0.9012,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM-AE,0.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM-AE,0.0617,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM-AE,0.0494,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM-AE,0.0238,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,VAE,0.8765,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,VAE,0.8765,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,VAE,0.8148,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,VAE,0.4688,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,VAE,0.9136,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,VAE,0.9136,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,VAE,0.8929,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM or VAE,0.9383,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM or VAE,0.9506,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM or VAE,0.9506,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM or VAE,0.4688,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM or VAE,0.9383,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM or VAE,0.9506,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM or VAE,0.9048,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,one-line rule,0.9877,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,one-line rule,1.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,one-line rule,1.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,one-line rule,0.9219,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,one-line rule,1.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,one-line rule,1.0,yes
+lstm_ae_v8__vae_v5,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,one-line rule,0.9881,yes
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,mirai,x1,LSTM-AE,0.522,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,mirai,x10,LSTM-AE,0.4693,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x1,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x10,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x100,LSTM-AE,0.8214,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x1,LSTM-AE,0.9762,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x100,LSTM-AE,0.9535,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,mirai,x1,VAE,0.9945,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,mirai,x10,VAE,0.9902,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x1,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x10,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x100,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x1,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x10,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x100,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,mirai,x1,LSTM or VAE,0.9945,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,mirai,x10,LSTM or VAE,0.9902,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,mirai,x1,one-line rule,0.5769,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,mirai,mirai,x10,one-line rule,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x1,one-line rule,0.7841,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x10,one-line rule,0.76,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,os_scan,scanning,x100,one-line rule,0.7545,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x1,one-line rule,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x10,one-line rule,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,kitsune,ssdp_flood,ddos,x100,one-line rule,0.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x1,LSTM-AE,0.9638,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x10,LSTM-AE,0.8674,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x100,LSTM-AE,0.2331,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x10,LSTM-AE,0.9492,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x100,LSTM-AE,0.949,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x10,LSTM-AE,0.9435,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x100,LSTM-AE,0.9538,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x100,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x1,LSTM-AE,0.2727,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x10,LSTM-AE,0.1777,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x100,LSTM-AE,0.2237,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x1,LSTM-AE,0.1443,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x10,LSTM-AE,0.2749,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x100,LSTM-AE,0.1594,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x1,LSTM-AE,0.2822,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x10,LSTM-AE,0.2364,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x100,LSTM-AE,0.6393,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x1,LSTM-AE,0.4228,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x10,LSTM-AE,0.543,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x100,LSTM-AE,0.7812,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x1,VAE,0.9729,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x10,VAE,0.9867,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x100,VAE,0.9945,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x1,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x10,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x100,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x1,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x10,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x100,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x1,VAE,0.9938,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x10,VAE,0.9939,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x100,VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x1,VAE,0.5584,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x10,VAE,0.6701,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x100,VAE,0.9342,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x1,VAE,0.9774,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x10,VAE,0.9785,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x100,VAE,0.9768,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x1,VAE,0.6436,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x10,VAE,0.5891,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x100,VAE,0.8852,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x1,VAE,0.9568,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x10,VAE,0.9492,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x100,VAE,0.9531,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x1,LSTM or VAE,0.9819,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x10,LSTM or VAE,0.9924,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x100,LSTM or VAE,0.9972,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x1,LSTM or VAE,0.5714,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x10,LSTM or VAE,0.7005,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x100,LSTM or VAE,0.9605,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x1,LSTM or VAE,0.9826,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x10,LSTM or VAE,0.991,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x100,LSTM or VAE,0.9884,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x1,LSTM or VAE,0.6683,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x10,LSTM or VAE,0.6182,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x100,LSTM or VAE,0.9344,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x1,LSTM or VAE,0.9599,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x10,LSTM or VAE,0.9648,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x100,LSTM or VAE,0.9531,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x1,one-line rule,0.9367,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x10,one-line rule,0.5909,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_http,ddos,x100,one-line rule,0.1549,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x1,one-line rule,0.9483,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_icmp,ddos,x100,one-line rule,0.949,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x1,one-line rule,0.954,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_tcp_syn,ddos,x100,one-line rule,0.9436,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x10,one-line rule,0.9818,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ddos_udp,ddos,x100,one-line rule,0.9838,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x1,one-line rule,0.2662,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x10,one-line rule,0.1726,no
+lstm_ae_v8__vae_v5__recal_dev,edge,os_fingerprinting,scanning,x100,one-line rule,0.1447,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x1,one-line rule,0.1661,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x10,one-line rule,0.0939,no
+lstm_ae_v8__vae_v5__recal_dev,edge,port_scanning,scanning,x100,one-line rule,0.1333,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x1,one-line rule,0.2129,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x10,one-line rule,0.1891,no
+lstm_ae_v8__vae_v5__recal_dev,edge,ransomware,ransomware,x100,one-line rule,0.623,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x1,one-line rule,0.0602,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x10,one-line rule,0.0703,no
+lstm_ae_v8__vae_v5__recal_dev,edge,vulnerability_scanner,scanning,x100,one-line rule,0.2344,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM-AE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM-AE,0.0469,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM-AE,0.963,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM-AE,0.9136,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM-AE,0.7024,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,VAE,0.9012,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,VAE,0.9012,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,VAE,0.9012,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,VAE,0.6875,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,VAE,0.9136,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,VAE,0.9136,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,VAE,0.9048,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM or VAE,0.7344,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM or VAE,0.9877,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM or VAE,0.9877,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM or VAE,0.9762,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,one-line rule,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,one-line rule,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,one-line rule,0.9219,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,one-line rule,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,one-line rule,1.0,no
+lstm_ae_v8__vae_v5__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,one-line rule,0.9881,no
+lstm_ae_v9__vae_v6,kitsune,mirai,mirai,x1,LSTM-AE,0.5495,no
+lstm_ae_v9__vae_v6,kitsune,mirai,mirai,x10,LSTM-AE,0.4717,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x1,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x10,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x100,LSTM-AE,0.8214,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x1,LSTM-AE,0.2381,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x10,LSTM-AE,0.2381,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x100,LSTM-AE,0.3256,no
+lstm_ae_v9__vae_v6,kitsune,mirai,mirai,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,mirai,mirai,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,mirai,mirai,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,mirai,mirai,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,kitsune,mirai,mirai,x1,one-line rule,0.5769,no
+lstm_ae_v9__vae_v6,kitsune,mirai,mirai,x10,one-line rule,0.0,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x1,one-line rule,0.7841,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x10,one-line rule,0.76,no
+lstm_ae_v9__vae_v6,kitsune,os_scan,scanning,x100,one-line rule,0.7545,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x1,one-line rule,0.0,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x10,one-line rule,0.0,no
+lstm_ae_v9__vae_v6,kitsune,ssdp_flood,ddos,x100,one-line rule,0.0,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x1,LSTM-AE,0.9683,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x10,LSTM-AE,0.9432,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x100,LSTM-AE,0.3506,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x10,LSTM-AE,0.9548,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x100,LSTM-AE,0.9541,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x10,LSTM-AE,0.9435,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x100,LSTM-AE,0.9538,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x100,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x1,LSTM-AE,0.2987,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x10,LSTM-AE,0.2284,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x100,LSTM-AE,0.3026,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x1,LSTM-AE,0.2635,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x10,LSTM-AE,0.4966,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x100,LSTM-AE,0.2609,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x1,LSTM-AE,0.3589,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x10,LSTM-AE,0.28,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x100,LSTM-AE,0.6393,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x1,LSTM-AE,0.4722,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x10,LSTM-AE,0.6602,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x100,LSTM-AE,0.8281,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x10,VAE,0.9977,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x1,VAE,0.9901,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x10,VAE,0.998,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x10,LSTM or VAE,0.9989,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x10,LSTM or VAE,0.998,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x1,one-line rule,0.9367,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x10,one-line rule,0.5909,no
+lstm_ae_v9__vae_v6,edge,ddos_http,ddos,x100,one-line rule,0.1549,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x1,one-line rule,0.9483,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v9__vae_v6,edge,ddos_icmp,ddos,x100,one-line rule,0.949,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x1,one-line rule,0.954,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v9__vae_v6,edge,ddos_tcp_syn,ddos,x100,one-line rule,0.9436,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x10,one-line rule,0.9818,no
+lstm_ae_v9__vae_v6,edge,ddos_udp,ddos,x100,one-line rule,0.9838,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x1,one-line rule,0.2662,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x10,one-line rule,0.1726,no
+lstm_ae_v9__vae_v6,edge,os_fingerprinting,scanning,x100,one-line rule,0.1447,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x1,one-line rule,0.1661,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x10,one-line rule,0.0939,no
+lstm_ae_v9__vae_v6,edge,port_scanning,scanning,x100,one-line rule,0.1333,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x1,one-line rule,0.2129,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x10,one-line rule,0.1891,no
+lstm_ae_v9__vae_v6,edge,ransomware,ransomware,x100,one-line rule,0.623,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x1,one-line rule,0.0602,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x10,one-line rule,0.0703,no
+lstm_ae_v9__vae_v6,edge,vulnerability_scanner,scanning,x100,one-line rule,0.2344,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM-AE,0.2346,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM-AE,0.2346,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM-AE,0.7901,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM-AE,0.4219,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM-AE,0.037,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM-AE,0.0494,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM-AE,0.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,VAE,0.8148,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,VAE,0.8148,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,VAE,0.7284,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,VAE,0.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,VAE,0.716,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,VAE,0.5556,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,VAE,0.3214,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM or VAE,0.8642,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM or VAE,0.8642,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM or VAE,0.8395,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM or VAE,0.4219,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM or VAE,0.7407,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM or VAE,0.6049,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM or VAE,0.3214,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,one-line rule,1.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,one-line rule,1.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,one-line rule,0.9219,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,one-line rule,1.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,one-line rule,1.0,no
+lstm_ae_v9__vae_v6,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,one-line rule,0.9881,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x1,LSTM-AE,0.0244,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x10,LSTM-AE,0.0488,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x100,LSTM-AE,0.0714,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x1,LSTM-AE,0.0,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x10,LSTM-AE,0.0,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x100,LSTM-AE,0.0,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x1,VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x10,VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x100,VAE,0.9524,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x1,VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x10,VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x100,VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x1,LSTM or VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x10,LSTM or VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x100,LSTM or VAE,0.9524,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x1,LSTM or VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x10,LSTM or VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x100,LSTM or VAE,0.9512,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x1,one-line rule,0.7073,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x10,one-line rule,0.7073,no
+lstm_ae_v9__vae_v6,xiiotid,all,ddos,x100,one-line rule,0.5714,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x1,one-line rule,0.8293,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x10,one-line rule,0.8293,no
+lstm_ae_v9__vae_v6,xiiotid,all,scanning,x100,one-line rule,0.8293,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,mirai,x1,LSTM-AE,0.533,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,mirai,x10,LSTM-AE,0.4717,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x1,LSTM-AE,0.9432,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x10,LSTM-AE,0.97,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x100,LSTM-AE,0.808,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x1,LSTM-AE,0.1905,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x10,LSTM-AE,0.1905,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x100,LSTM-AE,0.2558,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,mirai,x1,VAE,0.9973,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,mirai,x10,VAE,0.9902,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,mirai,x1,LSTM or VAE,0.9973,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,mirai,x10,LSTM or VAE,0.9902,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,mirai,x1,one-line rule,0.5769,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,mirai,mirai,x10,one-line rule,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x1,one-line rule,0.7841,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x10,one-line rule,0.76,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,os_scan,scanning,x100,one-line rule,0.7545,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x1,one-line rule,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x10,one-line rule,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,kitsune,ssdp_flood,ddos,x100,one-line rule,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x1,LSTM-AE,0.9638,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x10,LSTM-AE,0.9205,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x100,LSTM-AE,0.3043,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x10,LSTM-AE,0.9492,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x100,LSTM-AE,0.949,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x1,LSTM-AE,0.954,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x10,LSTM-AE,0.9435,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x100,LSTM-AE,0.9538,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x100,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x1,LSTM-AE,0.2792,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x10,LSTM-AE,0.1777,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x100,LSTM-AE,0.2368,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x1,LSTM-AE,0.1496,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x10,LSTM-AE,0.3518,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x100,LSTM-AE,0.2,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x1,LSTM-AE,0.3094,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x10,LSTM-AE,0.24,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x100,LSTM-AE,0.6393,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x1,LSTM-AE,0.4352,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x10,LSTM-AE,0.5664,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x100,LSTM-AE,0.8281,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x1,VAE,0.9819,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x10,VAE,0.9924,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x100,VAE,0.9751,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x1,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x10,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x100,VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x1,VAE,0.539,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x10,VAE,0.4924,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x100,VAE,0.8684,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x1,VAE,0.9426,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x10,VAE,0.9559,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x100,VAE,0.9072,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x1,VAE,0.4455,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x10,VAE,0.7709,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x100,VAE,0.9672,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x1,VAE,0.946,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x10,VAE,0.9395,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x100,VAE,0.9375,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x1,LSTM or VAE,0.991,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x10,LSTM or VAE,0.9962,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x100,LSTM or VAE,0.9772,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x1,LSTM or VAE,0.5519,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x10,LSTM or VAE,0.5279,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x100,LSTM or VAE,0.8947,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x1,LSTM or VAE,0.9461,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x10,LSTM or VAE,0.9661,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x100,LSTM or VAE,0.9623,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x1,LSTM or VAE,0.4802,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x10,LSTM or VAE,0.7964,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x1,LSTM or VAE,0.9491,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x10,LSTM or VAE,0.9531,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x100,LSTM or VAE,0.9375,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x1,one-line rule,0.9367,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x10,one-line rule,0.5909,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_http,ddos,x100,one-line rule,0.1549,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x1,one-line rule,0.9483,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_icmp,ddos,x100,one-line rule,0.949,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x1,one-line rule,0.954,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x10,one-line rule,0.9435,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_tcp_syn,ddos,x100,one-line rule,0.9436,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x10,one-line rule,0.9818,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ddos_udp,ddos,x100,one-line rule,0.9838,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x1,one-line rule,0.2662,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x10,one-line rule,0.1726,no
+lstm_ae_v9__vae_v6__recal_dev,edge,os_fingerprinting,scanning,x100,one-line rule,0.1447,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x1,one-line rule,0.1661,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x10,one-line rule,0.0939,no
+lstm_ae_v9__vae_v6__recal_dev,edge,port_scanning,scanning,x100,one-line rule,0.1333,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x1,one-line rule,0.2129,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x10,one-line rule,0.1891,no
+lstm_ae_v9__vae_v6__recal_dev,edge,ransomware,ransomware,x100,one-line rule,0.623,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x1,one-line rule,0.0602,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x10,one-line rule,0.0703,no
+lstm_ae_v9__vae_v6__recal_dev,edge,vulnerability_scanner,scanning,x100,one-line rule,0.2344,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM-AE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM-AE,0.7344,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM-AE,0.1605,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM-AE,0.358,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM-AE,0.5119,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,VAE,0.9012,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,VAE,0.9012,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,VAE,0.9136,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,VAE,0.2031,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,VAE,0.9259,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,VAE,0.9259,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,VAE,0.9048,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,LSTM or VAE,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,LSTM or VAE,0.7344,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,LSTM or VAE,0.9753,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,LSTM or VAE,0.9753,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,LSTM or VAE,0.9762,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x1,one-line rule,0.9877,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x10,one-line rule,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,ddos,x100,one-line rule,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-34-1,mirai,x1,one-line rule,0.9219,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x1,one-line rule,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x10,one-line rule,1.0,no
+lstm_ae_v9__vae_v6__recal_dev,iot23,CTU-IoT-Malware-Capture-48-1,mirai,x100,one-line rule,0.9881,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x1,LSTM-AE,0.0244,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x10,LSTM-AE,0.0488,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x100,LSTM-AE,0.0714,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x1,LSTM-AE,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x10,LSTM-AE,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x100,LSTM-AE,0.0,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x1,VAE,0.9024,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x10,VAE,0.9024,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x100,VAE,0.9048,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x1,VAE,0.9024,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x10,VAE,0.9024,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x100,VAE,0.9024,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x1,LSTM or VAE,0.9268,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x10,LSTM or VAE,0.9268,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x100,LSTM or VAE,0.9048,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x1,LSTM or VAE,0.9024,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x10,LSTM or VAE,0.9024,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x100,LSTM or VAE,0.9024,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x1,one-line rule,0.7073,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x10,one-line rule,0.7073,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,ddos,x100,one-line rule,0.5714,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x1,one-line rule,0.8293,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x10,one-line rule,0.8293,no
+lstm_ae_v9__vae_v6__recal_dev,xiiotid,all,scanning,x100,one-line rule,0.8293,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x1,LSTM-AE,0.0976,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x10,LSTM-AE,0.0732,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x100,LSTM-AE,0.0714,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x1,LSTM-AE,0.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x10,LSTM-AE,0.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x100,LSTM-AE,0.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x1,VAE,0.9512,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x10,VAE,0.9268,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x100,VAE,0.9524,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x1,VAE,1.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x10,VAE,1.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x100,VAE,1.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x1,LSTM or VAE,0.9756,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x10,LSTM or VAE,0.9512,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x100,LSTM or VAE,0.9762,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x1,LSTM or VAE,1.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x10,LSTM or VAE,1.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x100,LSTM or VAE,1.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x1,one-line rule,0.7073,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x10,one-line rule,0.7073,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,ddos,x100,one-line rule,0.5714,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x1,one-line rule,0.8293,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x10,one-line rule,0.8293,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1,xiiotid,all,scanning,x100,one-line rule,0.8293,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x1,LSTM-AE,0.0976,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x10,LSTM-AE,0.0732,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x100,LSTM-AE,0.119,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x1,LSTM-AE,0.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x10,LSTM-AE,0.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x100,LSTM-AE,0.0,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x1,VAE,0.878,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x10,VAE,0.878,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x100,VAE,0.8333,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x1,VAE,0.9512,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x10,VAE,0.9512,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x100,VAE,0.9512,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x1,LSTM or VAE,0.9268,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x10,LSTM or VAE,0.9024,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x100,LSTM or VAE,0.881,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x1,LSTM or VAE,0.9512,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x10,LSTM or VAE,0.9512,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x100,LSTM or VAE,0.9512,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x1,one-line rule,0.7073,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x10,one-line rule,0.7073,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,ddos,x100,one-line rule,0.5714,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x1,one-line rule,0.8293,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x10,one-line rule,0.8293,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal,xiiotid,all,scanning,x100,one-line rule,0.8293,no
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x1,LSTM-AE,0.0976,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x10,LSTM-AE,0.0732,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x100,LSTM-AE,0.119,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x1,LSTM-AE,0.0,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x10,LSTM-AE,0.0,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x100,LSTM-AE,0.0,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x1,VAE,0.878,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x10,VAE,0.878,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x100,VAE,0.8333,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x1,VAE,0.9512,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x10,VAE,0.9512,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x100,VAE,0.9512,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x1,LSTM or VAE,0.9268,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x10,LSTM or VAE,0.9024,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x100,LSTM or VAE,0.881,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x1,LSTM or VAE,0.9512,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x10,LSTM or VAE,0.9512,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x100,LSTM or VAE,0.9512,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x1,one-line rule,0.7073,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x10,one-line rule,0.7073,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,ddos,x100,one-line rule,0.5714,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x1,one-line rule,0.8293,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x10,one-line rule,0.8293,yes
+lstm_ae_xiiotid_v1__vae_xiiotid_v1__recal_dev,xiiotid,all,scanning,x100,one-line rule,0.8293,yes
