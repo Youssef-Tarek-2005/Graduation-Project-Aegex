@@ -1,0 +1,10 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.bak
+report.md
+report.json
+threat-intelligence-assistant/data/raw/
+threat-intelligence-assistant/data/processed/

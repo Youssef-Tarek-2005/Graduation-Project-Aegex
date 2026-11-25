@@ -1,0 +1,11 @@
+# This half needs no TensorFlow and no PyTorch — it never loads the
+# autoencoder, E-GraphSAGE or the type classifier.
+#
+# The RAG engine itself is a separate MIT-licensed project with its own
+# requirements.txt; install that one in this same environment:
+#
+#   git clone https://github.com/rvong65/threat-intelligence-assistant
+#   pip install -r threat-intelligence-assistant/requirements.txt
+#
+# Nothing else is needed here: report.py and ask.py use only the standard
+# library plus whatever that project already pulls in.

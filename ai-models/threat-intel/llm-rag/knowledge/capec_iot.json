@@ -1,0 +1,30 @@
+{
+  "standard": "CAPEC",
+  "version": "3.9",
+  "source_url": "https://capec.mitre.org/",
+  "note": "A curated subset of CAPEC attack patterns relevant to an IoT honeypot, each mapped to generic attack family keys (see attack_families.json) so it works across any dataset's labels, not just Edge-IIoTset. CAPEC says HOW an attacker acts, complementing CWE (the weakness) and ATT&CK (the technique).",
+  "items": [
+    {"id": "CAPEC-112", "title": "Brute Force", "text": "The attacker tries every possible value for a secret, such as a key or password, until the correct one is found. Feasible against devices with weak or default credentials and no lockout.", "attack_families": ["password"]},
+    {"id": "CAPEC-49", "title": "Password Brute Forcing", "text": "The attacker systematically guesses a user's password against an authentication endpoint. IoT services with no rate limiting are prime targets.", "attack_families": ["password"]},
+    {"id": "CAPEC-70", "title": "Try Common or Default Usernames and Passwords", "text": "The attacker uses known default or common credential pairs shipped with devices and software to gain access. This is how most IoT botnets spread.", "attack_families": ["password", "backdoor", "botnet"]},
+    {"id": "CAPEC-66", "title": "SQL Injection", "text": "The attacker injects crafted SQL through application input to read or manipulate the backing database, bypass authentication, or execute commands.", "attack_families": ["sql_injection"]},
+    {"id": "CAPEC-63", "title": "Cross-Site Scripting (XSS)", "text": "The attacker injects script into content served to other users, running code in their browser to steal sessions or act on their behalf. Device admin pages are common vectors.", "attack_families": ["xss"]},
+    {"id": "CAPEC-88", "title": "OS Command Injection", "text": "The attacker supplies input that the application passes to a system shell, executing arbitrary operating-system commands on the device.", "attack_families": ["command_injection", "upload", "backdoor"]},
+    {"id": "CAPEC-248", "title": "Command Injection", "text": "The attacker manipulates input so that it is interpreted as a command by a downstream component, gaining unintended execution within the application context.", "attack_families": ["command_injection", "upload"]},
+    {"id": "CAPEC-650", "title": "Upload a Web Shell to a Web Server", "text": "The attacker uploads a script that, once on the server, provides remote command execution and persistent access. A frequent follow-on to an upload weakness.", "attack_families": ["upload", "backdoor"]},
+    {"id": "CAPEC-1", "title": "Accessing Functionality Not Properly Constrained by ACLs", "text": "The attacker reaches privileged functionality that is not protected by proper access-control checks, performing actions meant to be restricted.", "attack_families": ["backdoor"]},
+    {"id": "CAPEC-100", "title": "Overflow Buffers", "text": "The attacker sends more data than a buffer can hold to corrupt memory, crashing the device or redirecting execution to attacker code.", "attack_families": ["dos", "ddos", "vuln_scan"]},
+    {"id": "CAPEC-125", "title": "Flooding", "text": "The attacker consumes a resource by sending a large volume of requests or packets, denying service to legitimate users. The pattern behind UDP, ICMP, TCP, and HTTP floods.", "attack_families": ["dos", "ddos"]},
+    {"id": "CAPEC-469", "title": "HTTP DoS", "text": "The attacker crafts HTTP requests that are cheap to send but expensive for the server to process, exhausting it with relatively little traffic.", "attack_families": ["dos", "ddos"]},
+    {"id": "CAPEC-300", "title": "Port Scanning", "text": "The attacker probes a range of network ports to discover which services are listening, mapping the device's attack surface before striking.", "attack_families": ["scanning"]},
+    {"id": "CAPEC-310", "title": "Scanning for Vulnerable Software", "text": "The attacker scans targets to identify software versions with known vulnerabilities, selecting an exploit to use next.", "attack_families": ["vuln_scan", "scanning"]},
+    {"id": "CAPEC-224", "title": "Fingerprinting", "text": "The attacker compares responses from a target against known signatures to identify its operating system, services, and versions.", "attack_families": ["fingerprint"]},
+    {"id": "CAPEC-541", "title": "Application Fingerprinting", "text": "The attacker elicits and analyzes application responses to determine the exact software and version in use, narrowing down viable exploits.", "attack_families": ["fingerprint"]},
+    {"id": "CAPEC-157", "title": "Sniffing Attacks", "text": "The attacker captures network traffic in transit to read sensitive data or learn about the target. Effective where IoT traffic is unencrypted.", "attack_families": ["mitm", "exfiltration"]},
+    {"id": "CAPEC-94", "title": "Adversary in the Middle (AiTM)", "text": "The attacker positions between two communicating parties and relays or alters messages, intercepting data or injecting their own without either side noticing. Often set up via ARP or DNS spoofing.", "attack_families": ["mitm", "spoofing"]},
+    {"id": "CAPEC-117", "title": "Interception", "text": "The attacker monitors data flows to and from a target without modifying them, gaining access to information that aids further attacks.", "attack_families": ["mitm", "exfiltration"]},
+    {"id": "CAPEC-186", "title": "Malicious Software Update", "text": "The attacker delivers a malicious update to a device, abusing a weak or unauthenticated update mechanism to install a backdoor or malware.", "attack_families": ["backdoor", "ransomware", "botnet"]},
+    {"id": "CAPEC-549", "title": "Local Execution of Code", "text": "The attacker executes code on the target once access is gained, used to deploy payloads such as ransomware or persistence tooling.", "attack_families": ["ransomware", "botnet"]},
+    {"id": "CAPEC-542", "title": "Targeted Malware", "text": "The attacker crafts malware for a specific target or device family, tuned to its software and environment to evade generic defenses.", "attack_families": ["ransomware", "botnet"]}
+  ]
+}
