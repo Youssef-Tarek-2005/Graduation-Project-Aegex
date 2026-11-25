@@ -1,0 +1,68 @@
+{
+  "version": "2018",
+  "verified": "2026-11-15 — still the current release; no later revision published",
+  "source_url": "https://owasp.org/www-project-internet-of-things/",
+  "note": "Items map to generic attack family keys (see attack_families.json) so retrieval works across any dataset's labels, not just Edge-IIoTset.",
+  "items": [
+    {
+      "id": "IOT-I1",
+      "title": "Weak, Guessable, or Hardcoded Passwords",
+      "attack_families": ["password", "backdoor", "botnet"],
+      "text": "Use of easily brute-forced, publicly available, or unchangeable credentials, including backdoor accounts in firmware or client software that grant unauthorised access to a deployed system. On a honeypot this appears as repeated authentication attempts against Telnet, SSH or an MQTT broker from one source, often cycling a short list of vendor default pairs such as admin/admin or root/1234. It is the entry point the Mirai family and its descendants rely on, because an IoT device that ships with a fixed password cannot be secured by its owner. Mitigation: force a credential change on first boot, forbid shared or factory-wide secrets, rate-limit and lock out after repeated failures, and remove every hardcoded account from firmware images before release."
+    },
+    {
+      "id": "IOT-I2",
+      "title": "Insecure Network Services",
+      "attack_families": ["scanning", "vuln_scan", "ddos", "dos"],
+      "text": "Unneeded or insecure network services running on the device itself, particularly those exposed to the internet, that compromise confidentiality, integrity or availability, or allow unauthorised remote control. Reconnaissance against these services is what a honeypot sees first: sweeps across many ports from a single host in a short window, banner grabbing, and service fingerprinting, followed by floods aimed at whatever answered. Mitigation: close every port the product does not require, bind management services to the local network only, keep listening services patched, and treat any open port as something that must be justified rather than something to be disabled later."
+    },
+    {
+      "id": "IOT-I3",
+      "title": "Insecure Ecosystem Interfaces",
+      "attack_families": ["sql_injection", "xss", "command_injection", "upload", "ddos"],
+      "text": "Insecure web, backend API, cloud or mobile interfaces in the ecosystem outside the device that allow it or its related components to be compromised, commonly through weak authentication or authorisation, missing input and output filtering, or missing encryption. Against a honeypot this is the web-facing attack surface: injection payloads in query strings and form fields, script payloads aimed at an administrative console, and attempts to upload a file to a management endpoint. Mitigation: authenticate and authorise every API call, validate input server side, encode output, enforce TLS on each hop, and treat the companion app and the cloud service as part of the device's attack surface rather than as separate products."
+    },
+    {
+      "id": "IOT-I4",
+      "title": "Lack of Secure Update Mechanism",
+      "attack_families": ["backdoor", "ransomware", "botnet"],
+      "text": "Inability to update the device securely, covering missing firmware validation, missing secure delivery because the transfer is unencrypted, missing anti-rollback protection, and missing notification of security changes. Without a signed and verified update path an attacker who reaches the device once can install persistent code and the owner has no way to remove it. Mitigation: sign firmware and verify the signature on the device before flashing, deliver updates over an authenticated encrypted channel, refuse to install an older version than the one running, and tell the operator when a security-relevant change is applied."
+    },
+    {
+      "id": "IOT-I5",
+      "title": "Use of Insecure or Outdated Components",
+      "attack_families": ["vuln_scan", "backdoor"],
+      "text": "Use of deprecated or insecure software components or libraries that could allow the device to be compromised, including insecure customisation of operating system platforms and the use of third-party hardware or software components from a compromised supply chain. Scanners probing a honeypot are frequently looking for exactly this: a known-vulnerable version string that maps to a public exploit. Mitigation: maintain a bill of materials for firmware, track published vulnerabilities against every bundled component, and plan for component updates across the whole supported lifetime of the product rather than only at launch."
+    },
+    {
+      "id": "IOT-I6",
+      "title": "Insufficient Privacy Protection",
+      "attack_families": ["mitm", "fingerprint", "exfiltration"],
+      "text": "User personal information stored on the device or in the wider ecosystem that is used insecurely, improperly, or without permission. IoT sensors collect data that is sensitive by context rather than by field name: occupancy, movement, audio, temperature patterns that reveal when a building is empty. Mitigation: collect only what the function requires, state clearly what is retained and for how long, encrypt personal data at rest and in transit, and provide a deletion path that reaches the cloud copies as well as the device."
+    },
+    {
+      "id": "IOT-I7",
+      "title": "Insecure Data Transfer and Storage",
+      "attack_families": ["mitm", "password", "exfiltration"],
+      "text": "Lack of encryption or access control for sensitive data anywhere within the ecosystem, including at rest, in transit, and during processing. Unencrypted MQTT on port 1883 is the common case in IoT deployments: credentials and telemetry both cross the network in cleartext, so a position on the path yields the content and the ability to alter it. Mitigation: use TLS for every link including local ones, encrypt sensitive data at rest, restrict which components may read which data, and do not treat a local network as a trusted boundary."
+    },
+    {
+      "id": "IOT-I8",
+      "title": "Lack of Device Management",
+      "attack_families": ["backdoor", "ransomware", "upload", "botnet"],
+      "text": "Lack of security support on devices deployed in production, including asset management, update management, secure decommissioning, systems monitoring, and response capabilities. A fleet that is not inventoried cannot be patched, and a compromise that is not monitored is not noticed; this is the gap that lets a device stay in a botnet for months. Mitigation: keep an inventory of deployed devices and their firmware versions, monitor for anomalous behaviour centrally, define a response path for a compromised device, and wipe credentials and data on decommissioning."
+    },
+    {
+      "id": "IOT-I9",
+      "title": "Insecure Default Settings",
+      "attack_families": ["password", "scanning", "backdoor"],
+      "text": "Devices or systems shipped with insecure default settings, or lacking the ability to make the system more secure by restricting operators from modifying configurations. Defaults decide the security of the large majority of deployed units because most are never reconfigured, so an open management port or a universal password in the factory image becomes the de facto configuration of the whole fleet. Mitigation: ship with the most restrictive configuration that still works, require the operator to opt in to anything riskier, and ensure every security-relevant setting can actually be changed by the operator."
+    },
+    {
+      "id": "IOT-I10",
+      "title": "Lack of Physical Hardening",
+      "attack_families": ["backdoor", "fingerprint"],
+      "text": "Lack of physical hardening measures, allowing potential attackers to gain sensitive information that helps in a future remote attack or to take local control of the device. IoT devices are frequently deployed where an attacker can reach them: exposed debug headers, unlocked bootloaders and removable flash let one unit be opened to extract firmware and keys, and whatever is shared across the fleet is then compromised everywhere. Mitigation: disable or lock debug interfaces in production builds, encrypt firmware at rest on the device, avoid fleet-wide shared secrets so that one extracted key does not unlock every unit, and make tampering evident."
+    }
+  ]
+}

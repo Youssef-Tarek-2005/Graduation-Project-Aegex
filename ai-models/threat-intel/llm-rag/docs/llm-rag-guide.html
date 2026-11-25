@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طبقة الـ LLM / RAG — دليل التنصيب والتشغيل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070f1c; --bg2:#0c1a2e; --card:#102237; --card2:#16304a; --line:#1f3f5e;
+  --txt:#e8f1f8; --muted:#8fa9c0;
+  --cyan:#00e5ff; --cyan-dim:#0a4a5c;
+  --orange:#ffa62b; --green:#3ddc97; --red:#ff5c7a; --purple:#b47cff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,229,255,.10), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(180,124,255,.07), transparent);
+  background-attachment:fixed; color:var(--txt);
+  font-family:'IBM Plex Sans Arabic','Cairo',sans-serif;
+  line-height:1.9; overflow-x:hidden;
+}
+code,.mono,pre{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed}
+
+.progress-wrap{position:fixed;top:0;left:0;right:0;height:3px;background:#0a1626;z-index:100}
+.progress{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .35s ease;box-shadow:0 0 12px var(--cyan)}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:48px 16px 110px}
+.slide{display:none;width:100%;max-width:840px;animation:fade .4s ease}
+.slide.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;color:var(--cyan);background:rgba(0,229,255,.08);border:1px solid var(--cyan-dim);padding:5px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-family:'Cairo',sans-serif;font-weight:900;font-size:clamp(25px,5.6vw,40px);line-height:1.35;margin-bottom:14px;background:linear-gradient(120deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-family:'Cairo',sans-serif;font-weight:800;font-size:clamp(21px,4.6vw,30px);margin-bottom:18px;color:#fff}
+h3{font-family:'Cairo',sans-serif;font-weight:700;font-size:clamp(17px,3.6vw,21px);margin:24px 0 10px;color:var(--cyan)}
+p{margin-bottom:14px;font-size:clamp(15px,3.3vw,17px)}
+.lead{font-size:clamp(16px,3.6vw,19px);color:var(--muted)}
+ul,ol{margin:0 20px 16px 0;padding-right:8px}
+li{margin-bottom:9px;font-size:clamp(14.5px,3.2vw,16.5px)}
+b,strong{color:#fff;font-weight:700}
+
+.box{border-radius:14px;padding:18px 20px;margin:18px 0;border-right:4px solid}
+.def{background:rgba(0,229,255,.06);border-color:var(--cyan)} .def .box-t{color:var(--cyan)}
+.tip{background:rgba(255,166,43,.07);border-color:var(--orange)} .tip .box-t{color:var(--orange)}
+.warn{background:rgba(255,92,122,.07);border-color:var(--red)} .warn .box-t{color:var(--red)}
+.ok{background:rgba(61,220,151,.07);border-color:var(--green)} .ok .box-t{color:var(--green)}
+.box-t{display:block;font-family:'Cairo',sans-serif;font-weight:800;font-size:15px;margin-bottom:8px}
+.box p:last-child,.box ul:last-child,.box li:last-child{margin-bottom:0}
+
+pre{position:relative;background:#060d18;border:1px solid var(--line);border-radius:12px;padding:40px 16px 16px;overflow-x:auto;margin:14px 0;font-size:12.5px;line-height:1.8;text-align:left}
+pre code{color:#cfe6f5}
+.k{color:var(--purple)} .s{color:var(--green)} .n{color:var(--orange)}
+.c{color:#5b7591;font-style:italic} .f{color:var(--cyan)}
+code.inl{background:#081322;border:1px solid var(--line);padding:2px 7px;border-radius:6px;font-size:.88em;color:var(--cyan)}
+.cp{position:absolute;top:8px;right:10px;background:var(--card2);border:1px solid var(--line);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:4px 9px;border-radius:6px;cursor:pointer;transition:.18s;z-index:2}
+.cp:hover{border-color:var(--cyan);color:var(--cyan)}
+.cp.done{border-color:var(--green);color:var(--green)}
+
+.tw{overflow-x:auto;margin:18px 0;border-radius:12px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:420px;font-size:14px}
+th{background:var(--card2);color:var(--cyan);font-family:'Cairo',sans-serif;font-weight:800;padding:12px 14px;text-align:right;font-size:13.5px;white-space:nowrap}
+td{padding:11px 14px;border-top:1px solid var(--line);background:rgba(16,34,55,.5)}
+tr:hover td{background:rgba(22,48,74,.7)}
+
+.steps{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.step .num{flex:0 0 32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#04131d;font-family:'JetBrains Mono',monospace;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.step .body b{display:block;margin-bottom:3px;font-size:15.5px}
+.step .body span{color:var(--muted);font-size:14px}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+@media(max-width:620px){.cols{grid-template-columns:1fr}}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px}
+.mini b{display:block;color:var(--cyan);margin-bottom:6px;font-family:'Cairo',sans-serif}
+.mini span{font-size:14px;color:var(--muted)}
+
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+.q .qt{font-family:'Cairo',sans-serif;font-weight:700;margin-bottom:14px;font-size:16px;color:#fff}
+.opt{display:block;width:100%;text-align:right;background:var(--bg2);border:1px solid var(--line);color:var(--txt);padding:12px 15px;border-radius:10px;margin-bottom:9px;cursor:pointer;font-family:inherit;font-size:14.5px;transition:.18s}
+.opt:hover{border-color:var(--cyan);background:var(--card2)}
+.opt.right{border-color:var(--green);background:rgba(61,220,151,.14);color:var(--green)}
+.opt.wrong{border-color:var(--red);background:rgba(255,92,122,.12);color:var(--red)}
+.qa{display:none;margin-top:10px;padding:12px 15px;background:rgba(0,229,255,.06);border-right:3px solid var(--cyan);border-radius:9px;font-size:14px;color:var(--muted)}
+.qa.show{display:block}
+
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(7,15,28,.93);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:90}
+.nbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:10px 20px;border-radius:10px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:14.5px;transition:.18s}
+.nbtn:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.counter{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+.hint{text-align:center;color:#4e6b85;font-size:12px;margin-top:26px;font-family:'JetBrains Mono',monospace}
+.chk{list-style:none;margin-right:0}
+.chk li{position:relative;padding-right:30px;margin-bottom:12px}
+.chk li::before{content:"☐";position:absolute;right:0;color:var(--cyan);font-size:18px;top:-2px}
+.flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:20px 0;font-family:'JetBrains Mono',monospace;font-size:12px}
+.fbox{background:var(--card2);border:1px solid var(--cyan);border-radius:10px;padding:10px 12px;text-align:center;color:var(--cyan);min-width:92px}
+.fbox small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.farrow{color:var(--orange);font-size:16px}
+.layer{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.layer .tag{flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid}
+.l1 .tag{color:var(--green);border-color:var(--green);background:rgba(61,220,151,.1)}
+.l2 .tag{color:var(--purple);border-color:var(--purple);background:rgba(180,124,255,.1)}
+.l3 .tag{color:var(--orange);border-color:var(--orange);background:rgba(255,166,43,.1)}
+</style>
+</head>
+<body>
+
+<div class="progress-wrap"><div class="progress" id="prog"></div></div>
+<div class="stage">
+
+<!-- 1 -->
+<section class="slide active">
+  <span class="badge">LLM / RAG · المرحلة 3</span>
+  <h1>طبقة الـ LLM<br>تنصيب وتشغيل على جهازك</h1>
+  <p class="lead">فحصت الكود الأول زي ما طلبت. الريبو سليم وشغّال، والأهم: <b>مش محتاج GPU ولا API key ولا حتى بناء الـ index</b>. كل حاجة محليّة.</p>
+
+  <div class="cols">
+    <div class="mini"><b>⏱ التنصيب</b><span>20 – 30 دقيقة (أغلبها تحميل)</span></div>
+    <div class="mini"><b>⚡ التشغيل</b><span>ثواني — الـ index جاهز في الريبو</span></div>
+    <div class="mini"><b>💾 المساحة</b><span>~5 جيجا (Ollama + موديلين)</span></div>
+    <div class="mini"><b>🎮 الـ GPU</b><span>اختياري — الـ 3050 هتسرّع بس</span></div>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ نتيجة الفحص</span>
+    <p>شغّلت الـ test suite بتاع الريبو نفسه: <b>56 passed, 2 skipped</b>. رخصة MIT. آخر commit <code class="inl">2026-07-01 (v1.1.2)</code>. مفيش أي مكتبة GPU في الـ requirements.</p>
+  </div>
+  <p class="hint">السهم ← للتالي · → للسابق · أو اسحب بإصبعك</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <span class="badge">01 · إيه اللي بنصّبه</span>
+  <h2>الريبو ده بيعمل إيه بالظبط؟</h2>
+  <p><code class="inl">rvong65/threat-intelligence-assistant</code> هو نظام <b>RAG</b>: بيجاوب على أسئلة عن التهديدات، بس <b>مش من دماغه</b> — بيدوّر الأول في قاعدة معرفة حقيقية، وبعدين يكتب الإجابة من اللي لقاه، ويحطّ الـ citation جنب كل جملة.</p>
+
+  <div class="flow">
+    <div class="fbox">سؤالك<small>query</small></div>
+    <span class="farrow">←</span>
+    <div class="fbox">FAISS<small>بحث دلالي</small></div>
+    <span class="farrow">←</span>
+    <div class="fbox">5 مستندات<small>top_k=5</small></div>
+    <span class="farrow">←</span>
+    <div class="fbox">gemma3:4b<small>يكتب الرد</small></div>
+    <span class="farrow">←</span>
+    <div class="fbox">إجابة<small>+ مصادر</small></div>
+  </div>
+
+  <h3>قاعدة المعرفة اللي جوّاه</h3>
+  <p>فتحت الـ index وعدّيت اللي فيه بنفسي:</p>
+  <div class="tw"><table>
+    <tr><th>المصدر</th><th>عدد المستندات</th><th>إيه ده</th></tr>
+    <tr><td>MITRE ATT&CK</td><td>697</td><td>تكنيكات الهجوم (T1059, T1055…)</td></tr>
+    <tr><td>CISA KEV</td><td>1,614</td><td>ثغرات مُستغَلّة فعليًا في الواقع</td></tr>
+    <tr><td>MITRE Software</td><td>821</td><td>أدوات ومالويرات معروفة (S0154…)</td></tr>
+    <tr><td>MITRE Groups</td><td>174</td><td>مجموعات الهاكرز (G0007…)</td></tr>
+    <tr><td><b>الإجمالي</b></td><td><b>3,306 → 3,312 chunk</b></td><td>768 بُعد لكل chunk</td></tr>
+  </table></div>
+
+  <div class="box def">
+    <span class="box-t">🔍 ليه ده مهم لمشروعك</span>
+    <p>الـ autoencoder والـ E-GraphSAGE بيقولوا <b>"ده هجوم"</b>. الطبقة دي بتقول <b>"ده هجوم من النوع ده، شبه تكنيك MITRE كذا، والمصدر هو ده"</b>. يعني بتحوّل رقم إلى تقرير يفهمه بني آدم.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <span class="badge">02 · أهم اكتشاف</span>
+  <h2>الـ index مبني ومرفوع في الريبو</h2>
+  <p>أول حاجة عملتها إني فتحت ملف <code class="inl">indices/faiss_index/manifest.json</code>. ولقيت ده:</p>
+
+<pre><code>{
+  <span class="f">"corpus_version"</span>: <span class="s">"1.0.0"</span>,
+  <span class="f">"vectorstore_backend"</span>: <span class="s">"faiss"</span>,
+  <span class="f">"embedding_model"</span>: <span class="s">"nomic-embed-text"</span>,
+  <span class="f">"embedding_provider"</span>: <span class="s">"ollama"</span>,     <span class="c">// ← المهم</span>
+  <span class="f">"document_count"</span>: <span class="n">3306</span>,
+  <span class="f">"chunk_count"</span>: <span class="n">3312</span>,
+  <span class="f">"built_at"</span>: <span class="s">"2026-06-10T13:27:29Z"</span>
+}</code></pre>
+
+  <p>الـ <code class="inl">embedding_provider</code> هو <b>ollama</b>. يعني صاحب الريبو بنى الـ index بنفس الطريقة اللي إحنا هنشغّل بيها محليًا. النتيجة:</p>
+
+  <div class="box ok">
+    <span class="box-t">✓ اللي مش محتاج تعمله</span>
+    <ul>
+      <li>❌ مش محتاج تحمّل MITRE ATT&CK (ملف ~40 ميجا)</li>
+      <li>❌ مش محتاج تدخل على <code class="inl">cisa.gov</code> (واللي ممكن يتحجب عليك زي Kaggle)</li>
+      <li>❌ مش محتاج تشغّل <code class="inl">ingest.py</code> ولا تستنى بناء الـ embeddings</li>
+      <li>❌ مش محتاج <b>HuggingFace</b> خالص على البروفايل المحلي</li>
+      <li>❌ مش محتاج <b>Groq API key</b></li>
+    </ul>
+  </div>
+
+  <p>تأكدت إن الـ index سليم فعلًا: حمّلته بنفسي، طلع <b>3,312 vector بـ 768 بُعد</b>، وكل مستند جوّاه الـ metadata بتاعته كاملة — العنوان، النوع، الـ ID، والـ <code class="inl">url</code> اللي بيستخدمه في الـ citations.</p>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="badge">03 · قبل ما تبدأ</span>
+  <h2>تشيك على جهازك</h2>
+  <p>جهازك (HP Victus · 16 جيجا رام · RTX 3050 · i7 جيل 12) أكبر من المطلوب. الريبو بيقول <b>~8 جيجا رام</b> للبروفايل المحلي.</p>
+
+  <h3>اللي عندك خلاص</h3>
+  <div class="tw"><table>
+    <tr><th>الحاجة</th><th>الحالة</th><th>تشيك عليها</th></tr>
+    <tr><td>Python 3.11+</td><td>✓ نصّبتها قبل كده</td><td><code class="inl">python --version</code></td></tr>
+    <tr><td>Git</td><td>✓ استخدمناها قبل كده</td><td><code class="inl">git --version</code></td></tr>
+    <tr><td>مساحة هارد</td><td>✓ 1 تيرا</td><td>محتاجين ~5 جيجا</td></tr>
+  </table></div>
+
+  <h3>اللي ناقص</h3>
+  <ul>
+    <li><b>Ollama</b> — البرنامج اللي يشغّل الموديل على جهازك</li>
+    <li><b>الريبو نفسه</b> + مكتباته</li>
+  </ul>
+
+  <div class="box warn">
+    <span class="box-t">⚠ venv جديد، مش القديم</span>
+    <p>متستخدمش الـ <code class="inl">venv</code> اللي عملناه للـ autoencoder أو الـ E-GraphSAGE. الطبقة دي عندها مكتبات مختلفة تمامًا (langchain, faiss, streamlit) ومفيش داعي تخلط. هنعمل <code class="inl">.venv</code> جديد جوّه فولدر الريبو.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="badge">04 · الخطوة 1</span>
+  <h2>نصّب Ollama</h2>
+  <p>Ollama هو اللي هيشغّل الموديل على جهازك. مفتوح المصدر ومجاني ومفيش فيه حسابات ولا مفاتيح.</p>
+
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div class="body"><b>افتح PowerShell جديد</b><span>مش لازم Administrator</span></div></div>
+    <div class="step"><div class="num">2</div><div class="body"><b>شغّل الأمر ده</b><span>winget هيحمّل وينصّب لوحده</span></div></div>
+  </div>
+
+<pre><code>winget install --source winget --id Ollama.Ollama</code></pre>
+
+  <div class="box tip">
+    <span class="box-t">💡 لاحظ <code class="inl">--source winget</code></span>
+    <p>نفس المشكلة اللي قابلتنا مع Python. من غيرها winget بيحاول يجيبها من <code class="inl">msstore</code> وبيطلّع error في الشهادة. الـ flag دي بتجبره على المصدر الصح.</p>
+  </div>
+
+  <p>لو winget مرضيش، حمّل الـ installer من الموقع الرسمي: <code class="inl">https://ollama.com/download/windows</code></p>
+
+  <h3>اقفل الـ PowerShell وافتح واحد جديد</h3>
+  <p>ضروري — عشان الـ <code class="inl">PATH</code> يتحدّث. وبعدين اتأكد:</p>
+<pre><code>ollama --version</code></pre>
+  <div class="box ok">
+    <span class="box-t">✓ المتوقع</span>
+    <p>سطر فيه رقم نسخة، زي <code class="inl">ollama version is 0.x.x</code>. لو طلع <code class="inl">not recognized</code>، الـ PATH لسه متحدّثش — اعمل restart للجهاز.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <span class="badge">05 · الخطوة 2</span>
+  <h2>حمّل الموديلين</h2>
+  <p>موديلين، كل واحد له دور مختلف تمامًا:</p>
+
+  <div class="tw"><table>
+    <tr><th>الموديل</th><th>الحجم</th><th>دوره</th></tr>
+    <tr><td><code class="inl">nomic-embed-text</code></td><td>~274 ميجا</td><td>يحوّل سؤالك لـ 768 رقم عشان البحث في الـ index</td></tr>
+    <tr><td><code class="inl">gemma3:4b</code></td><td>~3.3 جيجا</td><td>يكتب الإجابة النهائية من المستندات</td></tr>
+  </table></div>
+
+<pre><code>ollama pull nomic-embed-text
+ollama pull gemma3:4b</code></pre>
+
+  <div class="box def">
+    <span class="box-t">🔍 ليه الموديلين دول بالتحديد؟</span>
+    <p>مش اختيار عشوائي. الـ <code class="inl">manifest.json</code> قال إن الـ index اتبنى بـ <code class="inl">nomic-embed-text</code> — فلازم نستخدم <b>نفسه</b> في البحث. والـ <code class="inl">gemma3:4b</code> هو اللي الريبو موصّي بيه ومجرَّب عليه.</p>
+  </div>
+
+  <div class="box tip">
+    <span class="box-t">💡 الـ RTX 3050 بتاعتك</span>
+    <p><code class="inl">gemma3:4b</code> بعد الـ quantization حواليه 3.3 جيجا، فهيدخل في الـ 4 جيجا VRAM بتاعتك تقريبًا كله. Ollama بيوزّع لوحده بين الـ GPU والرام — مش محتاج تضبط حاجة. متوقع <b>15-30 توكن/ثانية</b>، سريع كفاية للعرض الحيّ.</p>
+  </div>
+
+  <h3>تشيك</h3>
+<pre><code>ollama list</code></pre>
+  <p>لازم تشوف السطرين. لو ناقص واحد، اعمل له <code class="inl">pull</code> تاني.</p>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <span class="badge">06 · الخطوة 3</span>
+  <h2>نزّل الريبو واعمل البيئة</h2>
+  <p>هنحطّه جنب باقي المشروع. غيّر المسار لو مشروعك في مكان تاني.</p>
+
+<pre><code>cd $HOME\Desktop\PoC
+git clone https://github.com/rvong65/threat-intelligence-assistant.git
+cd threat-intelligence-assistant</code></pre>
+
+  <h3>اعمل venv وفعّله</h3>
+<pre><code>python -m venv .venv
+.\.venv\Scripts\activate</code></pre>
+
+  <div class="box ok">
+    <span class="box-t">✓ المتوقع</span>
+    <p>سطر الـ PowerShell بيبدأ بـ <code class="inl">(.venv)</code>. لو مظهرش، البيئة مش مفعّلة والـ pip هيروح في المكان الغلط.</p>
+  </div>
+
+  <div class="box warn">
+    <span class="box-t">⚠ لو ظهر error في الـ Execution Policy</span>
+    <p>ويندوز بيمنع السكربتات افتراضيًا على بعض الأجهزة. شغّل السطر ده مرة واحدة وبعدين فعّل تاني:</p>
+<pre><code>Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</code></pre>
+    <p><code class="inl">-Scope Process</code> معناها إن التغيير للنافذة دي بس وبيختفي لما تقفلها — أأمن من إنك تغيّر إعدادات الجهاز كله.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <span class="badge">07 · الخطوة 4</span>
+  <h2>نصّب المكتبات</h2>
+  <p>نفس الـ flags اللي استخدمناها قبل كده، عشان نفس مشاكل الشبكة متتكررش:</p>
+
+<pre><code>python -m pip install --upgrade pip
+pip install -r requirements.txt --default-timeout=1000 --retries 10</code></pre>
+
+  <div class="box warn">
+    <span class="box-t">⚠ متدوسش جوّه النافذة!</span>
+    <p>فاكر لما طلع <code class="inl">"Operation cancelled by user"</code> المرة اللي فاتت؟ ده بسبب خاصية QuickEdit — أي كليك جوّه الـ PowerShell وقت التحميل بيوقّف الأمر. سيب النافذة في حالها لما تخلص. ولو الـ VPN مفتوح، اقفله — PyPI بيتهنّج معاه.</p>
+  </div>
+
+  <h3>إيه اللي بيتنصّب</h3>
+  <div class="tw"><table>
+    <tr><th>المكتبة</th><th>دورها</th></tr>
+    <tr><td><code class="inl">langchain</code> 0.3.x</td><td>يربط البحث بالموديل</td></tr>
+    <tr><td><code class="inl">faiss-cpu</code></td><td>البحث الدلالي — <b>نسخة CPU، مفيش GPU</b></td></tr>
+    <tr><td><code class="inl">langchain-ollama</code></td><td>الوصل مع Ollama المحلي</td></tr>
+    <tr><td><code class="inl">streamlit</code></td><td>الواجهة اللي هتعرضها في المناقشة</td></tr>
+    <tr><td><code class="inl">pydantic</code></td><td>يتحقق من الإعدادات</td></tr>
+  </table></div>
+
+  <div class="box def">
+    <span class="box-t">🔍 ملحوظة مهمة للمناقشة</span>
+    <p>مفيش <code class="inl">torch</code> ولا <code class="inl">bitsandbytes</code> ولا أي مكتبة GPU في الملف ده. الطبقة دي <b>كلها CPU</b>. ده السبب الأساسي إني نصحتك بالريبو ده بدل <code class="inl">Cyber-LLM-RAG</code> اللي كان محتاج Llama-2-7B بـ 4-bit — واللي عايز أكتر من 4 جيجا VRAM.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <span class="badge">08 · الخطوة 5</span>
+  <h2>ملف الإعدادات <code class="inl">.env</code></h2>
+  <p>الريبو افتراضيًا مظبوط على البروفايل السحابي (Groq + HuggingFace). إحنا عايزين المحلي. <b>متنسخش <code class="inl">.env.example</code> زي ما هو</b> — هنكتب الملف من الأول.</p>
+
+  <p>اعمل ملف اسمه <code class="inl">.env</code> في نفس فولدر الريبو، وحطّ فيه ده بالظبط:</p>
+
+<pre><code>DEPLOYMENT_PROFILE=local
+LLM_PROVIDER=ollama
+LLM_MODEL=gemma3:4b
+OLLAMA_BASE_URL=http://localhost:11434
+
+EMBEDDING_PROVIDER=ollama
+EMBEDDING_MODEL=nomic-embed-text
+
+VECTORSTORE_BACKEND=faiss
+RETRIEVAL_TOP_K=5
+CONFIDENCE_THRESHOLD=40
+HARD_ABSTENTION_ENABLED=true
+RETRIEVAL_ONLY_FALLBACK=true
+LLM_REWRITE_FOLLOWUPS=true
+INCLUDE_GROUPS_SOFTWARE=true
+MEMORY_MAX_TURNS=3
+INGEST_BATCH_SIZE=32
+
+DATA_RAW_DIR=data/raw
+DATA_PROCESSED_DIR=data/processed
+INDICES_DIR=indices/faiss_index</code></pre>
+
+  <div class="box ok">
+    <span class="box-t">✓ الملف ده متحقَّق منه</span>
+    <p>كتبته وشغّلته على كود الريبو نفسه (<code class="inl">config/settings.py</code>) وقبله من غير أي error في الـ validation. مش مجرد تخمين.</p>
+  </div>
+
+  <p>أسهل طريقة تعمله من PowerShell — افتحه في Notepad والصق:</p>
+<pre><code>notepad .env</code></pre>
+  <p>Notepad هيسأل "تعمل الملف؟" — قول آه، الصق، واعمل Save.</p>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <span class="badge">09 · فهم الإعدادات</span>
+  <h2>إيه اللي ضبطناه ولِيه</h2>
+  <p>أربع إعدادات من دول هي <b>قلب موضوع منع الهلوسة</b> — وده أهم حاجة تعرفها عن الطبقة دي في المناقشة.</p>
+
+  <div class="tw"><table>
+    <tr><th>الإعداد</th><th>معناه</th></tr>
+    <tr><td><code class="inl">RETRIEVAL_TOP_K=5</code></td><td>يجيب أقرب 5 مستندات بس. أكتر = ضوضاء، أقل = معلومات ناقصة</td></tr>
+    <tr><td><code class="inl">CONFIDENCE_THRESHOLD=40</code></td><td>لو الثقة أقل من 40%، النظام <b>يرفض يجاوب</b> بدل إنه يألّف</td></tr>
+    <tr><td><code class="inl">HARD_ABSTENTION_ENABLED=true</code></td><td>الامتناع إجباري، مش اقتراح للموديل</td></tr>
+    <tr><td><code class="inl">RETRIEVAL_ONLY_FALLBACK=true</code></td><td>لو الموديل وقع، يعرض المستندات اللي لقاها على الأقل</td></tr>
+  </table></div>
+
+  <h3>الـ prompt اللي بيفرض ده</h3>
+  <p>قريت <code class="inl">src/rag/prompts.py</code>. فيه تعليمات صريحة للموديل:</p>
+  <ul>
+    <li>كل جملة لازم يكون جنبها citation بالشكل <code class="inl">[T1059.001]</code> أو <code class="inl">[G0007]</code> أو <code class="inl">[CVE-2024-1234]</code></li>
+    <li><b>ممنوع</b> يختلق أي ID مش موجود في المستندات</li>
+    <li>لو مش لاقي دليل، يقول نص محدَّد بالحرف: <i>"I don't have enough grounded evidence to answer confidently."</i></li>
+  </ul>
+
+  <div class="box def">
+    <span class="box-t">🎯 الجملة اللي تقولها للدكتور</span>
+    <p>"الطبقة دي <b>مربوطة بمصادر</b> (grounded). مش LLM بيتكلم من دماغه — كل جملة لها citation من MITRE أو CISA، ولو مفيش دليل كافي النظام بيمتنع عن الإجابة بدل إنه يهلوس. وده متحقَّق منه في الـ prompt وفي عتبة الثقة."</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <span class="badge">10 · الخطوة 6</span>
+  <h2>شغّل!</h2>
+  <p>اتأكد إن <code class="inl">(.venv)</code> ظاهر في أول السطر، وإنك جوّه فولدر الريبو:</p>
+
+<pre><code>streamlit run app.py</code></pre>
+
+  <div class="box ok">
+    <span class="box-t">✓ المتوقع</span>
+    <p>الـ PowerShell هيطبع لينك زي <code class="inl">Local URL: http://localhost:8501</code>، والمتصفح هيفتح لوحده. هتشوف واجهة شات.</p>
+  </div>
+
+  <div class="box warn">
+    <span class="box-t">⚠ سيب النافذة مفتوحة</span>
+    <p>الـ PowerShell ده هو السيرفر نفسه. لو قفلته، الصفحة بتموت. لما تخلص، اقفلها بـ <code class="inl">Ctrl+C</code>.</p>
+  </div>
+
+  <h3>أول سؤال تجربه</h3>
+<pre><code>How is T1059 used by threat actors?</code></pre>
+
+  <p>المتوقع: إجابة فيها <code class="inl">[T1059]</code> و IDs تانية، وتحتها قايمة المصادر مع لينكات <code class="inl">attack.mitre.org</code>.</p>
+
+  <h3>وجرّب سؤال خارج نطاق المعرفة</h3>
+<pre><code>What is the capital of Egypt?</code></pre>
+  <p>المتوقع: يرفض يجاوب. <b>ده نجاح مش فشل</b> — ده الـ abstention gate شغّال. أثبِت ده للدكتور في المناقشة، هو دليل إن النظام مش بيهلوس.</p>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <span class="badge">11 · فخ لازم تعرفه</span>
+  <h2>متغيّرش مصدر الـ embeddings</h2>
+  <p>ده أخطر حاجة في الريبو ده، ومفيش فيه أي تحذير منها، فخد بالك.</p>
+
+  <div class="box warn">
+    <span class="box-t">⚠ المشكلة</span>
+    <p>الـ index اتبنى بـ <b>Ollama</b> <code class="inl">nomic-embed-text</code>. لو شغّلت البروفايل السحابي (<code class="inl">EMBEDDING_PROVIDER=huggingface</code>) مع نفس الـ index، <b>مش هيطلع error</b> — الاتنين 768 بُعد فالأبعاد متوافقة. بس البحث هيبوظ بالهدوء وهيجيب مستندات غلط، وانت مش هتعرف ليه.</p>
+  </div>
+
+  <h3>القاعدة</h3>
+  <div class="tw"><table>
+    <tr><th>لو استخدمت</th><th>لازم</th></tr>
+    <tr><td>الـ index الجاهز اللي في الريبو</td><td><code class="inl">EMBEDDING_PROVIDER=ollama</code> — زي ما ظبطناه</td></tr>
+    <tr><td>HuggingFace أو مصدر تاني</td><td>تبني الـ index من الأول بنفس المصدر</td></tr>
+  </table></div>
+
+  <div class="box def">
+    <span class="box-t">🔍 لو الدكتور سأل</span>
+    <p>السؤال المتوقع: "إزاي عرفت إن الـ index متوافق؟" الرد: "من <code class="inl">manifest.json</code> — بيسجّل الـ embedding provider والموديل اللي اتبنى بيهم، وأنا تأكدت إن إعدادات التشغيل مطابقة ليهم." ده يوري إنك فاهم النظام، مش بس مشغّله.</p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <span class="badge">12 · اختياري</span>
+  <h2>لو عايز تبني الـ index بنفسك</h2>
+  <p>مش محتاج ده للعرض — الـ index الجاهز كفاية. بس لو عايز تقول في المناقشة إنك بنيت القاعدة بنفسك، أو عايز تحدّثها:</p>
+
+<pre><code>python scripts/ingest.py --validate-only</code></pre>
+  <p>يتحقق من البيانات بس. وبعدين:</p>
+<pre><code>python scripts/ingest.py --build-index</code></pre>
+
+  <h3>إيه اللي بيحصل</h3>
+  <ol>
+    <li>بيحمّل <code class="inl">enterprise-attack.json</code> من <code class="inl">raw.githubusercontent.com</code> (~40 ميجا)</li>
+    <li>بيحمّل <code class="inl">known_exploited_vulnerabilities.csv</code> من <code class="inl">cisa.gov</code></li>
+    <li>بيقسّمهم chunks ويعمل embedding لكل واحد بـ Ollama</li>
+    <li>بيكتب index جديد في <code class="inl">indices/faiss_index</code></li>
+  </ol>
+
+  <div class="box warn">
+    <span class="box-t">⚠ لو <code class="inl">cisa.gov</code> محجوب عليك</span>
+    <p>احتمال كبير — زي ما حصل مع Kaggle. الحل: حمّل الملفين من تليفونك أو أي نت تاني، وحطّهم يدويًا في <code class="inl">data/raw/</code> <b>بنفس الأسماء بالحرف</b>:</p>
+    <ul>
+      <li><code class="inl">enterprise-attack.json</code></li>
+      <li><code class="inl">known_exploited_vulnerabilities.csv</code></li>
+    </ul>
+    <p>السكربت بيشيك لو الملف موجود، ولو موجود بيستخدمه ومش بيحاول يحمّل.</p>
+  </div>
+
+  <p>وممكن تجرّب سؤال في نفس الأمر:</p>
+<pre><code>python scripts/ingest.py --build-index --test-query "How is T1059 used?"</code></pre>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <span class="badge">13 · حل المشاكل</span>
+  <h2>لو حصل error</h2>
+
+  <div class="tw"><table>
+    <tr><th>الرسالة</th><th>السبب</th><th>الحل</th></tr>
+    <tr><td><code class="inl">ollama: not recognized</code></td><td>الـ PATH متحدّثش</td><td>اقفل الـ PowerShell وافتح جديد، أو restart</td></tr>
+    <tr><td><code class="inl">connection refused :11434</code></td><td>خدمة Ollama واقفة</td><td>شغّل <code class="inl">ollama serve</code> في نافذة تانية</td></tr>
+    <tr><td><code class="inl">model 'gemma3:4b' not found</code></td><td>الـ pull مكمّلش</td><td><code class="inl">ollama pull gemma3:4b</code> تاني</td></tr>
+    <tr><td><code class="inl">ReadTimeoutError</code> في pip</td><td>شبكة بطيئة / VPN</td><td>اقفل الـ VPN + الـ flags بتاعة الـ timeout</td></tr>
+    <tr><td><code class="inl">Operation cancelled by user</code></td><td>دوست جوّه النافذة</td><td>شغّل تاني وسيب النافذة</td></tr>
+    <tr><td><code class="inl">cannot be loaded... execution policy</code></td><td>ويندوز مانع السكربتات</td><td><code class="inl">Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</code></td></tr>
+    <tr><td>الرد بطيء جدًا</td><td>الموديل على الرام مش GPU</td><td>اقفل Chrome والبرامج التقيلة، أو استخدم موديل أصغر</td></tr>
+    <tr><td>الإجابات كلها "امتناع"</td><td>الـ embeddings مش متطابقة</td><td>راجع <code class="inl">EMBEDDING_PROVIDER=ollama</code> في <code class="inl">.env</code></td></tr>
+    <tr><td><code class="inl">Port 8501 is already in use</code></td><td>نسخة شغّالة بالفعل</td><td><code class="inl">streamlit run app.py --server.port 8502</code></td></tr>
+  </table></div>
+
+  <div class="box tip">
+    <span class="box-t">💡 لو عايز موديل أسرع</span>
+    <p>لو <code class="inl">gemma3:4b</code> تقيل على جهازك، جرّب <code class="inl">ollama pull gemma3:1b</code> وغيّر <code class="inl">LLM_MODEL=gemma3:1b</code> في <code class="inl">.env</code>. أسرع بكتير، بس جودة الصياغة أقل. <b>متغيّرش موديل الـ embedding أبدًا</b> — ده هو اللي لازم يفضل زي ما هو.</p>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <span class="badge">14 · مكان الطبقة دي</span>
+  <h2>المشروع كامل — الثلاث طبقات</h2>
+
+  <div class="layer l1"><span class="tag">LAYER 1</span><div><b>Autoencoder</b> — كشف الشاذ على 2.2 مليون اتصال<br><span style="color:var(--muted);font-size:14px">كشف 77.89% · إنذار كاذب 4.96% · ✓ خلصت</span></div></div>
+  <div class="layer l2"><span class="tag">LAYER 2</span><div><b>E-GraphSAGE</b> — تصنيف بسياق الشبكة<br><span style="color:var(--muted);font-size:14px">يتفوّق على الـ MLP في كل أحجام النافذة · ✓ خلصت</span></div></div>
+  <div class="layer l3"><span class="tag">LAYER 3</span><div><b>RAG / LLM</b> — تقرير مربوط بمصادر<br><span style="color:var(--muted);font-size:14px">3,312 مستند · citations إجبارية · 🔄 بننصّبها دلوقتي</span></div></div>
+
+  <h3>فجوة لقيتها — وهي فرصة ليك</h3>
+  <p>عدّيت الكلمات في قاعدة المعرفة بنفسي. النتيجة:</p>
+  <div class="tw"><table>
+    <tr><th>المصطلح</th><th>عدد المستندات</th></tr>
+    <tr><td>ransomware</td><td>1,732</td></tr>
+    <tr><td>backdoor</td><td>293</td></tr>
+    <tr><td>password</td><td>124</td></tr>
+    <tr><td>SQL</td><td>45</td></tr>
+    <tr><td>cross-site (XSS)</td><td>37</td></tr>
+    <tr><td style="color:var(--red)">IoT</td><td style="color:var(--red)">12 فقط</td></tr>
+    <tr><td style="color:var(--red)">MQTT</td><td style="color:var(--red)">1 فقط</td></tr>
+    <tr><td style="color:var(--red)">Mirai</td><td style="color:var(--red)">صفر</td></tr>
+  </table></div>
+
+  <div class="box def">
+    <span class="box-t">🎯 ده إسهامك انت</span>
+    <p>القاعدة قويّة في هجمات الـ IT العامة، لكن <b>ضعيفة جدًا في الـ IoT</b> — ومشروعك كله honeypot لإنترنت الأشياء. فإضافة <b>OWASP IoT Top 10</b> لقاعدة المعرفة مش رفاهية، دي اللي بتخلّي الطبقة دي ليها علاقة بمجال مشروعك. وده إسهام انت بتضيفه فوق الريبو الجاهز — حاجة قوية تقولها في المناقشة.</p>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide">
+  <span class="badge">15 · الختام</span>
+  <h2>تشيك ليست وخطوة جاية</h2>
+
+  <ul class="chk">
+    <li><code class="inl">ollama --version</code> بيطبع رقم</li>
+    <li><code class="inl">ollama list</code> فيه <code class="inl">nomic-embed-text</code> و <code class="inl">gemma3:4b</code></li>
+    <li>الريبو منزّل و <code class="inl">(.venv)</code> مفعّل</li>
+    <li><code class="inl">pip install -r requirements.txt</code> خلص من غير error</li>
+    <li>ملف <code class="inl">.env</code> موجود وفيه <code class="inl">DEPLOYMENT_PROFILE=local</code></li>
+    <li><code class="inl">streamlit run app.py</code> فتح الصفحة</li>
+    <li>سؤال T1059 رجع إجابة فيها citations</li>
+    <li>سؤال خارج النطاق رجع امتناع (ده نجاح!)</li>
+  </ul>
+
+  <div class="q">
+    <p class="qt">ليه مش محتاجين نشغّل <code class="inl">ingest.py</code>؟</p>
+    <button class="opt" data-ok="0">عشان الريبو مش محتاج قاعدة معرفة</button>
+    <button class="opt" data-ok="1">عشان الـ index مبني ومرفوع في الريبو بنفس موديل الـ embedding اللي هنستخدمه</button>
+    <button class="opt" data-ok="0">عشان Ollama بيبني الـ index لوحده</button>
+    <div class="qa">الـ <code class="inl">manifest.json</code> بيقول إن الـ index اتبنى بـ Ollama <code class="inl">nomic-embed-text</code> — نفس اللي إحنا هنشغّله. فالـ 3,312 chunk جاهزين ومتوافقين. ده وفّر علينا تحميل 40 ميجا، دخول على cisa.gov المحتمل يتحجب، ووقت بناء الـ embeddings.</div>
+  </div>
+
+  <div class="q">
+    <p class="qt">لو النظام رفض يجاوب على سؤال، ده إيه؟</p>
+    <button class="opt" data-ok="0">عيب في النظام محتاج تصليح</button>
+    <button class="opt" data-ok="1">الـ abstention gate شغّال صح — بيمنع الهلوسة</button>
+    <button class="opt" data-ok="0">الموديل صغير أوي</button>
+    <div class="qa">دي ميزة مقصودة. <code class="inl">CONFIDENCE_THRESHOLD=40</code> + <code class="inl">HARD_ABSTENTION_ENABLED=true</code> بيخلّوا النظام يقول "مش عندي دليل كافي" بدل إنه يألّف إجابة. في مجال الأمن، إجابة مألّفة أخطر من مفيش إجابة.</div>
+  </div>
+
+  <h3>اللي جاي بعد التنصيب</h3>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div class="body"><b>الجسر بين الكشف والتقرير</b><span>نخلّي مخرجات الـ autoencoder / E-GraphSAGE تتحوّل لسؤال للطبقة دي تلقائيًا</span></div></div>
+    <div class="step"><div class="num">2</div><div class="body"><b>إضافة OWASP IoT Top 10</b><span>الفجوة اللي لقيناها — إسهامك انت</span></div></div>
+    <div class="step"><div class="num">3</div><div class="body"><b>تحضير العرض</b><span>فاضل حوالي 11 يوم للمناقشة</span></div></div>
+  </div>
+
+  <div class="box ok">
+    <span class="box-t">✓ الأمانة في المناقشة</span>
+    <p>الريبو ده <b>تطبيق أسئلة وأجوبة</b>، مش مولّد تقارير. قوله كده بصراحة: "استخدمت نظام RAG جاهز مفتوح المصدر كأساس، وإسهامي هو ربطه بمخرجات طبقة الكشف وإضافة مصادر معرفة خاصة بالـ IoT." الدكاترة بيحترموا الوضوح ده أكتر من إنك تدّعي إنك بنيت كل حاجة من الصفر.</p>
+  </div>
+  <p class="hint">خلصنا · 16 / 16</p>
+</section>
+
+</div>
+
+<div class="nav">
+  <button class="nbtn" id="prev">السابق</button>
+  <span class="counter" id="count">1 / 16</span>
+  <button class="nbtn" id="next">التالي</button>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const prev=document.getElementById('prev'), next=document.getElementById('next');
+const count=document.getElementById('count'), prog=document.getElementById('prog');
+let i=0;
+function render(){
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  count.textContent=(i+1)+' / '+slides.length;
+  prog.style.width=((i+1)/slides.length*100)+'%';
+  prev.disabled=i===0; next.disabled=i===slides.length-1;
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function go(d){const n=i+d; if(n>=0&&n<slides.length){i=n;render();}}
+prev.onclick=()=>go(-1); next.onclick=()=>go(1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='BUTTON')return;
+  if(e.key==='ArrowLeft')go(1);
+  if(e.key==='ArrowRight')go(-1);
+});
+let sx=0,sy=0;
+document.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX;sy=e.changedTouches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){ dx<0?go(-1):go(1); }
+},{passive:true});
+document.querySelectorAll('pre').forEach(pre=>{
+  const b=document.createElement('button');
+  b.className='cp'; b.textContent='copy';
+  b.onclick=()=>{navigator.clipboard.writeText(pre.querySelector('code').innerText).then(()=>{
+    b.textContent='copied'; b.classList.add('done');
+    setTimeout(()=>{b.textContent='copy';b.classList.remove('done')},1600);});};
+  pre.appendChild(b);
+});
+document.querySelectorAll('.q').forEach(q=>{
+  const opts=[...q.querySelectorAll('.opt')], ans=q.querySelector('.qa');
+  opts.forEach(o=>o.onclick=()=>{
+    if(q.dataset.done)return;
+    q.dataset.done=1;
+    opts.forEach(x=>x.classList.add(x.dataset.ok==='1'?'right':'wrong'));
+    ans.classList.add('show');
+  });
+});
+render();
+</script>
+</body>
+</html>

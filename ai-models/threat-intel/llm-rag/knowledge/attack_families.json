@@ -1,0 +1,21 @@
+{
+  "note": "Dataset-agnostic attack taxonomy. Each knowledge item (CWE / CAPEC / OWASP) maps to one or more of these family keys instead of to one dataset's class strings. The build scripts expand every key into its name plus the label variants seen across the common IoT IDS datasets (Edge-IIoTset, TON_IoT, Bot-IoT, CICIoT2023, N-BaIoT), and embed that text so retrieval fires whatever exact label the detector emits. Add real labels from the team's models to the matching family's `labels` list when known.",
+  "families": {
+    "password":          {"name": "Password / brute-force attack", "labels": ["Password", "password", "BruteForce", "Brute_Force", "Brute Force", "DictionaryBruteForce", "password cracking", "credential stuffing", "dictionary attack"]},
+    "dos":               {"name": "Denial of Service (DoS)", "labels": ["DoS", "dos", "DoS-SYN_Flood", "DoS-TCP_Flood", "DoS-UDP_Flood", "DoS-HTTP_Flood", "denial of service"]},
+    "ddos":              {"name": "Distributed Denial of Service (DDoS) / flooding", "labels": ["DDoS", "ddos", "DDoS_UDP", "DDoS_ICMP", "DDoS_TCP", "DDoS_HTTP", "DDoS-ICMP_Flood", "DDoS-UDP_Flood", "DDoS-SYN_Flood", "flooding", "flood"]},
+    "scanning":          {"name": "Reconnaissance / scanning", "labels": ["Port_Scanning", "scanning", "Scanning", "Recon", "Reconnaissance", "Recon-PortScan", "Service_Scan", "host discovery", "network scan", "port scan"]},
+    "vuln_scan":         {"name": "Vulnerability scanning", "labels": ["Vulnerability_scanner", "VulnerabilityScan", "vulnerability scan", "vulnerability scanner"]},
+    "fingerprint":       {"name": "Fingerprinting / OS detection", "labels": ["Fingerprinting", "OS_Fingerprint", "Recon-OSScan", "OS fingerprinting", "service fingerprinting"]},
+    "sql_injection":     {"name": "SQL injection", "labels": ["SQL_injection", "SqlInjection", "injection", "Injection", "SQL injection"]},
+    "command_injection": {"name": "Command / code injection", "labels": ["CommandInjection", "command injection", "OS command injection", "code injection"]},
+    "xss":               {"name": "Cross-site scripting (XSS)", "labels": ["XSS", "xss", "cross-site scripting", "BrowserHijacking"]},
+    "upload":            {"name": "Malicious file upload / web shell", "labels": ["Uploading", "Uploading_Attack", "file upload", "web shell", "malicious upload"]},
+    "backdoor":          {"name": "Backdoor / unauthorized access", "labels": ["Backdoor", "backdoor", "Backdoor_Malware", "persistence", "remote access"]},
+    "ransomware":        {"name": "Ransomware", "labels": ["Ransomware", "ransomware", "crypto malware", "crypto-ransomware"]},
+    "botnet":            {"name": "Botnet / Mirai", "labels": ["Mirai", "mirai", "Gafgyt", "gafgyt", "Bashlite", "botnet", "IoT botnet", "C2", "command and control"]},
+    "mitm":              {"name": "Man-in-the-middle / sniffing", "labels": ["MITM", "mitm", "MITM-ArpSpoofing", "adversary in the middle", "sniffing", "interception", "eavesdropping", "ARP spoofing"]},
+    "spoofing":          {"name": "Spoofing", "labels": ["Spoofing", "DNS_Spoofing", "ARP spoofing", "IP spoofing", "identity spoofing"]},
+    "exfiltration":      {"name": "Data theft / exfiltration", "labels": ["Theft", "Data_Exfiltration", "Keylogging", "data exfiltration", "information theft", "data leakage"]}
+  }
+}
