@@ -9,3 +9,7 @@ data/*.csv
 # step 9 output: generated from the database, rebuild with python -m features.dataset
 data/processed/
 artifacts/
+
+# AI model runs and test recordings: generated, rebuild with python -m detect / python -m demo.make_poc_pcaps
+backend/model_runs/
+backend/pcaps/

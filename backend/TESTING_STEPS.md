@@ -204,5 +204,5 @@ Stop with **Ctrl+C** (the capture gets its end time), then delete what it sent:
 
 ```powershell
 .venv/Scripts/python -m demo.check_all     # steps 1-11 together, on a throw-away database: "ALL STEPS PASS"
-.venv/Scripts/python -m pytest             # 162 unit tests: "162 passed"
+.venv/Scripts/python -m pytest             # 163 unit tests: "163 passed"
 ```

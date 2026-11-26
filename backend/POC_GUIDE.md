@@ -185,6 +185,53 @@ Whole captures go to one split: oldest → train, then validation, newest → te
 If the automatic split doesn't fit, write your own `splits.json` (`{"train": [...], "val": [...], "test": [...]}`)
 and run `features.dataset --splits splits.json`.
 
+## 6b. Sending the recordings to Task B
+
+The backend runs on the **hotspot laptop** (where the ESP32 sends its data). Whoever has that laptop sends after
+each recording day, through a shared Drive folder (not git: the files are big):
+
+1. **The pcap files** (`pcaps\*.pcap`), so Zeek can be run again.
+2. **The attack log** (`attack_log_<day>.csv`), checked first with `python -m ingest.attacks <file> --check`.
+3. **The database**, which also holds what the ESP32 sent live (sensor readings, honeypot events):
+
+```powershell
+docker exec aegex-db pg_dump -U aegex -d aegex_poc -Fc -f /tmp/aegex_poc.dump
+docker cp aegex-db:/tmp/aegex_poc.dump .\aegex_poc_1125.dump
+```
+
+**On the receiving laptop** (this **replaces** its own `aegex_poc` with the received one; tested 2026-11-24, the
+copy matched the original row for row):
+
+```powershell
+docker cp .\aegex_poc_1125.dump aegex-db:/tmp/received.dump
+docker exec aegex-db psql -U aegex -d aegex -c "DROP DATABASE IF EXISTS aegex_poc WITH (FORCE)" -c "CREATE DATABASE aegex_poc"
+docker exec aegex-db psql -U aegex -d aegex_poc -c "CREATE EXTENSION IF NOT EXISTS timescaledb" -c "SELECT timescaledb_pre_restore()"
+docker exec aegex-db pg_restore -U aegex -d aegex_poc --no-owner /tmp/received.dump
+docker exec aegex-db psql -U aegex -d aegex_poc -c "SELECT timescaledb_post_restore()"
+```
+
+`pg_dump` prints warnings about "circular foreign-key constraints": that's normal for TimescaleDB and harmless.
+Stop the API before restoring (the `WITH (FORCE)` would cut its connections anyway).
+
+## 6c. Run the AI models on a recording (LSTM-AE + VAE)
+
+The AI team's models live in `ai-models/lstm-vae-gat/`. `detect.py` is the connection: it runs their own script
+on a recording and saves what they flag in the `alerts` table.
+
+```powershell
+.venv/Scripts/pip install torch --index-url https://download.pytorch.org/whl/cpu      # once
+.venv/Scripts/python -m detect pcaps\cap-poc-1125-attack-1.pcap --normal pcaps\cap-poc-1125-normal-1.pcap
+```
+
+`--normal` must be a **normal-only recording of the same network**: the models learn from it what normal looks like
+here (about 1% of normal windows will still alarm, by design). The alerts then appear at
+`GET /api/v1/alerts?capture=cap-poc-1125-attack-1` (and in Swagger under **Data**).
+
+**Try it now, without hardware:** `python -m demo.make_poc_pcaps` writes a made-up normal recording and an attack
+recording (port scan + HTTP flood from `192.168.137.50`) into `pcaps\`. On 2026-11-25:
+`python -m detect pcaps\poc-attack.pcap --normal pcaps\poc-normal.pcap` took 4 s and gave 100 alerts: 99 on the
+attacker `192.168.137.50`, 1 false alarm on the phone. The normal recording alone gave 1 alert in 33 windows.
+
 ## 7. Test it all without the hardware
 
 ```powershell

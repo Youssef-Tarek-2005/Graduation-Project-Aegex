@@ -974,14 +974,14 @@ cap-demo-06, the numbers matched the database (514 events, 4 attack runs), and t
 .venv/Scripts/python -m pytest -v
 ```
 
-155 tests in total at the end of step 11; 162 after the proof-of-concept lab (`tests/test_poc.py`, see [POC_GUIDE.md](POC_GUIDE.md)).
+155 tests in total at the end of step 11; 162 after the proof-of-concept lab (`tests/test_poc.py`, see [POC_GUIDE.md](POC_GUIDE.md)); 163 with the AI models connection (`tests/test_detect.py`).
 
 ## Test everything, from start to end
 
 Three levels, all from the `backend` folder, with the database running:
 
 ```bash
-.venv/Scripts/python -m pytest                 # 162 unit tests: each piece alone (25 s)
+.venv/Scripts/python -m pytest                 # 163 unit tests: each piece alone (25 s)
 .venv/Scripts/python -m demo.check_all         # steps 1-11 together, in order, PASS/FAIL per step (15 s)
 .venv/Scripts/python -m demo.live_sim          # live data without the hardware (Ctrl+C to stop)
 ```

@@ -16,3 +16,7 @@ httpx==0.28.1            # step 10: needed by FastAPI's TestClient in the tests
 pytest==8.3.4
 scapy==2.6.1            # only to rebuild samples/cap-2026-11-20-a.pcap (samples/make_sample_pcap.py)
 tzdata==2025.2          # time-zone database; Windows has none built in, and the ESP32 parser needs it
+
+# Only for detect.py (runs the AI models in ai-models/lstm-vae-gat). The CPU build is enough and smaller:
+#   .venv/Scripts/pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.5

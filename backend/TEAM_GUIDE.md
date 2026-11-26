@@ -41,7 +41,7 @@ First time only: `python -m venv .venv` then `.venv/Scripts/pip install -r requi
 
 | Command (from `backend`) | What it proves | Time |
 |---|---|---|
-| `.venv/Scripts/python -m pytest` | 162 unit tests: every piece alone | 25 s |
+| `.venv/Scripts/python -m pytest` | 163 unit tests: every piece alone | 25 s |
 | `.venv/Scripts/python -m demo.check_all` | **steps 1-11 together, in order**, on a throw-away database; prints PASS/FAIL per step | 15 s |
 | `.venv/Scripts/python -m demo.live_sim` | **live data without the hardware**: a fake ESP32, MQTT client and attacker send data to the API every 2 s; watch the dashboard in "Live" | until Ctrl+C |
 | `.venv/Scripts/python -m demo.live_sim --clean` | deletes everything the simulator sent | 1 s |

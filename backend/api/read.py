@@ -29,7 +29,7 @@ from ingest.event import CONTRACT, EVENT_TYPES, SEVERITIES
 from .db import get_conn
 from .ingest import REFUSED
 from .ingest import refuse as _refuse
-from .schemas import AttackRunOut, CaptureRow, DeviceOut, EdgeOut, EventOut, FlowOut, Page, Severity, WindowOut
+from .schemas import AlertOut, AttackRunOut, CaptureRow, DeviceOut, EdgeOut, EventOut, FlowOut, Page, Severity, WindowOut
 
 router = APIRouter(prefix="/api/v1", responses=REFUSED)
 Conn = Annotated[psycopg.Connection, Depends(get_conn)]
@@ -268,3 +268,24 @@ def list_edges(conn: Conn, r: Range, p: Pages, label: Label = None, capture_id: 
                 LEFT JOIN devices d ON d.ip = f.dst_ip"""
     page = fetch_page(conn, select, w, [("f.ts_start", "timestamptz", "ts"), ("f.flow_id", "text", "flow_id")], p)
     return in_contract_order(page, "features", flow.FEATURE_NAMES)
+
+
+# ------------------------------------------------------------------------------------------- AI model alerts
+@router.get("/alerts", response_model=Page[AlertOut], tags=["Data"],
+            summary="Alerts from the AI models (LSTM-AE + VAE), saved by python -m detect")
+def list_alerts(conn: Conn, r: Range, p: Pages, device_id: str | None = None,
+                entity_id: Annotated[str | None, Query(description="the flagged host: device_id or IP")] = None,
+                capture: Annotated[str | None, Query(description="the recording's name given to detect")] = None,
+                min_severity: Annotated[Severity | None, Query(description="this severity and above")] = None) -> dict:
+    w = Where()
+    w.time("ts", r)
+    w.add("device_id = %s", device_id)
+    w.add("entity_id = %s", entity_id)
+    w.add("evidence->>'capture' = %s", capture)
+    if min_severity is not None:
+        levels = ("low", "medium", "high", "critical")
+        w.add("severity = ANY(%s)", list(levels[levels.index(min_severity):]) if min_severity in levels else list(levels))
+    select = """SELECT alert_id::text AS alert_id, ts, model_name, model_version, entity_id, device_id, window_start,
+                       window_end, score, predicted_scenario, severity, status, evidence
+                FROM alerts"""
+    return fetch_page(conn, select, w, [("ts", "timestamptz", "ts"), ("alert_id", "uuid", "alert_id")], p)

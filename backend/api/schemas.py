@@ -305,6 +305,22 @@ class EdgeOut(BaseModel):
     features: dict[str, float] = Field(description="the 41 flow features, NOT scaled (flow_scaler.joblib)")
 
 
+class AlertOut(BaseModel):
+    alert_id: str
+    ts: datetime
+    model_name: str = Field(description="which model's score was higher: lstm_ae or vae")
+    model_version: str
+    entity_id: str = Field(description="the flagged host: our device_id, or its IP if it isn't ours (e.g. the attacker)")
+    device_id: str | None
+    window_start: datetime | None
+    window_end: datetime | None
+    score: float = Field(description="how far over the alarm line: 1.0 = on it, 3.0 = three times over")
+    predicted_scenario: str | None = Field(description="the VAE's closest known attack, in our scenario names")
+    severity: str | None
+    status: str
+    evidence: dict[str, Any] = Field(description="both models' scores, VAE confidence, the features that looked wrong")
+
+
 # ------------------------------------------------------------------------------------------- dashboard summaries
 class Series(BaseModel):
     name: str
