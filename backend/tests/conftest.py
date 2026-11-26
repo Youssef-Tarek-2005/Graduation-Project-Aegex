@@ -1,8 +1,8 @@
 """Shared test setup.
 
 Database tests never touch your real `aegex` database. They build a separate, throw-away database called
-`aegex_test` on the same server, apply schema_v2.sql and seed_lab.sql to it, and empty the events table
-before every test. If the database isn't running, those tests are skipped and the other tests still run.
+`aegex_test` on the same server, apply schema_v2.sql and seed_lab.sql to it, and empty the events and
+flows tables before every test. If the database isn't running, those tests are skipped and the other tests still run.
 """
 from __future__ import annotations
 
@@ -40,4 +40,5 @@ def test_db_url() -> str:
 def db(test_db_url: str):
     with connect(test_db_url) as conn:
         conn.execute("DELETE FROM events")
+        conn.execute("DELETE FROM flows")
         yield conn

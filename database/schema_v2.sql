@@ -28,8 +28,12 @@ CREATE TABLE IF NOT EXISTS devices (
     is_virtual    BOOLEAN NOT NULL DEFAULT FALSE,                 -- TRUE for the VM gateway ("virtual Raspberry Pi")
     platform      TEXT,                                           -- e.g. 'virtualbox-debian12', 'rpi4', 'esp32-devkit'
     description   TEXT,
+    monitored     BOOLEAN NOT NULL DEFAULT TRUE,                  -- FALSE: a known lab machine, not a honeypot (e.g. the
+                                                                  -- laptop hotspot): no feature windows, but its IP still counts as "ours"
     created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+-- Databases created before `monitored` existed get the column here (safe to run again).
+ALTER TABLE devices ADD COLUMN IF NOT EXISTS monitored BOOLEAN NOT NULL DEFAULT TRUE;
 
 
 -- -----------------------------------------------------------------------------------------------------
@@ -114,7 +118,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_events_dedup ON events (dedup_key, ts) WHER
 --    These rows are also the edges for the Temporal GAT (Task D).
 -- -----------------------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS flows (
-    flow_id         TEXT        NOT NULL,                         -- Zeek uid (e.g. 'CHhAvVGS1DHFjwGM9') or generated
+    flow_id         TEXT        NOT NULL,                         -- stable id: hash of (start time, proto, 5-tuple), same on every Zeek run
+    zeek_uid        TEXT,                                         -- Zeek's own uid (random per run); joins to ssh.log, http.log, ...
     ts_start        TIMESTAMPTZ NOT NULL,
     ts_end          TIMESTAMPTZ,
     capture_id      TEXT REFERENCES captures (capture_id),
@@ -132,7 +137,7 @@ CREATE TABLE IF NOT EXISTS flows (
     resp_bytes      BIGINT,
     orig_pkts       BIGINT,
     resp_pkts       BIGINT,
-    features        JSONB,                                        -- normalized vector keyed by name
+    features        JSONB,                                        -- the 41 flow features by name, after fill + log1p, NOT scaled (the step 9 scaler goes on top)
     feature_version TEXT,                                         -- contract version that produced `features`
     label           SMALLINT CHECK (label IN (0, 1)),
     scenario        TEXT,
@@ -156,8 +161,8 @@ CREATE TABLE IF NOT EXISTS feature_windows (
     capture_id      TEXT REFERENCES captures (capture_id),
     feature_version TEXT NOT NULL,
     features_raw    JSONB NOT NULL,                               -- before log1p/scaling (for debugging + dashboard)
-    features        JSONB NOT NULL,                               -- normalized, keyed by name, order from contract
-    n_events        INTEGER NOT NULL DEFAULT 0,
+    features        JSONB NOT NULL,                               -- keyed by name, after log1p, NOT scaled (step 9 scaler on top)
+    n_events        INTEGER NOT NULL DEFAULT 0,                   -- flows + events touching the entity (0 = silent window)
     label           SMALLINT CHECK (label IN (0, 1)),             -- 1 if any attack event/flow hit this entity in the window
     scenario        TEXT,
     run_id          TEXT,

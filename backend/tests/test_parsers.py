@@ -166,6 +166,6 @@ def test_contract_violations_fail_loudly():
     with pytest.raises(ContractError):
         Event(ts=ts, source="cowrie", event_type="made_up_type", dedup_key="x")
     with pytest.raises(ContractError):
-        Event(ts=ts, source="esp32", event_type="login_failed", dedup_key="x")      # ESP32 can't log logins
+        Event(ts=ts, source="mosquitto", event_type="login_failed", dedup_key="x")  # an MQTT broker log has no logins
     with pytest.raises(ContractError):
         Event(ts=datetime(2026, 11, 20), source="esp32", event_type="sensor_reading", dedup_key="x")  # no tz

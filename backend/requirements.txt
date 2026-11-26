@@ -4,5 +4,19 @@
 #   backend/.venv/bin/python     -m pip install -r backend/requirements.txt      (Linux / macOS)
 
 psycopg[binary]==3.2.3  # PostgreSQL driver (step 4+)
+numpy==2.2.6            # step 9: arrays, sequences
+pandas==2.2.3           # step 9: tables
+pyarrow==19.0.1         # step 9: .parquet files
+scikit-learn==1.6.1     # step 9: StandardScaler (joblib comes with it)
+fastapi==0.115.12        # step 10: the API
+uvicorn[standard]==0.34.2 # step 10: the server that runs it
+pydantic==2.14.4         # step 10: request checking (comes with fastapi; pinned)
+psycopg-pool==3.2.6      # step 10: database connection pool
+httpx==0.28.1            # step 10: needed by FastAPI's TestClient in the tests
 pytest==8.3.4
+scapy==2.6.1            # only to rebuild samples/cap-2026-11-20-a.pcap (samples/make_sample_pcap.py)
 tzdata==2025.2          # time-zone database; Windows has none built in, and the ESP32 parser needs it
+
+# Only for detect.py (runs the AI models in ai-models/lstm-vae-gat). The CPU build is enough and smaller:
+#   .venv/Scripts/pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.5
