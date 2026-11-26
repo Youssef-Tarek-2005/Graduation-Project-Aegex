@@ -458,6 +458,7 @@ footer input {
       <li class="nav-item"><button class="active" data-view="v-overview">Overview</button></li>
       <li class="nav-item"><button data-view="v-events-time">Events over time</button></li>
       <li class="nav-item"><button data-view="v-attacks">Detected attacks</button></li>
+      <li class="nav-item"><button data-view="v-ai">AI alerts</button></li>
       <li class="nav-item"><button data-view="v-recent-events">Recent events</button></li>
       <li class="nav-item"><button data-view="v-intel">Threat intelligence</button></li>
     </ul>
@@ -517,7 +518,7 @@ footer input {
       <section class="row" style="grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">
         <div class="card">
           <div class="lbl">Attack scenarios</div>
-          <div class="sub" id="atkSub">labeled attack events + flows, from Task A's attack log (model alerts come with step 12)</div>
+          <div class="sub" id="atkSub">labeled attack events + flows, from Task A's attack log (the AI models' alerts are on the AI alerts page)</div>
           <div class="chart" style="height: 300px;"><canvas id="cA"></canvas></div>
         </div>
         <div class="card">
@@ -529,6 +530,35 @@ footer input {
             </table>
             <div class="empty" id="atkEmpty" style="display:none">No attack runs in this range</div>
           </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- VIEW 3b: AI alerts (LSTM-AE + VAE, saved by python -m detect) -->
+    <section id="v-ai" class="page-view">
+      <section class="kpis" id="aiCards"></section>
+      <section class="card">
+        <div class="head" style="flex-wrap:wrap">
+          <div>
+            <div class="lbl">AI model alerts</div>
+            <div class="sub" id="aiSub">LSTM-AE + VAE alerts, one per suspicious window of one device</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <select id="aiCap" title="Which scored recording to show"><option value="">All recordings</option></select>
+            <select id="aiSev">
+              <option value="low">All severities</option>
+              <option value="medium">Medium and above</option>
+              <option value="high">High and above</option>
+              <option value="critical">Critical only</option>
+            </select>
+          </div>
+        </div>
+        <div class="scroll" style="max-height: 500px;">
+          <table>
+            <thead><tr><th>Window start</th><th>Severity</th><th>Device / IP</th><th>Model</th><th>Score</th><th>Closest attack type</th><th>Most unusual features</th></tr></thead>
+            <tbody id="aiRows"></tbody>
+          </table>
+          <div class="empty" id="aiEmpty" style="display:none">No AI alerts yet</div>
         </div>
       </section>
     </section>
@@ -702,7 +732,7 @@ function detections(sum, runs) {
     { label: "attack flows", data: sc.map(([, v]) => v.flows), backgroundColor: PALETTE[5], borderRadius: 4 }
   ];
   ch.A.update();
-  $("#atkSub").textContent = `${sum.labels.attack} attack events and ${sum.attack_flows} attack flows in range, from Task A's attack log (model alerts come with step 12)`;
+  $("#atkSub").textContent = `${sum.labels.attack} attack events and ${sum.attack_flows} attack flows in range, from Task A's attack log (the AI models' alerts are on the AI alerts page)`;
   const body = $("#atkRows"); body.replaceChildren();
   $("#atkEmpty").style.display = runs.items.length ? "none" : "block";
   runs.items.forEach(r => {
@@ -714,6 +744,63 @@ function detections(sum, runs) {
     body.appendChild(tr);
   });
 }
+
+// AI alerts: the models' output for a whole recording, so they are filtered by recording, not by the time buttons.
+const aiCaptures = new Set();
+async function loadAlerts() {
+  const params = new URLSearchParams({ order: "desc", limit: 1000, min_severity: $("#aiSev").value });
+  if ($("#aiCap").value) params.set("capture", $("#aiCap").value);
+  let alerts;
+  try { alerts = (await get("/api/v1/alerts?" + params)).items; }
+  catch (e) {
+    $("#aiRows").replaceChildren(); $("#aiCards").replaceChildren();
+    $("#aiEmpty").textContent = "Could not load the AI alerts: " + e.message; $("#aiEmpty").style.display = "block";
+    return;
+  }
+  // recordings that have alerts -> the dropdown (kept across refreshes)
+  const sel = $("#aiCap"), before = aiCaptures.size;
+  alerts.forEach(a => a.evidence?.capture && aiCaptures.add(a.evidence.capture));
+  if (aiCaptures.size !== before) {
+    const keep = sel.value;
+    sel.replaceChildren(new Option("All recordings", ""), ...[...aiCaptures].sort().map(c => new Option(c, c)));
+    sel.value = keep;
+  }
+  // summary cards
+  const who = {};
+  alerts.forEach(a => { who[a.entity_id] = (who[a.entity_id] || 0) + 1; });
+  const top = Object.entries(who).sort((x, y) => y[1] - x[1])[0];
+  const box = $("#aiCards"); box.replaceChildren();
+  const add = (label, value, sub) => {
+    const c = document.createElement("div"); c.className = "card";
+    const l = document.createElement("div"); l.className = "lbl"; l.textContent = label;
+    const v = document.createElement("div"); v.className = "val"; v.textContent = value;
+    const d = document.createElement("div"); d.className = "delta"; d.textContent = sub;
+    c.append(l, v, d); box.appendChild(c);
+  };
+  add("AI alerts", alerts.length.toLocaleString(), "suspicious windows");
+  add("High or critical", alerts.filter(a => a.severity === "high" || a.severity === "critical").length.toLocaleString(), "score 3+ times the alarm line");
+  add("Devices / IPs flagged", Object.keys(who).length.toLocaleString(), "distinct sources");
+  add("Most flagged", top ? top[0] : "-", top ? `${top[1]} alerts` : "no alerts");
+  // table
+  const body = $("#aiRows"); body.replaceChildren();
+  $("#aiEmpty").textContent = "No AI alerts for this choice";
+  $("#aiEmpty").style.display = alerts.length ? "none" : "block";
+  alerts.forEach(a => {
+    const tr = document.createElement("tr");
+    const td = (t, cls) => { const c = document.createElement("td"); if (cls) c.className = cls; c.textContent = t; tr.appendChild(c); return c; };
+    const ev = a.evidence || {};
+    td(new Date(a.window_start).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+    td("").appendChild(sevPill(a.severity));
+    td(a.device_id || a.entity_id);
+    td(a.model_name === "lstm_ae" ? "LSTM-AE" : a.model_name === "vae" ? "VAE" : a.model_name);
+    td(Number(a.score).toFixed(2));
+    td(nice(ev.closest_known_class ?? "-") + (ev.zero_day_candidate ? " (unknown pattern)" : ""));
+    td(String(ev.worst_features || "-").replace(/,/g, ", "), "det");
+    body.appendChild(tr);
+  });
+}
+$("#aiCap").addEventListener("change", loadAlerts);
+$("#aiSev").addEventListener("change", loadAlerts);
 
 async function searchKb() {
   const q = $("#kbq").value.trim(), box = $("#kbres"); box.replaceChildren();
@@ -1091,6 +1178,7 @@ async function refresh() {
   $("#err").textContent = errors.length ? "Some dashboard panels could not refresh: " + errors.join(" | ") : "";
   $("#err").style.display = errors.length ? "block" : "none";
   $("#upd").textContent = "Updated " + new Date().toLocaleTimeString();
+  loadAlerts();
 }
 $("#seg").addEventListener("click", e => {
   if (e.target.tagName !== "BUTTON") return;
