@@ -9,8 +9,8 @@ from src.rag.retriever import RetrievedChunk
 
 # Bracketed or bare IDs in LLM output.
 CITATION_PATTERN = re.compile(
-    r"\[(T\d{4}(?:\.\d{3})?|G\d{4}|S\d{4}|CVE-\d{4}-\d{4,}|CWE-\d{1,4}|CAPEC-\d{1,4}|M\d{4})\]"
-    r"|(?<![A-Za-z0-9])(T\d{4}(?:\.\d{3})?|G\d{4}|S\d{4}|CVE-\d{4}-\d{4,}|CWE-\d{1,4}|CAPEC-\d{1,4}|M\d{4})(?![A-Za-z0-9])",
+    r"\[(T\d{4}(?:\.\d{3})?|G\d{4}|S\d{4}|CVE-\d{4}-\d{4,}|CWE-\d{1,4}|CAPEC-\d{1,4}|M\d{4}|IOT-I\d{1,2})\]"
+    r"|(?<![A-Za-z0-9])(T\d{4}(?:\.\d{3})?|G\d{4}|S\d{4}|CVE-\d{4}-\d{4,}|CWE-\d{1,4}|CAPEC-\d{1,4}|M\d{4}|IOT-I\d{1,2})(?![A-Za-z0-9])",
     re.IGNORECASE,
 )
 
