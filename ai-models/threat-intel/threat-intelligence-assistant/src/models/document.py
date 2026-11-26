@@ -17,6 +17,7 @@ SourceType = Literal[
     "cwe",
     "capec",
     "attack_mitigation",
+    "owasp_iot",
 ]
 
 
