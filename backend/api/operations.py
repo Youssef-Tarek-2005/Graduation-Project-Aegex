@@ -15,13 +15,15 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 import psycopg
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import PlainTextResponse
 
 from datasets import analyze
 from ingest import datastore, pipeline
+from intel import report
 
 from .db import get_conn
 from .ingest import REFUSED
@@ -127,6 +129,17 @@ def get_run(run_id: str) -> dict:
     if r is None:
         raise HTTPException(404, "no such run")
     return {"run_id": run_id, **{k: r.get(k) for k in ("session", "kind", "started", "ok", "stages")}}
+
+
+# ------------------------------------------------------------------------------------------- threat intelligence
+@router.get("/intel/live-report", tags=["Threat intelligence"],
+            summary="Threat intelligence from our own detections (grounded: ATT&CK, OWASP IoT, CWE, CAPEC, CVE)")
+def live_report(conn: Conn, minutes: Annotated[int, Query(ge=5, le=10080, description="the last N minutes")] = 60,
+                format: Literal["json", "markdown"] = "json"):
+    r = report.build(conn, minutes)
+    if format == "markdown":
+        return PlainTextResponse(report.markdown(r), media_type="text/markdown; charset=utf-8")
+    return r
 
 
 # ------------------------------------------------------------------------------------------- datastore
