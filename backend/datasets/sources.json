@@ -1,0 +1,658 @@
+{
+  "readme_for_ai": "Machine-readable list of every dataset used to train or test the Aegex IoT intrusion-detection models (LSTM autoencoder, VAE, temporal GAT). One object per dataset in `datasets`. Fields: `url` = download page (Kaggle unless host = zenodo); `kaggle_slug` = argument for `kaggle datasets download -d <slug>`; `files` = exact file names (`used` false = downloaded/available but not used; `sha256` = checksum of the original file, null if it was never downloaded to the project PC); `adapter` = code that converts it; `labelling` = how the dataset's own labels were mapped to the project classes; `operations` = every processing step applied, in order; `used_by_models` = model runs that used it. Originals were never modified. Project attack classes: benign, scanning, ddos, mirai, ransomware, other (other = out of scope, never a training target). Human-readable detail: DATASETS_AND_PREPROCESSING.md in this folder.",
+  "generated": "2026-11-26",
+  "download_example": "kaggle datasets download -d <kaggle_slug> -f <file> -p <folder>",
+  "where_to_put_files": "all original files in one folder, then set environment variable AEGEX_DATA to it (Gotham zip in <AEGEX_DATA>/gotham_2025/); outputs go to AEGEX_OUT",
+  "project_classes": [
+    "benign",
+    "scanning",
+    "ddos",
+    "mirai",
+    "ransomware",
+    "other"
+  ],
+  "shared_operations": [
+    "step1_flows: adapter -> unified flow table (or packets -> bidirectional flows via FlowBuilder: inactivity timeout 300 s TCP / 60 s UDP-ICMP-ARP, 120 s active timeout, IPv4 + ARP only)",
+    "step2_features: 50 features per flow (17 numeric incl. 4 device-behaviour, 33 binary); chronological split per (capture, attack_class) 70 % train / 15 % val / 15 % test; RobustScaler per dataset fitted on train + clean benign flows only; hosts that send attack traffic marked device_compromised",
+    "step3_sequences_graphs: per-device windows of 32 flows, stride 16; 60 s graph snapshots (nodes = hosts, edges = host pairs, mean features + log flow count, single-peer public IPs merged into EXTERNAL)"
+  ],
+  "datasets": [
+    {
+      "id": "edge",
+      "name": "Edge-IIoTset",
+      "host": "kaggle",
+      "kaggle_slug": "mohamedamineferrag/edgeiiotset-cyber-security-dataset-of-iot-iiot",
+      "url": "https://www.kaggle.com/datasets/mohamedamineferrag/edgeiiotset-cyber-security-dataset-of-iot-iiot",
+      "kaggle_usability": 7.5,
+      "downloaded_to_project_pc": true,
+      "files": [
+        {
+          "file": "edge-IIotset.zip",
+          "used": true,
+          "size_bytes": 1746605436,
+          "sha256": "42df619d4a222c5ae014a3b8ad2017536dbf49fbc2d35145349e6012a65b74ae",
+          "note": "Kaggle download-all archive of the dataset; only the pcaps under Edge-IIoTset dataset/Attack traffic and Normal traffic are read (no pre-computed CSV features)"
+        }
+      ],
+      "adapter": "scripts/aegex_datasets/edge.py",
+      "parts_used": [
+        "Attack traffic/Ransomware attack.pcap",
+        "Attack traffic/Vulnerability scanner attack.pcap",
+        "Attack traffic/Port Scanning attack.pcap",
+        "Attack traffic/OS Fingerprinting attack.pcap",
+        "Attack traffic/DDoS HTTP|ICMP|TCP SYN|UDP Flood Attacks.pcap",
+        "Normal traffic/<10 devices>/<device>.pcap (Distance, Flame_Sensor, Heart_Rate, IR_Receiver, Modbus, Soil_Moisture, Sound_Sensor, Temperature_and_Humidity, Water_Level, phValue)"
+      ],
+      "parts_not_used": [
+        "SQL injection, XSS, uploading, backdoor, password, MITM captures (out of scope)",
+        "the dataset's pre-computed CSV feature files"
+      ],
+      "labelling": {
+        "method": "file-level (official): every flow in an attack pcap is that attack",
+        "mapping": {
+          "Ransomware": "ransomware",
+          "Vulnerability scanner": "scanning",
+          "Port Scanning": "scanning",
+          "OS Fingerprinting": "scanning",
+          "DDoS HTTP/ICMP/TCP SYN/UDP Flood": "ddos",
+          "Normal traffic": "benign"
+        }
+      },
+      "operations": [
+        "pcaps read from inside the zip (zip not extracted, original untouched)",
+        "packets -> flows with FlowBuilder",
+        "file-level labels applied",
+        "step1_flows: adapter -> unified flow table (or packets -> bidirectional flows via FlowBuilder: inactivity timeout 300 s TCP / 60 s UDP-ICMP-ARP, 120 s active timeout, IPv4 + ARP only)",
+        "step2_features: 50 features per flow (17 numeric incl. 4 device-behaviour, 33 binary); chronological split per (capture, attack_class) 70 % train / 15 % val / 15 % test; RobustScaler per dataset fitted on train + clean benign flows only; hosts that send attack traffic marked device_compromised",
+        "step3_sequences_graphs: per-device windows of 32 flows, stride 16; 60 s graph snapshots (nodes = hosts, edges = host pairs, mean features + log flow count, single-peer public IPs merged into EXTERNAL)"
+      ],
+      "used_by_models": [
+        "lstm_ae_v8",
+        "vae_v5",
+        "gat_v2 (train)",
+        "gat_v5 (test only, never trained on)"
+      ],
+      "caveats": [
+        "attacks recorded in separate files with no normal traffic: the dataset's own test split is trivially easy (one-line rule 99.9 %); only the realistic benchmark is quoted"
+      ]
+    },
+    {
+      "id": "kitsune",
+      "name": "Kitsune Network Attack Dataset",
+      "host": "kaggle",
+      "kaggle_slug": "ymirsky/network-attack-dataset-kitsune",
+      "url": "https://www.kaggle.com/datasets/ymirsky/network-attack-dataset-kitsune",
+      "kaggle_usability": 8.2,
+      "downloaded_to_project_pc": true,
+      "files": [
+        {
+          "file": "Mirai_pcap.pcap.zip",
+          "used": true,
+          "size_bytes": 8633000,
+          "sha256": "1d9c807fcd9e0441e945498eb00ec130f810747c7cc1b74cf458564e9b9f7a84",
+          "note": "Kaggle path: Mirai Botnet/Mirai_pcap.pcap (Kaggle serves single-file downloads zipped)"
+        },
+        {
+          "file": "mirai_labels.csv.zip",
+          "used": true,
+          "size_bytes": 2415,
+          "sha256": "f460c4540bde959941325a583e527d6c82156e9ce46088539ed22e6957e5f0ac",
+          "note": "Kaggle path: Mirai Botnet/mirai_labels.csv"
+        },
+        {
+          "file": "SSDP_Flood_pcap.pcap.zip",
+          "used": true,
+          "size_bytes": 295939113,
+          "sha256": "6916392aa3f0c9aa6badcfc0eac3c6326f961745c45e5e2d670808ae1e02187f",
+          "note": "Kaggle path: SSDP Flood/SSDP_Flood_pcap.pcap"
+        },
+        {
+          "file": "SSDP_Flood_labels.csv.zip",
+          "used": true,
+          "size_bytes": 9613486,
+          "sha256": "d075b8cfbbb69c4c64db8016e7c12817b4cf51015ba18ae42f9ba109d646622c",
+          "note": "Kaggle path: SSDP Flood/SSDP_Flood_labels.csv"
+        },
+        {
+          "file": "OS_Scan_pcap.pcapng.zip",
+          "used": true,
+          "size_bytes": 211906152,
+          "sha256": "baea59b1191e84c5533e89d1ddc9b33c0ab1cf2f913d46b3a8a458f472473ae5",
+          "note": "Kaggle path: OS Scan/OS_Scan_pcap.pcapng"
+        },
+        {
+          "file": "OS_Scan_labels.csv.zip",
+          "used": true,
+          "size_bytes": 4005117,
+          "sha256": "dbb24336d673715cafcd212aa884f5e993e5aed47e9bb47c51eb244ec9579975",
+          "note": "Kaggle path: OS Scan/OS_Scan_labels.csv"
+        },
+        {
+          "file": "SYN_DoS_pcap.pcap.zip",
+          "used": false,
+          "size_bytes": 335140867,
+          "sha256": "b387ea5fc81102d31cab9e15a76e24b2f5a34ac0bf0fa3b9f6bc62f15420d841",
+          "note": "downloaded, not used (weak, unprocessed)"
+        },
+        {
+          "file": "SYN_DoS_labels.csv.zip",
+          "used": false,
+          "size_bytes": 6519834,
+          "sha256": "74ba6e2fc3e81b083b8ca075c454400057421b3d7ec71a5ed089404b11498ed0"
+        }
+      ],
+      "files_not_used_on_kaggle": "the *_dataset.csv files (pre-computed Kitsune features, up to 11.7 GB) are not needed",
+      "adapter": "scripts/aegex_datasets/kitsune/__init__.py",
+      "labelling": {
+        "method": "official per-packet labels; a flow is an attack if any of its packets is",
+        "mapping": {
+          "Mirai": "mirai",
+          "SSDP Flood": "ddos",
+          "OS Scan": "scanning"
+        },
+        "relabel": "Mirai packets relabelled by behaviour (kitsune/relabel_mirai.py, checked by verify_mirai_relabel.py, output kitsune_mirai_relabeled/): R1 ARP sweep from an infected host (>= 20 targets), R2 Telnet scans, R3 other new behaviour of infected hosts; normal background after the attack start set back to benign (73,290 packets 1 -> 0)"
+      },
+      "operations": [
+        "Mirai labels relabelled by behaviour (new file, original kept)",
+        "pcaps read from the zips",
+        "packets -> flows with FlowBuilder, per-packet labels carried to flows",
+        "step1_flows: adapter -> unified flow table (or packets -> bidirectional flows via FlowBuilder: inactivity timeout 300 s TCP / 60 s UDP-ICMP-ARP, 120 s active timeout, IPv4 + ARP only)",
+        "step2_features: 50 features per flow (17 numeric incl. 4 device-behaviour, 33 binary); chronological split per (capture, attack_class) 70 % train / 15 % val / 15 % test; RobustScaler per dataset fitted on train + clean benign flows only; hosts that send attack traffic marked device_compromised",
+        "step3_sequences_graphs: per-device windows of 32 flows, stride 16; 60 s graph snapshots (nodes = hosts, edges = host pairs, mean features + log flow count, single-peer public IPs merged into EXTERNAL)"
+      ],
+      "used_by_models": [
+        "lstm_ae_v8",
+        "vae_v5",
+        "gat_v2 (train)",
+        "gat_v5 (test only)"
+      ],
+      "caveats": [
+        "VAE flags 92 % of another device's normal traffic injected the same way: alerts mean 'new for this device'"
+      ]
+    },
+    {
+      "id": "iot23",
+      "name": "IoT-23 (Stratosphere Lab, Zeek conn.log parquet release)",
+      "host": "kaggle",
+      "kaggle_slug": "dhoogla/iot23-dataset",
+      "url": "https://www.kaggle.com/datasets/dhoogla/iot23-dataset",
+      "kaggle_usability": 7.65,
+      "downloaded_to_project_pc": true,
+      "files": [
+        {
+          "file": "CTU-IoT-Malware-Capture-34-1.features.parquet",
+          "used": true,
+          "size_bytes": 156531,
+          "sha256": "819c7765a359efb5660808b85c18e22b9f585230ac4ed1611761ee7948bed66d"
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-34-1.metadata.parquet",
+          "used": true,
+          "size_bytes": 620480,
+          "sha256": "da88de00ac87b50f153769e5c7b53edfed2918787f87c93d5708ddfdb9410d9d"
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-35-1.features.parquet",
+          "used": true,
+          "size_bytes": 52569847,
+          "sha256": "3cb7e13c74661b82ae1a4f6898a677a532c7745cb749632b16d642154f378626"
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-35-1.metadata.parquet",
+          "used": true,
+          "size_bytes": 262065067,
+          "sha256": "db69ef99d77f571b901dca19a91bf671daed4a632d428ca7060753ed9f1aa60e"
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-48-1.features.parquet",
+          "used": true,
+          "size_bytes": 14274709,
+          "sha256": "5cd904ce5b0a0c70f82daee0942c42e0748f57e09b44eeedbb72ffafd5d0c8e6"
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-48-1.metadata.parquet",
+          "used": true,
+          "size_bytes": 88753918,
+          "sha256": "3aa194f40ee0454fbf1360f6b9d760a2dd9cebd1199ae5feb66494bf3fd93e16"
+        },
+        {
+          "file": "CTU-Honeypot-Capture-4-1.features.parquet",
+          "used": true,
+          "size_bytes": 11429,
+          "sha256": "b943ea1b210e4e999e329cd2542099a60f93abe74cd521ae7e5dbdcc29d27863"
+        },
+        {
+          "file": "CTU-Honeypot-Capture-4-1.metadata.parquet",
+          "used": true,
+          "size_bytes": 15725,
+          "sha256": "32dad08a881f626182efce167e34366f50a63f8914002ac8f267aea77962ebca"
+        },
+        {
+          "file": "CTU-Honeypot-Capture-5-1.features.parquet",
+          "used": true,
+          "size_bytes": 27127,
+          "sha256": "3e19bcc177d2f75c594fc1aca741d0797f62addfef4c93b2e06f55a9501b8571"
+        },
+        {
+          "file": "CTU-Honeypot-Capture-5-1.metadata.parquet",
+          "used": true,
+          "size_bytes": 42959,
+          "sha256": "b00cc1acbaafa5896a8d1a0a743e6ca53c8819386af7edbb387d0379a447d5ea"
+        },
+        {
+          "file": "CTU-Honeypot-Capture-7-1.features.parquet",
+          "used": true,
+          "size_bytes": 7138,
+          "sha256": "874e5e7e1d19d1bd5724b457e4f95f96760b23644b74f5466cfcd89a82d49eac"
+        },
+        {
+          "file": "CTU-Honeypot-Capture-7-1.metadata.parquet",
+          "used": true,
+          "size_bytes": 6153,
+          "sha256": "6cc350e1441e39ea4eac34fadee4eb6bf27caefc07b1815aedaaeff292d532d5"
+        }
+      ],
+      "adapter": "scripts/aegex_datasets/iot23.py",
+      "labelling": {
+        "method": "official Zeek label|detailed-label",
+        "mapping": {
+          "Malicious + detailed-label contains DDoS": "ddos",
+          "other Malicious": "mirai",
+          "Benign": "benign"
+        },
+        "relabel": "capture 35-1: Benign flows that are unanswered TCP SYN to port 23/2323, to a public IP, sent by a host the dataset labels infected -> mirai (8.25 M flows; same behaviour is labelled malicious in 48-1); original label kept in original_label / label_note"
+      },
+      "operations": [
+        "features + metadata parquet joined on source_row",
+        "Zeek fields mapped to the flow table (history string -> TCP flags per direction)",
+        "official labels + Telnet relabel",
+        "step1_flows: adapter -> unified flow table (or packets -> bidirectional flows via FlowBuilder: inactivity timeout 300 s TCP / 60 s UDP-ICMP-ARP, 120 s active timeout, IPv4 + ARP only)",
+        "step2_features: 50 features per flow (17 numeric incl. 4 device-behaviour, 33 binary); chronological split per (capture, attack_class) 70 % train / 15 % val / 15 % test; RobustScaler per dataset fitted on train + clean benign flows only; hosts that send attack traffic marked device_compromised",
+        "step3_sequences_graphs: per-device windows of 32 flows, stride 16; 60 s graph snapshots (nodes = hosts, edges = host pairs, mean features + log flow count, single-peer public IPs merged into EXTERNAL)"
+      ],
+      "used_by_models": [
+        "lstm_ae_v8",
+        "vae_v5",
+        "gat_v2 (train)",
+        "gat_v5 (train)"
+      ]
+    },
+    {
+      "id": "iot23x",
+      "name": "IoT-23 extra malware captures (same release as iot23)",
+      "host": "kaggle",
+      "kaggle_slug": "dhoogla/iot23-dataset",
+      "url": "https://www.kaggle.com/datasets/dhoogla/iot23-dataset",
+      "kaggle_usability": 7.65,
+      "downloaded_to_project_pc": false,
+      "processed_where": "Kaggle notebook (private), not downloaded",
+      "files": [
+        {
+          "file": "CTU-IoT-Malware-Capture-1-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-1-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-3-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-3-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-7-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-7-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-8-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-8-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-9-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-9-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-17-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-17-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-20-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-20-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-21-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-21-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-33-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-33-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-36-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-36-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-39-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-39-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-42-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-42-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-43-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-43-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-44-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-44-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-49-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-49-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-52-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-52-1.metadata.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-60-1.features.parquet",
+          "used": true
+        },
+        {
+          "file": "CTU-IoT-Malware-Capture-60-1.metadata.parquet",
+          "used": true
+        }
+      ],
+      "total_size_bytes_approx": 9110000000,
+      "adapter": "scripts/aegex_datasets/iot23x.py",
+      "labelling": {
+        "method": "official Zeek labels, family-aware mapping (family per capture in iot23x.FAMILY)",
+        "mapping": {
+          "Mirai-family captures (Mirai, Okiru, Kenjiro, Hakai): DDoS": "ddos",
+          "Mirai-family captures: any other malicious": "mirai",
+          "other families (Hide&Seek, Muhstik, Hajime, Torii, IRCBot, Gafgyt, Trojan): DDoS": "ddos",
+          "other families: PartOfAHorizontalPortScan": "scanning",
+          "other families: C&C / FileDownload / Attack": "other",
+          "Benign": "benign"
+        }
+      },
+      "operations": [
+        "only the first 600,000 flows of each capture read (env AEGEX_IOT23X_MAX_ROWS)",
+        "same Zeek mapping + Telnet relabel as iot23",
+        "step1_flows: adapter -> unified flow table (or packets -> bidirectional flows via FlowBuilder: inactivity timeout 300 s TCP / 60 s UDP-ICMP-ARP, 120 s active timeout, IPv4 + ARP only)",
+        "step2_features: 50 features per flow (17 numeric incl. 4 device-behaviour, 33 binary); chronological split per (capture, attack_class) 70 % train / 15 % val / 15 % test; RobustScaler per dataset fitted on train + clean benign flows only; hosts that send attack traffic marked device_compromised",
+        "step3_sequences_graphs: per-device windows of 32 flows, stride 16; 60 s graph snapshots (nodes = hosts, edges = host pairs, mean features + log flow count, single-peer public IPs merged into EXTERNAL)"
+      ],
+      "used_by_models": [
+        "lstm_ae_iot23x_kaggle_v2 + vae_iot23x_kaggle_v2 (GAT inputs only)",
+        "gat_v4, gat_v5 (train)"
+      ],
+      "caveats": [
+        "almost no normal traffic (7 clean normal test windows): no valid false-alarm rate"
+      ]
+    },
+    {
+      "id": "xiiotid",
+      "name": "X-IIoTID (cleaned parquet release)",
+      "host": "kaggle",
+      "kaggle_slug": "dhoogla/x-iiotid",
+      "url": "https://www.kaggle.com/datasets/dhoogla/x-iiotid",
+      "kaggle_usability": 7.65,
+      "downloaded_to_project_pc": true,
+      "files": [
+        {
+          "file": "archive.zip",
+          "used": true,
+          "size_bytes": 81491835,
+          "sha256": "efed3830377d249c20f48c8e360d22528b0c1aed4b24c08698f7b604c0111486",
+          "note": "Kaggle 'download all' archive of the dataset; contains X-IIoTID.parquet, X-IIoTID-labels.parquet, X-IIoTID-metadata.parquet"
+        }
+      ],
+      "adapter": "scripts/aegex_datasets/xiiotid.py",
+      "labelling": {
+        "method": "official class2 kill-chain stage",
+        "mapping": {
+          "Normal": "benign",
+          "Reconnaissance": "scanning",
+          "RDOS": "ddos",
+          "crypto-ransomware": "ransomware",
+          "everything else (incl. class1 fuzzing)": "other"
+        }
+      },
+      "operations": [
+        "only network columns used (host telemetry and the authors' detector outputs ignored)",
+        "dropped: 6,222 exact duplicates, loopback 127.0.0.0/8, rows without timestamp or protocol, rows without packet/byte counts (18.6 %, dropped not imputed because missingness depends on class)",
+        "TCP flags rebuilt from direction-less boolean columns",
+        "sorted by timestamp (1 s resolution) then source row",
+        "step1_flows: adapter -> unified flow table (or packets -> bidirectional flows via FlowBuilder: inactivity timeout 300 s TCP / 60 s UDP-ICMP-ARP, 120 s active timeout, IPv4 + ARP only)",
+        "step2_features: 50 features per flow (17 numeric incl. 4 device-behaviour, 33 binary); chronological split per (capture, attack_class) 70 % train / 15 % val / 15 % test; RobustScaler per dataset fitted on train + clean benign flows only; hosts that send attack traffic marked device_compromised",
+        "step3_sequences_graphs: per-device windows of 32 flows, stride 16; 60 s graph snapshots (nodes = hosts, edges = host pairs, mean features + log flow count, single-peer public IPs merged into EXTERNAL)"
+      ],
+      "used_by_models": [
+        "lstm_ae_xiiotid_v1",
+        "vae_xiiotid_v1",
+        "gat_v3, gat_v4, gat_v5 (train)"
+      ],
+      "caveats": [
+        "ransomware unusable (1 flow with counts)",
+        "only 36 attacked host-minutes in the GAT benchmark"
+      ]
+    },
+    {
+      "id": "gotham",
+      "name": "Gotham Dataset 2025 (Belarbi et al., Cardiff / Toshiba)",
+      "host": "zenodo",
+      "kaggle_slug": null,
+      "url": "https://doi.org/10.5281/zenodo.14502760",
+      "licence": "CC BY 4.0",
+      "md5": "7ca78c0517ccb3d2854e823678e0f206",
+      "downloaded_to_project_pc": true,
+      "files": [
+        {
+          "file": "GothamDataset2025.zip",
+          "used": true,
+          "size_bytes": 23824968355,
+          "sha256": "4c96a8915466baf14c8608c127bc4ef4f42aff4ba351292a2085371846175b4f",
+          "note": "stored in gotham_2025/; not on Kaggle"
+        }
+      ],
+      "adapter": "scripts/aegex_datasets/gotham/__init__.py + pcap_labeller.py",
+      "labelling": {
+        "method": "official labeller IP rules (github.com/othmbela/gotham-network-packet-labeller metadata), exact-IP matching; Unknown -> benign",
+        "mapping": {
+          "Mirai / Merlin flooding": "ddos",
+          "Mirai Telnet scan, brute force, loader, reporting, C&C": "mirai",
+          "masscan / Nmap UDP scans": "scanning",
+          "Merlin C&C": "other",
+          "Benign": "benign"
+        }
+      },
+      "operations": [
+        "per-device pcaps streamed from the zip (not extracted)",
+        "merged by time across devices, duplicate packets removed",
+        "official labeller rules applied per packet, flow label = most frequent malicious packet label",
+        "step1_flows: adapter -> unified flow table (or packets -> bidirectional flows via FlowBuilder: inactivity timeout 300 s TCP / 60 s UDP-ICMP-ARP, 120 s active timeout, IPv4 + ARP only)",
+        "step2_features: 50 features per flow (17 numeric incl. 4 device-behaviour, 33 binary); chronological split per (capture, attack_class) 70 % train / 15 % val / 15 % test; RobustScaler per dataset fitted on train + clean benign flows only; hosts that send attack traffic marked device_compromised",
+        "step3_sequences_graphs: per-device windows of 32 flows, stride 16; 60 s graph snapshots (nodes = hosts, edges = host pairs, mean features + log flow count, single-peer public IPs merged into EXTERNAL)"
+      ],
+      "used_by_models": [
+        "lstm_ae_gotham_v1",
+        "vae_gotham_v1",
+        "gat_v3, gat_v4, gat_v5 (train)"
+      ]
+    },
+    {
+      "id": "aci",
+      "name": "ACI-IoT-2023 (Army Cyber Institute)",
+      "host": "kaggle",
+      "kaggle_slug": "emilynack/aci-iot-network-traffic-dataset-2023",
+      "url": "https://www.kaggle.com/datasets/emilynack/aci-iot-network-traffic-dataset-2023",
+      "kaggle_usability": 9.41,
+      "licence": "CC BY 4.0",
+      "downloaded_to_project_pc": false,
+      "processed_where": "Kaggle notebook (private), not downloaded",
+      "files": [
+        {
+          "file": "ACI-IoT-2023.csv",
+          "used": true,
+          "size_bytes": 625901428
+        },
+        {
+          "file": "ACI-IoT-2023-Payload.csv",
+          "used": false,
+          "size_bytes": 5532418561
+        },
+        {
+          "file": "pcap_combined/ and Timesheets/",
+          "used": false
+        }
+      ],
+      "adapter": "scripts/aegex_datasets/aci.py",
+      "labelling": {
+        "method": "official Label column",
+        "mapping": {
+          "ping sweep, OS / port / vulnerability scan": "scanning",
+          "ICMP / SYN / UDP / DNS flood, Slowloris": "ddos",
+          "dictionary brute force, ARP spoofing": "other",
+          "Benign": "benign"
+        }
+      },
+      "operations": [
+        "CICFlowMeter columns mapped to the flow table (bytes = payload + header, >= 20 per packet; protocol 0 -> ICMP; TCP flag counts mapped per direction)",
+        "timestamps parsed with the format that falls inside 2023-10-30..2023-11-03 (rows mix day-first and month-first)",
+        "step1_flows: adapter -> unified flow table (or packets -> bidirectional flows via FlowBuilder: inactivity timeout 300 s TCP / 60 s UDP-ICMP-ARP, 120 s active timeout, IPv4 + ARP only)",
+        "step2_features: 50 features per flow (17 numeric incl. 4 device-behaviour, 33 binary); chronological split per (capture, attack_class) 70 % train / 15 % val / 15 % test; RobustScaler per dataset fitted on train + clean benign flows only; hosts that send attack traffic marked device_compromised",
+        "step3_sequences_graphs: per-device windows of 32 flows, stride 16; 60 s graph snapshots (nodes = hosts, edges = host pairs, mean features + log flow count, single-peer public IPs merged into EXTERNAL)"
+      ],
+      "used_by_models": [
+        "lstm_ae_aci_kaggle_v1/_v2",
+        "vae_aci_kaggle_v1/_v2",
+        "gat_v4, gat_v5 (train)"
+      ]
+    },
+    {
+      "id": "nf_toniot",
+      "name": "NF-ToN-IoT-v3 (NetFlow v3, UQ)",
+      "host": "kaggle",
+      "kaggle_slug": "athena21/netflow-v3-datasets",
+      "url": "https://www.kaggle.com/datasets/athena21/netflow-v3-datasets",
+      "kaggle_usability": 8.24,
+      "downloaded_to_project_pc": true,
+      "files": [
+        {
+          "file": "NF-ToN-IoT-v3.csv",
+          "used": true,
+          "size_bytes": 5302886266,
+          "sha256": "53ec8f468a43ede9b1536fabc0390af2fa33ab4312b23ce4d864f186a4651f78"
+        }
+      ],
+      "adapter": "scripts/aegex_datasets/nf_toniot.py",
+      "labelling": {
+        "method": "official Attack column",
+        "mapping": {
+          "scanning": "scanning",
+          "ddos": "ddos",
+          "ransomware": "ransomware",
+          "benign": "benign",
+          "dos, xss, password, injection, backdoor, mitm": "other"
+        }
+      },
+      "operations": [
+        "CSV streamed in 1 M-row chunks, one capture per UTC day",
+        "step1_flows: adapter -> unified flow table (or packets -> bidirectional flows via FlowBuilder: inactivity timeout 300 s TCP / 60 s UDP-ICMP-ARP, 120 s active timeout, IPv4 + ARP only)",
+        "step2_features: 50 features per flow (17 numeric incl. 4 device-behaviour, 33 binary); chronological split per (capture, attack_class) 70 % train / 15 % val / 15 % test; RobustScaler per dataset fitted on train + clean benign flows only; hosts that send attack traffic marked device_compromised",
+        "step3_sequences_graphs: per-device windows of 32 flows, stride 16; 60 s graph snapshots (nodes = hosts, edges = host pairs, mean features + log flow count, single-peer public IPs merged into EXTERNAL)"
+      ],
+      "used_by_models": [
+        "lstm_ae_nftoniot_v1",
+        "vae_nftoniot_v1",
+        "gat_v3 (train; failed, dropped from later GATs)"
+      ]
+    }
+  ],
+  "rejected_datasets": [
+    {
+      "name": "CICIoT2023 / CIC IoT-DIAD 2024 CSVs",
+      "reason": "no IP addresses or timestamps (shuffled window features)"
+    },
+    {
+      "name": "CIC IoMT 2024",
+      "reason": "no IP addresses or timestamps"
+    },
+    {
+      "name": "MU-IoT (Kaggle ubobyclinton/mu-iot)",
+      "url": "https://www.kaggle.com/datasets/ubobyclinton/mu-iot",
+      "reason": "Kaggle copy is normalised features with encoded labels, no IPs or timestamps"
+    },
+    {
+      "name": "MedBIoT (Kaggle shaily20/medbiot-legit-and-malware)",
+      "url": "https://www.kaggle.com/datasets/shaily20/medbiot-legit-and-malware",
+      "reason": "per-device statistical features, no IPs; Kaggle usability 0.24"
+    },
+    {
+      "name": "TII-SSRC-23 (Kaggle daniaherzalla/tii-ssrc-23)",
+      "reason": "only 1,301 benign flows, 5-6 nodes"
+    }
+  ]
+}

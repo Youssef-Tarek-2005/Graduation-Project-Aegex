@@ -1,0 +1,578 @@
+{
+ "generated": "2026-11-27 13:42 UTC",
+ "data_dir": "C:\\aegex_data",
+ "catalogue_date": "2026-11-26",
+ "datasets": [
+  {
+   "id": "edge",
+   "name": "Edge-IIoTset",
+   "host": "kaggle",
+   "slug": "mohamedamineferrag/edgeiiotset-cyber-security-dataset-of-iot-iiot",
+   "url": "https://www.kaggle.com/datasets/mohamedamineferrag/edgeiiotset-cyber-security-dataset-of-iot-iiot",
+   "size_bytes": 1746605436,
+   "label_method": "file-level (official): every flow in an attack pcap is that attack",
+   "models": [
+    "lstm_ae_v8",
+    "vae_v5",
+    "gat_v2 (train)",
+    "gat_v5 (test only, never trained on)"
+   ],
+   "files": [
+    {
+     "file": "edge-IIotset.zip",
+     "expected_bytes": 1746605436,
+     "expected_sha256": "42df619d4a222c5ae014a3b8ad2017536dbf49fbc2d35145349e6012a65b74ae",
+     "status": "missing"
+    }
+   ],
+   "captures": {},
+   "total": {}
+  },
+  {
+   "id": "kitsune",
+   "name": "Kitsune Network Attack Dataset",
+   "host": "kaggle",
+   "slug": "ymirsky/network-attack-dataset-kitsune",
+   "url": "https://www.kaggle.com/datasets/ymirsky/network-attack-dataset-kitsune",
+   "size_bytes": 530099283,
+   "label_method": "official per-packet labels; a flow is an attack if any of its packets is",
+   "models": [
+    "lstm_ae_v8",
+    "vae_v5",
+    "gat_v2 (train)",
+    "gat_v5 (test only)"
+   ],
+   "files": [
+    {
+     "file": "Mirai_pcap.pcap.zip",
+     "expected_bytes": 8633000,
+     "expected_sha256": "1d9c807fcd9e0441e945498eb00ec130f810747c7cc1b74cf458564e9b9f7a84",
+     "path": "C:\\aegex_data\\Mirai_pcap.pcap.zip",
+     "bytes": 8633000,
+     "status": "verified"
+    },
+    {
+     "file": "mirai_labels.csv.zip",
+     "expected_bytes": 2415,
+     "expected_sha256": "f460c4540bde959941325a583e527d6c82156e9ce46088539ed22e6957e5f0ac",
+     "path": "C:\\aegex_data\\mirai_labels.csv.zip",
+     "bytes": 2415,
+     "status": "verified"
+    },
+    {
+     "file": "SSDP_Flood_pcap.pcap.zip",
+     "expected_bytes": 295939113,
+     "expected_sha256": "6916392aa3f0c9aa6badcfc0eac3c6326f961745c45e5e2d670808ae1e02187f",
+     "status": "missing"
+    },
+    {
+     "file": "SSDP_Flood_labels.csv.zip",
+     "expected_bytes": 9613486,
+     "expected_sha256": "d075b8cfbbb69c4c64db8016e7c12817b4cf51015ba18ae42f9ba109d646622c",
+     "status": "missing"
+    },
+    {
+     "file": "OS_Scan_pcap.pcapng.zip",
+     "expected_bytes": 211906152,
+     "expected_sha256": "baea59b1191e84c5533e89d1ddc9b33c0ab1cf2f913d46b3a8a458f472473ae5",
+     "status": "missing"
+    },
+    {
+     "file": "OS_Scan_labels.csv.zip",
+     "expected_bytes": 4005117,
+     "expected_sha256": "dbb24336d673715cafcd212aa884f5e993e5aed47e9bb47c51eb244ec9579975",
+     "status": "missing"
+    }
+   ],
+   "captures": {
+    "mirai": {
+     "status": "measured",
+     "flows": 50032,
+     "attack_flows": 13104,
+     "attack_share": 0.2619,
+     "classes": {
+      "benign": 36928,
+      "mirai": 13104
+     },
+     "hosts": 311,
+     "lan_hosts": 257,
+     "attack_sources": [
+      "192.168.2.107",
+      "192.168.2.110"
+     ],
+     "n_attack_sources": 2,
+     "protocols": {
+      "udp": 22364,
+      "tcp": 21128,
+      "arp": 6112,
+      "icmp": 426,
+      "other": 2
+     },
+     "packets": 758609,
+     "bytes": 29401288,
+     "start_utc": "2018-10-25 05:46:22",
+     "end_utc": "2018-10-25 07:45:19",
+     "span_hours": 1.98,
+     "relabelled_flows": 50032,
+     "label_notes": [
+      "behaviour relabel: kitsune_mirai_relabeled (R1 ARP sweep / R2 Telnet / R3 new behaviour)"
+     ],
+     "missing_values": {}
+    },
+    "ssdp_flood": {
+     "status": "files missing",
+     "detail": "original 'SSDP_Flood_labels.csv.zip'"
+    },
+    "os_scan": {
+     "status": "files missing",
+     "detail": "original 'OS_Scan_labels.csv.zip'"
+    }
+   },
+   "total": {
+    "captures": 1,
+    "flows": 50032,
+    "attack_flows": 13104,
+    "attack_share": 0.2619,
+    "classes": {
+     "benign": 36928,
+     "mirai": 13104
+    },
+    "hosts": 311,
+    "lan_hosts": 257,
+    "relabelled_flows": 50032
+   }
+  },
+  {
+   "id": "iot23",
+   "name": "IoT-23 (Stratosphere Lab, Zeek conn.log parquet release)",
+   "host": "kaggle",
+   "slug": "dhoogla/iot23-dataset",
+   "url": "https://www.kaggle.com/datasets/dhoogla/iot23-dataset",
+   "size_bytes": 418551083,
+   "label_method": "official Zeek label|detailed-label",
+   "models": [
+    "lstm_ae_v8",
+    "vae_v5",
+    "gat_v2 (train)",
+    "gat_v5 (train)"
+   ],
+   "files": [
+    {
+     "file": "CTU-IoT-Malware-Capture-34-1.features.parquet",
+     "expected_bytes": 156531,
+     "expected_sha256": "819c7765a359efb5660808b85c18e22b9f585230ac4ed1611761ee7948bed66d",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-34-1.metadata.parquet",
+     "expected_bytes": 620480,
+     "expected_sha256": "da88de00ac87b50f153769e5c7b53edfed2918787f87c93d5708ddfdb9410d9d",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-35-1.features.parquet",
+     "expected_bytes": 52569847,
+     "expected_sha256": "3cb7e13c74661b82ae1a4f6898a677a532c7745cb749632b16d642154f378626",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-35-1.metadata.parquet",
+     "expected_bytes": 262065067,
+     "expected_sha256": "db69ef99d77f571b901dca19a91bf671daed4a632d428ca7060753ed9f1aa60e",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-48-1.features.parquet",
+     "expected_bytes": 14274709,
+     "expected_sha256": "5cd904ce5b0a0c70f82daee0942c42e0748f57e09b44eeedbb72ffafd5d0c8e6",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-48-1.metadata.parquet",
+     "expected_bytes": 88753918,
+     "expected_sha256": "3aa194f40ee0454fbf1360f6b9d760a2dd9cebd1199ae5feb66494bf3fd93e16",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-Honeypot-Capture-4-1.features.parquet",
+     "expected_bytes": 11429,
+     "expected_sha256": "b943ea1b210e4e999e329cd2542099a60f93abe74cd521ae7e5dbdcc29d27863",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-Honeypot-Capture-4-1.metadata.parquet",
+     "expected_bytes": 15725,
+     "expected_sha256": "32dad08a881f626182efce167e34366f50a63f8914002ac8f267aea77962ebca",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-Honeypot-Capture-5-1.features.parquet",
+     "expected_bytes": 27127,
+     "expected_sha256": "3e19bcc177d2f75c594fc1aca741d0797f62addfef4c93b2e06f55a9501b8571",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-Honeypot-Capture-5-1.metadata.parquet",
+     "expected_bytes": 42959,
+     "expected_sha256": "b00cc1acbaafa5896a8d1a0a743e6ca53c8819386af7edbb387d0379a447d5ea",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-Honeypot-Capture-7-1.features.parquet",
+     "expected_bytes": 7138,
+     "expected_sha256": "874e5e7e1d19d1bd5724b457e4f95f96760b23644b74f5466cfcd89a82d49eac",
+     "status": "missing"
+    },
+    {
+     "file": "CTU-Honeypot-Capture-7-1.metadata.parquet",
+     "expected_bytes": 6153,
+     "expected_sha256": "6cc350e1441e39ea4eac34fadee4eb6bf27caefc07b1815aedaaeff292d532d5",
+     "status": "missing"
+    }
+   ],
+   "captures": {},
+   "total": {}
+  },
+  {
+   "id": "iot23x",
+   "name": "IoT-23 extra malware captures (same release as iot23)",
+   "host": "kaggle",
+   "slug": "dhoogla/iot23-dataset",
+   "url": "https://www.kaggle.com/datasets/dhoogla/iot23-dataset",
+   "size_bytes": 9110000000,
+   "label_method": "official Zeek labels, family-aware mapping (family per capture in iot23x.FAMILY)",
+   "models": [
+    "lstm_ae_iot23x_kaggle_v2 + vae_iot23x_kaggle_v2 (GAT inputs only)",
+    "gat_v4, gat_v5 (train)"
+   ],
+   "files": [
+    {
+     "file": "CTU-IoT-Malware-Capture-1-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-1-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-3-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-3-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-7-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-7-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-8-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-8-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-9-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-9-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-17-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-17-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-20-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-20-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-21-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-21-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-33-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-33-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-36-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-36-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-39-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-39-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-42-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-42-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-43-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-43-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-44-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-44-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-49-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-49-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-52-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-52-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-60-1.features.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    },
+    {
+     "file": "CTU-IoT-Malware-Capture-60-1.metadata.parquet",
+     "expected_bytes": null,
+     "expected_sha256": null,
+     "status": "missing"
+    }
+   ],
+   "captures": {},
+   "total": {}
+  },
+  {
+   "id": "xiiotid",
+   "name": "X-IIoTID (cleaned parquet release)",
+   "host": "kaggle",
+   "slug": "dhoogla/x-iiotid",
+   "url": "https://www.kaggle.com/datasets/dhoogla/x-iiotid",
+   "size_bytes": 81491835,
+   "label_method": "official class2 kill-chain stage",
+   "models": [
+    "lstm_ae_xiiotid_v1",
+    "vae_xiiotid_v1",
+    "gat_v3, gat_v4, gat_v5 (train)"
+   ],
+   "files": [
+    {
+     "file": "archive.zip",
+     "expected_bytes": 81491835,
+     "expected_sha256": "efed3830377d249c20f48c8e360d22528b0c1aed4b24c08698f7b604c0111486",
+     "status": "missing"
+    }
+   ],
+   "captures": {},
+   "total": {}
+  },
+  {
+   "id": "gotham",
+   "name": "Gotham Dataset 2025 (Belarbi et al., Cardiff / Toshiba)",
+   "host": "zenodo",
+   "slug": "https://doi.org/10.5281/zenodo.14502760",
+   "url": "https://doi.org/10.5281/zenodo.14502760",
+   "size_bytes": 23824968355,
+   "label_method": "official labeller IP rules (github.com/othmbela/gotham-network-packet-labeller metadata), exact-IP matching; Unknown -> benign",
+   "models": [
+    "lstm_ae_gotham_v1",
+    "vae_gotham_v1",
+    "gat_v3, gat_v4, gat_v5 (train)"
+   ],
+   "files": [
+    {
+     "file": "GothamDataset2025.zip",
+     "expected_bytes": 23824968355,
+     "expected_sha256": "4c96a8915466baf14c8608c127bc4ef4f42aff4ba351292a2085371846175b4f",
+     "status": "missing"
+    }
+   ],
+   "captures": {},
+   "total": {}
+  },
+  {
+   "id": "aci",
+   "name": "ACI-IoT-2023 (Army Cyber Institute)",
+   "host": "kaggle",
+   "slug": "emilynack/aci-iot-network-traffic-dataset-2023",
+   "url": "https://www.kaggle.com/datasets/emilynack/aci-iot-network-traffic-dataset-2023",
+   "size_bytes": 625901428,
+   "label_method": "official Label column",
+   "models": [
+    "lstm_ae_aci_kaggle_v1/_v2",
+    "vae_aci_kaggle_v1/_v2",
+    "gat_v4, gat_v5 (train)"
+   ],
+   "files": [
+    {
+     "file": "ACI-IoT-2023.csv",
+     "expected_bytes": 625901428,
+     "expected_sha256": null,
+     "status": "missing"
+    }
+   ],
+   "captures": {},
+   "total": {}
+  },
+  {
+   "id": "nf_toniot",
+   "name": "NF-ToN-IoT-v3 (NetFlow v3, UQ)",
+   "host": "kaggle",
+   "slug": "athena21/netflow-v3-datasets",
+   "url": "https://www.kaggle.com/datasets/athena21/netflow-v3-datasets",
+   "size_bytes": 5302886266,
+   "label_method": "official Attack column",
+   "models": [
+    "lstm_ae_nftoniot_v1",
+    "vae_nftoniot_v1",
+    "gat_v3 (train; failed, dropped from later GATs)"
+   ],
+   "files": [
+    {
+     "file": "NF-ToN-IoT-v3.csv",
+     "expected_bytes": 5302886266,
+     "expected_sha256": "53ec8f468a43ede9b1536fabc0390af2fa33ab4312b23ce4d864f186a4651f78",
+     "status": "missing"
+    }
+   ],
+   "captures": {},
+   "total": {}
+  }
+ ],
+ "rejected": [
+  {
+   "name": "CICIoT2023 / CIC IoT-DIAD 2024 CSVs",
+   "reason": "no IP addresses or timestamps (shuffled window features)"
+  },
+  {
+   "name": "CIC IoMT 2024",
+   "reason": "no IP addresses or timestamps"
+  },
+  {
+   "name": "MU-IoT (Kaggle ubobyclinton/mu-iot)",
+   "url": "https://www.kaggle.com/datasets/ubobyclinton/mu-iot",
+   "reason": "Kaggle copy is normalised features with encoded labels, no IPs or timestamps"
+  },
+  {
+   "name": "MedBIoT (Kaggle shaily20/medbiot-legit-and-malware)",
+   "url": "https://www.kaggle.com/datasets/shaily20/medbiot-legit-and-malware",
+   "reason": "per-device statistical features, no IPs; Kaggle usability 0.24"
+  },
+  {
+   "name": "TII-SSRC-23 (Kaggle daniaherzalla/tii-ssrc-23)",
+   "reason": "only 1,301 benign flows, 5-6 nodes"
+  }
+ ]
+}
