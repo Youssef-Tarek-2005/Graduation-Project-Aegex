@@ -1,20 +1,18 @@
 #include <WiFi.h>
-NEW SKETCH
-
 #include <WebServer.h>
 #include <HTTPClient.h>
 #include <DHT.h>
 
 // ---------- Wi-Fi / collector ----------
-const char* WIFI_SSID = "HP 8181";
-const char* WIFI_PASS = "*Q7888s4";
-const char* COLLECTOR = "http://192.168.137.1:5000/event";  // laptop hotspot IP, from ipconfig
+const char* WIFI_SSID = "YOUR_SSID";        // SSID of the Kali access point (2.4 GHz only)
+const char* WIFI_PASS = "YOUR_PASSWORD";
+const char* COLLECTOR = "http://KALI_IP:5000/event";  // replace KALI_IP with Kali's IP on the AP interface (ip -br addr)
 
-// ---------- Static IP (hotspot network) ----------
+// ---------- Static IP (optional; change the addresses to your Kali AP subnet first) ----------
 // Start with false to test with DHCP. Once it connects, set to true if you want the fixed IP.
 const bool USE_STATIC_IP = false;
 IPAddress STATIC_IP(192, 168, 137, 241);
-IPAddress GATEWAY(192, 168, 137, 1);     // the laptop (hotspot)
+IPAddress GATEWAY(192, 168, 137, 1);     // Kali (access point)
 IPAddress SUBNET(255, 255, 255, 0);
 IPAddress DNS_SERVER(192, 168, 137, 1);
 
