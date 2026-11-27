@@ -50,6 +50,9 @@ CREATE TABLE IF NOT EXISTS captures (
     notes         TEXT,
     CHECK (end_ts IS NULL OR end_ts > start_ts)
 );
+-- Step 2: which public dataset a capture comes from (an id in backend/datasets/sources.json, e.g. 'kitsune').
+-- NULL = recorded on our own honeypot.
+ALTER TABLE captures ADD COLUMN IF NOT EXISTS dataset TEXT;
 
 
 -- -----------------------------------------------------------------------------------------------------
@@ -148,6 +151,18 @@ SELECT create_hypertable('flows', 'ts_start', chunk_time_interval => INTERVAL '1
 CREATE INDEX IF NOT EXISTS ix_flows_src_ts    ON flows (src_ip, ts_start DESC);
 CREATE INDEX IF NOT EXISTS ix_flows_dst_ts    ON flows (dst_ip, ts_start DESC);
 CREATE INDEX IF NOT EXISTS ix_flows_device_ts ON flows (device_id, ts_start DESC);
+-- Unified flow record (Step 2): the same columns for honeypot flows (Zeek) and public datasets (the AI team's
+-- adapters, loaded by backend/datasets/to_unified.py). Added with ALTER so existing databases get them too
+-- (safe to run again).
+--   fwd_flags / bwd_flags: TCP flags seen from the originator / responder, OR-ed together:
+--                          FIN=1 SYN=2 RST=4 PSH=8 ACK=16 URG=32 (Zeek: derived from `history`). NULL = unknown.
+--   attack_class:          the AI team's class: benign | scanning | ddos | mirai | ransomware | other
+--                          (`scenario` holds the same in our vocabulary). NULL = unlabelled.
+--   label_info:            where a dataset label came from: original_label, label_note, mal_frac, campaign.
+ALTER TABLE flows ADD COLUMN IF NOT EXISTS fwd_flags    SMALLINT;
+ALTER TABLE flows ADD COLUMN IF NOT EXISTS bwd_flags    SMALLINT;
+ALTER TABLE flows ADD COLUMN IF NOT EXISTS attack_class TEXT;
+ALTER TABLE flows ADD COLUMN IF NOT EXISTS label_info   JSONB;
 
 
 -- -----------------------------------------------------------------------------------------------------
