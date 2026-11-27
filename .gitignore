@@ -26,6 +26,6 @@ backend/replays/
 # Claude desktop app settings (local to each PC, not part of the project)
 .claude/
 
-# Markdown files stay local: only the main README.md is in git
-*.md
-!/README.md
+# Task B's own Markdown docs stay local; teammates' docs (ai-models/, docs/, honeypot-poc/) and README.md stay in git
+backend/**/*.md
+contracts/*.md
