@@ -202,6 +202,8 @@ def main(argv=None) -> int:
     p.add_argument("--data", type=Path, default=analyze.DEFAULT_DATA, help="folder with the originals (AEGEX_DATA)")
     p.add_argument("--max-rows", type=int, default=DEFAULT_MAX_ROWS, help="per capture, first N connections in time")
     p.add_argument("--show", action="store_true", help="only list what is loaded")
+    p.add_argument("--no-compress", action="store_true",
+                   help="leave the loaded rows uncompressed (default: compress, see ingest/datastore.py)")
     a = p.parse_args(argv)
     if not a.show and not a.datasets:
         p.error("give --datasets (e.g. --datasets kitsune) or --show")
@@ -218,6 +220,11 @@ def main(argv=None) -> int:
             for ds in a.datasets:
                 print(f"{ds}:")
                 load_dataset(conn, reg, ds, a.max_rows)
+            if not a.no_compress:
+                from ingest.datastore import compress, mb
+                for table, (n, before, after) in compress(conn).items():
+                    if n:
+                        print(f"compressed {table}: {mb(before)} -> {mb(after)}")
         print(f"\n{DATASETS_DB}: loaded dataset captures")
         for ds, cap, n, att, classes, t0, t1 in show(conn):
             span = f"{t0:%Y-%m-%d %H:%M} -> {t1:%H:%M}" if t0 else "-"

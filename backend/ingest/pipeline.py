@@ -338,6 +338,11 @@ def dataset_stages(s: dict, check_only: bool = False) -> list[tuple[str, callabl
                     total["flows"] += r["loaded"]
                     total["attacks"] += r["attacks"]
                     total["dropped"] += r["bad_ip"] + r["bad_time"] + r["duplicate"]
+            if total["captures"] and s.get("compress", True):    # Step 4: dataset history is stored compressed
+                from .datastore import compress, mb
+                n, before, after = compress(dconn)["flows"]
+                total["flows_mb_after_compression"] = round(after / 1e6, 1)
+                st.lines.append(f"flows compressed: {mb(before)} -> {mb(after)}")
         st.counts = total
         if not total["captures"]:
             st.fail("no capture could be loaded")

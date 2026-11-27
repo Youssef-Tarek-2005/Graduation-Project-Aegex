@@ -163,6 +163,10 @@ ALTER TABLE flows ADD COLUMN IF NOT EXISTS fwd_flags    SMALLINT;
 ALTER TABLE flows ADD COLUMN IF NOT EXISTS bwd_flags    SMALLINT;
 ALTER TABLE flows ADD COLUMN IF NOT EXISTS attack_class TEXT;
 ALTER TABLE flows ADD COLUMN IF NOT EXISTS label_info   JSONB;
+-- Step 4: "everything of one capture" is the most common read (labels, features, replay, evaluation, re-loading
+-- a dataset), so it gets its own index instead of a scan of the whole table.
+CREATE INDEX IF NOT EXISTS ix_flows_capture_ts  ON flows  (capture_id, ts_start DESC);
+CREATE INDEX IF NOT EXISTS ix_events_capture_ts ON events (capture_id, ts DESC);
 
 
 -- -----------------------------------------------------------------------------------------------------
