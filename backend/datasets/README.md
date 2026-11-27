@@ -6,6 +6,7 @@
 | `DATASETS_AND_PREPROCESSING.md` | The AI team's write-up (unchanged): how each dataset was labelled and preprocessed. Its numbers are **reported**. |
 | `analyze.py` | Step 1: checks which files you have and **measures** them. |
 | `report/datasets_report.md` | The output: tables you can paste into slides. `.json` holds the same data. |
+| `to_unified.py` | Step 2: loads datasets into our `flows` table, in the separate database `aegex_datasets`. The mapping is in `contracts/TASK_B_CONTRACT.md` §2.1. |
 
 ## Where the data goes
 
@@ -25,6 +26,13 @@ Kitsune Mirai also needs the AI team's behaviour relabel. Make it once:
 cd backend
 .venv\Scripts\python -m datasets.analyze                          # all datasets, SHA-256 checked
 .venv\Scripts\python -m datasets.analyze --datasets kitsune --quick  # one dataset, sizes only
+```
+
+Load into the database (Step 2). Each capture keeps its first 1,000,000 connections in time; change that with `--max-rows`:
+
+```powershell
+.venv\Scripts\python -m datasets.to_unified --datasets kitsune
+.venv\Scripts\python -m datasets.to_unified --show
 ```
 
 Each capture is read with the AI team's own adapter (`ai-models/lstm-vae-gat/scripts/aegex_datasets`), so the

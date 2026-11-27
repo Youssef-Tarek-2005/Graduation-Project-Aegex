@@ -51,6 +51,8 @@ class Flow:
     resp_pkts: int | None
     device_id: str | None = None      # filled by the loader from the devices table
     capture_id: str | None = None     # filled by the loader
+    fwd_flags: int | None = None      # TCP flags of the originator / responder, from `history` (see history_flags)
+    bwd_flags: int | None = None
 
     def to_row(self) -> dict[str, Any]:
         return asdict(self)
@@ -59,6 +61,25 @@ class Flow:
 def make_flow_id(ts_start: datetime, proto: str, src_ip: str, src_port: int | None, dst_ip: str, dst_port: int | None) -> str:
     key = f"{ts_start.timestamp():.6f}|{proto}|{src_ip}|{src_port}|{dst_ip}|{dst_port}"
     return "F" + hashlib.sha256(key.encode()).hexdigest()[:24]
+
+
+# TCP flag bits, as in the AI team's flow table (aegex_prep.py): the unified flow record uses the same numbers.
+FIN, SYN, RST, PSH, ACK, URG = 1, 2, 4, 8, 16, 32
+_HISTORY = {"S": SYN, "H": SYN | ACK, "A": ACK, "D": PSH, "F": FIN, "R": RST}
+
+
+def history_flags(history: str | None, proto: str) -> tuple[int | None, int | None]:
+    """Zeek `history` -> (originator flags, responder flags). Upper case = originator, lower case = responder;
+    'D'/'d' (data seen) counts as PSH. Same rule as the AI team's _zeek_history_flags. Not TCP or no history -> None."""
+    if proto != "tcp" or not history:
+        return None, None
+    of = rf = 0
+    for ch in history:
+        if ch in _HISTORY:
+            of |= _HISTORY[ch]
+        elif ch.upper() in _HISTORY:
+            rf |= _HISTORY[ch.upper()]
+    return of, rf
 
 
 def _val(d: dict, key: str) -> Any:
@@ -132,6 +153,7 @@ class ZeekConnParser:
         sport, dport = _int(_val(d, "id.orig_p")), _int(_val(d, "id.resp_p"))
         proto = str(d["proto"]).lower()
         duration = _float(_val(d, "duration"))
+        fwd_flags, bwd_flags = history_flags(_val(d, "history"), proto)
         return Flow(
             flow_id=make_flow_id(ts, proto, src, sport, dst, dport),
             zeek_uid=_val(d, "uid"),
@@ -145,16 +167,19 @@ class ZeekConnParser:
             # Missing byte counts stay None (unknown), never 0: 0 would claim "we saw no data".
             orig_bytes=_int(_val(d, "orig_bytes")), resp_bytes=_int(_val(d, "resp_bytes")),
             orig_pkts=_int(_val(d, "orig_pkts")), resp_pkts=_int(_val(d, "resp_pkts")),
+            fwd_flags=fwd_flags, bwd_flags=bwd_flags,
         )
 
 
 # ------------------------------------------------------------------------------------------- loading
 INSERT_FLOW_SQL = """
 INSERT INTO flows (flow_id, zeek_uid, ts_start, ts_end, capture_id, device_id, src_ip, src_port, dst_ip, dst_port,
-                   proto, service, conn_state, history, duration_s, orig_bytes, resp_bytes, orig_pkts, resp_pkts)
+                   proto, service, conn_state, history, duration_s, orig_bytes, resp_bytes, orig_pkts, resp_pkts,
+                   fwd_flags, bwd_flags)
 VALUES (%(flow_id)s, %(zeek_uid)s, %(ts_start)s, %(ts_end)s, %(capture_id)s, %(device_id)s,
         %(src_ip)s::inet, %(src_port)s, %(dst_ip)s::inet, %(dst_port)s, %(proto)s, %(service)s, %(conn_state)s,
-        %(history)s, %(duration_s)s, %(orig_bytes)s, %(resp_bytes)s, %(orig_pkts)s, %(resp_pkts)s)
+        %(history)s, %(duration_s)s, %(orig_bytes)s, %(resp_bytes)s, %(orig_pkts)s, %(resp_pkts)s,
+        %(fwd_flags)s, %(bwd_flags)s)
 ON CONFLICT (flow_id, ts_start) DO NOTHING
 """
 

@@ -57,6 +57,41 @@ Design notes:
 - **Labeling is one SQL call per capture:** `CALL label_capture('cap-2026-11-20-a');`. It resets that capture's labels, then applies `attack_runs`, so you can re-run it after fixing the attack log. `SELECT * FROM v_label_summary;` shows how much data you have per scenario.
 - **Feedback loop (Task 13).** Analysts set `alerts.status` and `alerts.analyst_label`. D's retraining job pulls those rows as new labeled data.
 
+### 2.1 Unified connection record: honeypot flows and public datasets (Step 2, 2026-11-27)
+
+Every network connection uses the same `flows` columns, whichever source it came from. That way replay,
+correlation and evaluation run the same code on our honeypot and on the public datasets.
+
+| Source | Reader | Database |
+|---|---|---|
+| Our honeypot (Zeek `conn.log`) | `backend/ingest/flows.py` | `aegex_poc` (or `aegex` for the sample lab) |
+| Public datasets (Kitsune, IoT-23, X-IIoTID, …; catalogue in `backend/datasets/sources.json`) | The AI team's adapters (`ai-models/lstm-vae-gat/scripts/aegex_datasets`), then `python -m datasets.to_unified` | `aegex_datasets`, a separate database with the same schema |
+
+| `flows` column | Honeypot (Zeek) | Public dataset (AI team's flow table, `aegex_prep.FLOW_COLUMNS`) |
+|---|---|---|
+| `flow_id` | hash of start time + proto + both IP:port ends | same hash |
+| `ts_start`, `ts_end`, `duration_s` | `ts`, `ts + duration`, `duration` | `ts`, `ts_end` (NULL if before `ts`), `duration` |
+| `src_ip/port`, `dst_ip/port`, `proto` | `id.orig_*`, `id.resp_*`, `proto` | `src_*`, `dst_*`, `proto` (tcp, udp, icmp, arp, other) |
+| `orig_bytes/pkts`, `resp_bytes/pkts` | Zeek's counts | `fwd_bytes/pkts`, `bwd_bytes/pkts` |
+| `fwd_flags`, `bwd_flags` (**new**) | from `history` (upper case = originator, lower case = responder) | `fwd_flags`, `bwd_flags` |
+| `label`, `scenario` | `label_capture()` + `attack_runs` | `is_attack`; `attack_class` mapped to our scenario words |
+| `attack_class` (**new**) | NULL | the AI team's class: benign, scanning, ddos, mirai, ransomware, other |
+| `label_info` (**new**, JSONB) | NULL | where the label came from: `original_label`, `label_note` (e.g. the Mirai behaviour relabel), `campaign`, `mal_frac` |
+| `capture_id` | the recording session | `ds-<dataset>-<capture>`, e.g. `ds-kitsune-mirai`; `captures.dataset` (**new**) = catalogue id |
+| `device_id` | our device on either end | NULL (dataset hosts are not our devices) |
+| `service`, `conn_state`, `history`, `zeek_uid` | Zeek | NULL |
+
+TCP flags are bits OR-ed together, the same numbers in both readers: FIN=1, SYN=2, RST=4, PSH=8, ACK=16, URG=32.
+For example, a refused scan probe is `fwd_flags = 2` (SYN) and `bwd_flags = 20` (RST+ACK).
+
+Class mapping (AI class → `scenario`): scanning → `vulnerability_scanning`, ddos → `dos`, mirai → `mirai_botnet`,
+ransomware → `ransomware`, other → `other`, benign → NULL with `label = 0`.
+
+The new columns were added with `ALTER TABLE … ADD COLUMN IF NOT EXISTS`, so older databases get them by
+re-applying `schema_v2.sql` (`python -m ingest.poc_db` does this). Rows that already existed keep NULL there.
+The model feature vectors (41 in this contract, 50 in the AI team's pipeline) stay model-specific and are not
+part of the connection record.
+
 ---
 
 ## 3. What Task A sends: event ingestion format
