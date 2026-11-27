@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import ipaddress
 import json
 from dataclasses import dataclass, field
 from typing import Annotated, Any, Literal
@@ -35,6 +36,7 @@ router = APIRouter(prefix="/api/v1", responses=REFUSED)
 Conn = Annotated[psycopg.Connection, Depends(get_conn)]
 VERSION = CONTRACT["feature_version"]
 MAX_LIMIT = 5000
+ATTACK_CLASSES = ("benign", "scanning", "ddos", "mirai", "ransomware", "other")   # contract 2.1 (AI team's classes)
 
 
 # ------------------------------------------------------------------------------------------- shared parts
@@ -155,12 +157,18 @@ def list_devices(conn: Conn, p: Pages) -> dict:
 @router.get("/captures", response_model=Page[CaptureRow], tags=["Lab: captures and attack log"],
             summary="Recording sessions (those overlapping from/to)")
 def list_captures(conn: Conn, r: Range, p: Pages,
-                  kind: Annotated[str | None, Query(description="normal_only, attack, mixed or live")] = None) -> dict:
+                  kind: Annotated[str | None, Query(description="normal_only, attack, mixed or live")] = None,
+                  dataset: Annotated[str | None, Query(description="a public dataset id (e.g. kitsune), or "
+                                                       "'honeypot' for our own recordings")] = None) -> dict:
     w = Where()
     w.add("start_ts < %s", r.end)
     w.add("(end_ts IS NULL OR end_ts >= %s)", r.start)
     w.add("kind = %s", kind)
-    return fetch_page(conn, "SELECT capture_id, start_ts, end_ts, kind, pcap_path, notes FROM captures", w,
+    if dataset == "honeypot":
+        w.clauses.append("dataset IS NULL")
+    else:
+        w.add("dataset = %s", dataset)
+    return fetch_page(conn, "SELECT capture_id, start_ts, end_ts, kind, pcap_path, notes, dataset FROM captures", w,
                       [("start_ts", "timestamptz", "start_ts"), ("capture_id", "text", "capture_id")], p)
 
 
@@ -207,17 +215,42 @@ def list_events(conn: Conn, r: Range, p: Pages, label: Label = None, device_id: 
             summary="Network connections (dashboard, D)")
 def list_flows(conn: Conn, r: Range, p: Pages, label: Label = None,
                device_id: Annotated[str | None, Query(description="the honeypot device on either end")] = None,
-               capture_id: str | None = None, include_features: bool = False) -> dict:
+               capture_id: str | None = None, include_features: bool = False,
+               scenario: Annotated[str | None, Query(description=", ".join(SCENARIOS))] = None,
+               attack_class: Annotated[str | None, Query(description=", ".join(ATTACK_CLASSES) +
+                                                         " (public datasets)")] = None,
+               src_ip: Annotated[str | None, Query(description="flows sent by this address")] = None,
+               dataset: Annotated[str | None, Query(description="flows of every capture of this public dataset "
+                                                    "(e.g. kitsune), or 'honeypot'")] = None) -> dict:
+    problems = []
+    if scenario is not None and scenario not in SCENARIOS:
+        problems.append(f"scenario {scenario!r} is not one of: {', '.join(SCENARIOS)}")
+    if attack_class is not None and attack_class not in ATTACK_CLASSES:
+        problems.append(f"attack_class {attack_class!r} is not one of: {', '.join(ATTACK_CLASSES)}")
+    if src_ip is not None:
+        try:
+            ipaddress.ip_address(src_ip)
+        except ValueError:
+            problems.append(f"src_ip {src_ip!r} is not an IP address")
+    if problems:
+        raise refuse(problems)
     w = Where()
     w.time("ts_start", r)
     w.add("label = %s", label)
     w.add("device_id = %s", device_id)
     w.add("capture_id = %s", capture_id)
+    w.add("scenario = %s", scenario)
+    w.add("attack_class = %s", attack_class)
+    w.add("src_ip = %s::inet", src_ip)
+    if dataset == "honeypot":
+        w.clauses.append("capture_id IN (SELECT capture_id FROM captures WHERE dataset IS NULL)")
+    else:
+        w.add("capture_id IN (SELECT capture_id FROM captures WHERE dataset = %s)", dataset)
     features = "features" if include_features else "NULL::jsonb AS features"
     select = f"""SELECT flow_id, zeek_uid, ts_start, ts_end, capture_id, device_id, host(src_ip) AS src_ip, src_port,
                         host(dst_ip) AS dst_ip, dst_port, proto, service, conn_state, history, duration_s,
                         orig_bytes, resp_bytes, orig_pkts, resp_pkts, label, scenario, run_id, feature_version,
-                        {features}
+                        {features}, fwd_flags, bwd_flags, attack_class, label_info
                  FROM flows"""
     page = fetch_page(conn, select, w, [("ts_start", "timestamptz", "ts_start"), ("flow_id", "text", "flow_id")], p)
     return in_contract_order(page, "features", flow.FEATURE_NAMES)

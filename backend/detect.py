@@ -41,14 +41,25 @@ RUNS = Path(__file__).resolve().parent / "model_runs"   # the models' output fil
 SCENARIO = {"scanning": "vulnerability_scanning", "ddos": "dos", "mirai": "mirai_botnet", "ransomware": "ransomware"}
 
 
-def run_models(pcap: Path, normal: Path, name: str, gat: bool = False) -> Path:
-    """Step 1: the AI team's script. Returns the folder with its results."""
+def run_models(pcap: Path, normal: Path | None, name: str, gat: bool = False, reference: str | None = None,
+               gat_network: str | None = None) -> Path:
+    """Step 1: the AI team's script. Returns the folder with its results.
+
+    normal:    a normal recording of the same network -> the models calibrate on it (our honeypot)
+    reference: instead, the scaler + thresholds stored in the model for one of its TRAINING datasets
+               (e.g. 'kitsune' for a Kitsune recording; HOW_TO_USE.md's own test command). For public datasets."""
+    if (normal is None) == (reference is None):
+        raise ValueError("give exactly one of normal (our network) or reference (a training dataset)")
     cmd = [sys.executable, "-I", str(SCORE_SCRIPT), str(pcap),
            "--model", str(MODELS / "models" / "lstm_ae" / LSTM), "--vae", str(MODELS / "models" / "vae" / VAE),
-           "--calibrate", str(normal), "--recalibrate-threshold", "--name", name, "--out", str(RUNS)]
+           "--name", name, "--out", str(RUNS)]
+    cmd += ["--calibrate", str(normal), "--recalibrate-threshold"] if normal else ["--reference-scaler", reference]
     if gat:
         cmd += ["--gat", str(MODELS / "models" / "gat" / GAT)]
-    print(f"running the models on {pcap.name} (calibrated on {normal.name}) ...", flush=True)
+        if gat_network:
+            cmd += ["--gat-network", gat_network]
+    how = f"calibrated on {normal.name}" if normal else f"with the {reference} scaler stored in the model"
+    print(f"running the models on {pcap.name} ({how}) ...", flush=True)
     subprocess.run(cmd, check=True)
     return RUNS / name
 
@@ -69,7 +80,9 @@ def save_alerts(results: Path, capture: str) -> int:
             conn.execute("INSERT INTO model_versions (model_name, version, feature_version, threshold, is_active) "
                          "VALUES (%s, %s, 'lstm-vae-gat', %s, FALSE) ON CONFLICT (model_name, version) "
                          "DO UPDATE SET threshold = EXCLUDED.threshold", (name, version, thr))
-        conn.execute("DELETE FROM alerts WHERE evidence->>'capture' = %s", (capture,))   # re-run = replace
+        # re-run = replace the AI models' alerts of this capture (other detectors' alerts, e.g. the rules, stay)
+        conn.execute("DELETE FROM alerts WHERE evidence->>'capture' = %s AND model_name IN ('lstm_ae', 'vae', "
+                     "'temporal_gat')", (capture,))
         for a in alerts.itertuples(index=False):
             lstm, vae = float(a.lstm_score), float(a.vae_score)
             model, version, score = ("lstm_ae", LSTM, lstm) if lstm >= vae else ("vae", VAE, vae)
@@ -117,19 +130,26 @@ def save_gat_alerts(results: Path, capture: str) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Score a recording with the AI models and save the alerts.")
     ap.add_argument("pcap", type=Path, help="the recording to check (Wireshark .pcap)")
-    ap.add_argument("--normal", type=Path, required=True, help="a recording of NORMAL traffic on the same network")
+    how = ap.add_mutually_exclusive_group(required=True)
+    how.add_argument("--normal", type=Path, help="a recording of NORMAL traffic on the same network (our honeypot)")
+    how.add_argument("--reference-scaler", metavar="DATASET",
+                     help="a public dataset the models were trained on (kitsune, edge, iot23): use its stored scaler "
+                          "and thresholds instead of calibrating")
     ap.add_argument("--capture", help="name for this recording in the alerts (default: the file name)")
     ap.add_argument("--gat", action="store_true", help="also run the temporal GAT (gat_v5) and save its incidents")
+    ap.add_argument("--gat-network", help="the GAT's training network this traffic is from (gotham, iot23, xiiotid, "
+                                          "aci, iot23x): its own threshold instead of the pooled one")
     a = ap.parse_args()
     for f in (a.pcap, a.normal):
-        if not f.exists():
+        if f is not None and not f.exists():
             print(f"ERROR: {f} not found")
             return 1
     if not SCORE_SCRIPT.exists():
         print(f"ERROR: the AI models are not here: {MODELS}")
         return 1
     capture = a.capture or a.pcap.stem
-    results = run_models(a.pcap, a.normal, capture, gat=a.gat)
+    results = run_models(a.pcap, a.normal, capture, gat=a.gat, reference=a.reference_scaler,
+                         gat_network=a.gat_network)
     n = save_alerts(results, capture)
     if a.gat:
         g = save_gat_alerts(results, capture)

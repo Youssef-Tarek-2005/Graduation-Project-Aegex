@@ -27,7 +27,8 @@ every later stage needs the earlier ones. A WARN (e.g. attacker traffic outside 
              4 logs       Cowrie / Mosquitto / ESP32 -> events
              5 labels     attack log -> attack_runs -> label_capture() -> label report
              6 features   41 numbers per flow, 24 per device per 10 s
-             7 detect     LSTM-AE + VAE (+ GAT) on the pcap -> alerts         (only with "detect")
+             7 correlate  the rule baseline (correlate/rules.py) -> alerts, model 'rules'   ("correlate": false skips)
+             8 detect     LSTM-AE + VAE (+ GAT) on the pcap -> alerts         (only with "detect")
   datasets:  1 check      the original files are in the data folder (sizes)
              2 load       AI team's adapter -> flows rows in aegex_datasets   (datasets.to_unified)
 
@@ -277,6 +278,17 @@ def session_stages(conn: psycopg.Connection, s: dict, check_only: bool = False) 
                      "active_windows": w.active, "attack_windows": w.attack}
         st.lines += [str(f), str(w).splitlines()[0]]
 
+    def correlate_rules(st: Stage) -> None:
+        if s.get("correlate") is False:
+            st.status = "SKIP"
+            st.lines.append('"correlate": false in the session file')
+            return
+        from correlate.store import run as run_rules, save as save_rules
+        incidents = run_rules(conn, cap_id)
+        st.counts = {"incidents": save_rules(conn, cap_id, incidents)}
+        st.lines += [f"{i.severity:<8} {i.scenario:<22} {i.summary}" for i in incidents[:10]] or \
+            ["no rule reached its threshold"]
+
     def detect(st: Stage) -> None:
         det = s.get("detect")
         if not det:
@@ -292,7 +304,8 @@ def session_stages(conn: psycopg.Connection, s: dict, check_only: bool = False) 
     stages = [("check inputs", check)]
     if not check_only:
         stages += [("capture", capture), ("flows (pcap -> Zeek -> flows)", flows), ("logs -> events", logs),
-                   ("attack log + labels", labels), ("features", features), ("detect (AI models)", detect)]
+                   ("attack log + labels", labels), ("features", features),
+                   ("correlate (rule baseline)", correlate_rules), ("detect (AI models)", detect)]
     return stages
 
 

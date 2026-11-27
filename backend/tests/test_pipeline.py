@@ -39,7 +39,8 @@ def quiet(_):
 def test_a_session_runs_every_stage_in_order(db, tmp_path):
     r = pl.run(session(tmp_path), conn=db, save=False, log=quiet)
     # the sample logs have one broken line each, on purpose: skipped, counted, a WARN - and the run goes on
-    assert r.ok and [s.status for s in r.stages] == ["PASS", "PASS", "PASS", "WARN", "PASS", "PASS", "SKIP"]
+    assert r.ok and [s.status for s in r.stages] == ["PASS", "PASS", "PASS", "WARN", "PASS", "PASS", "PASS", "SKIP"]
+    assert stage(r, "correlate").counts == {"incidents": 0}            # 2 failed logins: below the brute-force line
     flows = stage(r, "flows").counts
     assert flows["saved"] > 0 and flows["saved"] == flows["flows"] and flows["broken_lines"] == 0
     logs = stage(r, "logs").counts

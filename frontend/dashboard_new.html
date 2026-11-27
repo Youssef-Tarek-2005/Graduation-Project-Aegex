@@ -541,7 +541,7 @@ footer input {
         <div class="head" style="flex-wrap:wrap">
           <div>
             <div class="lbl">AI model alerts</div>
-            <div class="sub" id="aiSub">LSTM-AE + VAE: one alert per suspicious window of one device. Temporal GAT: one alert per incident (an attack source and the hosts it reached).</div>
+            <div class="sub" id="aiSub">LSTM-AE + VAE: one alert per suspicious window of one device. Temporal GAT: one alert per incident (an attack source and the hosts it reached). Rule baseline: simple per-minute rules (scan, sweep, Telnet, flood, failed logins), the yardstick for the AI models.</div>
           </div>
           <div style="display:flex;gap:8px">
             <select id="aiCap" title="Which scored recording to show"><option value="">All recordings</option></select>
@@ -549,6 +549,7 @@ footer input {
               <option value="">All models</option>
               <option value="window">LSTM-AE + VAE</option>
               <option value="temporal_gat">Temporal GAT</option>
+              <option value="rules">Rule baseline</option>
             </select>
             <select id="aiSev">
               <option value="low">All severities</option>
@@ -759,7 +760,7 @@ async function loadAlerts() {
   const model = $("#aiModel").value;
   try {
     alerts = (await get("/api/v1/alerts?" + params)).items
-      .filter(a => !model || (model === "temporal_gat" ? a.model_name === "temporal_gat" : a.model_name !== "temporal_gat"));
+      .filter(a => !model || (model === "window" ? !["temporal_gat", "rules"].includes(a.model_name) : a.model_name === model));
   }
   catch (e) {
     $("#aiRows").replaceChildren(); $("#aiCards").replaceChildren();
@@ -787,7 +788,8 @@ async function loadAlerts() {
     c.append(l, v, d); box.appendChild(c);
   };
   const gatCount = alerts.filter(a => a.model_name === "temporal_gat").length;
-  add("AI alerts", alerts.length.toLocaleString(), `${(alerts.length - gatCount).toLocaleString()} windows (LSTM-AE + VAE), ${gatCount} GAT incidents`);
+  const ruleCount = alerts.filter(a => a.model_name === "rules").length;
+  add("Alerts", alerts.length.toLocaleString(), `${(alerts.length - gatCount - ruleCount).toLocaleString()} windows (LSTM-AE + VAE), ${gatCount} GAT, ${ruleCount} rule incidents`);
   add("High or critical", alerts.filter(a => a.severity === "high" || a.severity === "critical").length.toLocaleString(), "score 3+ times the alarm line");
   add("Devices / IPs flagged", Object.keys(who).length.toLocaleString(), "distinct sources");
   add("Most flagged", top ? top[0] : "-", top ? `${top[1]} alerts` : "no alerts");
@@ -801,11 +803,16 @@ async function loadAlerts() {
     const ev = a.evidence || {};
     td(new Date(a.window_start).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" }));
     td("").appendChild(sevPill(a.severity));
-    td(a.device_id || a.entity_id);
-    const gat = a.model_name === "temporal_gat";
-    td(a.model_name === "lstm_ae" ? "LSTM-AE" : a.model_name === "vae" ? "VAE" : gat ? "Temporal GAT" : a.model_name);
+    const gat = a.model_name === "temporal_gat", rule = a.model_name === "rules";
+    td(rule ? a.entity_id : (a.device_id || a.entity_id));   // rules: the attacking source (its targets are in Details)
+    td(a.model_name === "lstm_ae" ? "LSTM-AE" : a.model_name === "vae" ? "VAE" : gat ? "Temporal GAT" : rule ? "Rule baseline" : a.model_name);
     td(Number(a.score).toFixed(2));
-    if (gat) {   // the GAT finds the attack source; the attack type comes from a behaviour rule on its links
+    if (rule) {
+      td(nice(a.predicted_scenario || "-"));
+      const events = Object.entries(ev.events || {}).map(([k, n]) => `${n} ${k}`).join(", ");
+      td(`${ev.summary || ""}. ${Number(ev.flows || 0).toLocaleString()} flows` + (events ? `; also ${events}` : "") +
+         ((ev.devices || []).length ? `; reached ${ev.devices.join(", ")}` : ""), "det");
+    } else if (gat) {   // the GAT finds the attack source; the attack type comes from a behaviour rule on its links
       td(nice(a.predicted_scenario || "-"));
       td(`reached: ${(ev.targets || []).join(", ") || "-"}. ${ev.verdict || ""}`, "det");
     } else {

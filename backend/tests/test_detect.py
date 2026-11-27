@@ -74,3 +74,18 @@ def test_gat_incidents_go_into_the_database_and_the_api(client, db, results):
     detect.save_alerts(results, "cap-g")                                # re-run: GAT rows replaced too
     assert detect.save_gat_alerts(results, "cap-g") == 1
     assert db.execute("SELECT count(*) FROM alerts WHERE model_name = 'temporal_gat'").fetchone()[0] == 1
+
+
+def test_a_rerun_keeps_other_detectors_alerts(client, db, results):
+    """Re-scoring a capture replaces the AI models' alerts only: the rule baseline's incidents stay."""
+    from correlate import store
+    from correlate.rules import Incident
+    from datetime import datetime, timezone
+    t = datetime(2026, 11, 25, 11, 5, tzinfo=timezone.utc)
+    store.save(db, "cap-keep", [Incident("192.168.137.50", t, t, {"port_scan": 40})])
+    detect.save_alerts(results, "cap-keep")
+    detect.save_alerts(results, "cap-keep")
+    models = dict(db.execute("SELECT model_name, count(*) FROM alerts WHERE evidence->>'capture' = 'cap-keep' "
+                             "GROUP BY 1").fetchall())
+    assert models.get("rules") == 1 and sum(models.values()) == 3
+    db.execute("DELETE FROM alerts WHERE evidence->>'capture' = 'cap-keep'")
