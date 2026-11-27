@@ -42,7 +42,7 @@ SCENARIO = {"scanning": "vulnerability_scanning", "ddos": "dos", "mirai": "mirai
 
 
 def run_models(pcap: Path, normal: Path | None, name: str, gat: bool = False, reference: str | None = None,
-               gat_network: str | None = None) -> Path:
+               gat_network: str | None = None, quiet: bool = False) -> Path:
     """Step 1: the AI team's script. Returns the folder with its results.
 
     normal:    a normal recording of the same network -> the models calibrate on it (our honeypot)
@@ -59,8 +59,11 @@ def run_models(pcap: Path, normal: Path | None, name: str, gat: bool = False, re
         if gat_network:
             cmd += ["--gat-network", gat_network]
     how = f"calibrated on {normal.name}" if normal else f"with the {reference} scaler stored in the model"
-    print(f"running the models on {pcap.name} ({how}) ...", flush=True)
-    subprocess.run(cmd, check=True)
+    if not quiet:
+        print(f"running the models on {pcap.name} ({how}) ...", flush=True)
+    r = subprocess.run(cmd, capture_output=quiet, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"score_traffic.py failed (exit {r.returncode}): {(r.stderr or '')[-400:]}")
     return RUNS / name
 
 
@@ -69,8 +72,9 @@ def severity(score: float) -> str:
     return "critical" if score >= 10 else "high" if score >= 3 else "medium" if score >= 1.5 else "low"
 
 
-def save_alerts(results: Path, capture: str) -> int:
-    """Steps 2 + 3: alerts.csv -> alerts table."""
+def save_alerts(results: Path, capture: str, replace: bool = True) -> int:
+    """Steps 2 + 3: alerts.csv -> alerts table. replace=False adds to the capture's AI alerts (live mode, where
+    each minute of a long capture is scored on its own) instead of replacing them."""
     alerts = pd.read_csv(results / "alerts.csv")
     run = json.loads((results / "run.json").read_text(encoding="utf-8"))
     with connect() as conn, conn.transaction():
@@ -81,8 +85,9 @@ def save_alerts(results: Path, capture: str) -> int:
                          "VALUES (%s, %s, 'lstm-vae-gat', %s, FALSE) ON CONFLICT (model_name, version) "
                          "DO UPDATE SET threshold = EXCLUDED.threshold", (name, version, thr))
         # re-run = replace the AI models' alerts of this capture (other detectors' alerts, e.g. the rules, stay)
-        conn.execute("DELETE FROM alerts WHERE evidence->>'capture' = %s AND model_name IN ('lstm_ae', 'vae', "
-                     "'temporal_gat')", (capture,))
+        if replace:
+            conn.execute("DELETE FROM alerts WHERE evidence->>'capture' = %s AND model_name IN ('lstm_ae', 'vae', "
+                         "'temporal_gat')", (capture,))
         for a in alerts.itertuples(index=False):
             lstm, vae = float(a.lstm_score), float(a.vae_score)
             model, version, score = ("lstm_ae", LSTM, lstm) if lstm >= vae else ("vae", VAE, vae)

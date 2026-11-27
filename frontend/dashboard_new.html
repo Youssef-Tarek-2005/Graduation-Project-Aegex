@@ -468,6 +468,7 @@ footer input {
   <main class="main-content">
     <header>
       <div class="right">
+        <span class="pill" id="simPill" style="display:none" title="The live demo (demo.live_demo) generates the lab's network traffic and attacks; parsing, storage, detection and threat intelligence are the real system"><i class="dot up"></i>Live demo: simulated traffic, real detection</span>
         <span class="pill" title="The backend API and its database"><i class="dot" id="pg"></i>API + database</span>
         <span class="pill" title="The old API, still used for the threat-intelligence page"><i class="dot" id="es"></i>Threat-intel API</span>
         <span class="pill" title="Direct browser connection to the ESP32"><i class="dot" id="esp"></i><span id="espTxt">ESP32</span></span>
@@ -525,7 +526,7 @@ footer input {
           <div class="head"><div class="lbl">Attack runs</div></div>
           <div class="scroll" style="max-height:300px">
             <table>
-              <thead><tr><th>Start</th><th>Scenario</th><th>Tool</th><th>Target</th><th>Attacker</th><th>Events</th><th>Flows</th></tr></thead>
+              <thead><tr><th>Start</th><th>Scenario</th><th>Tool</th><th>Target</th><th>Attacker</th><th>Events</th><th>Flows</th><th>Caught by</th></tr></thead>
               <tbody id="atkRows"></tbody>
             </table>
             <div class="empty" id="atkEmpty" style="display:none">No attack runs in this range</div>
@@ -602,6 +603,15 @@ footer input {
 
     <!-- VIEW 5: Threat intelligence -->
     <section id="v-intel" class="page-view">
+      <section class="card" style="margin-bottom:16px">
+        <div class="head" style="flex-wrap:wrap">
+          <div>
+            <div class="lbl">Live threat intelligence: what AEGEX detected</div>
+            <div class="sub" id="liveIntelSub">Each incident our detectors raised in the selected time range, linked to MITRE ATT&amp;CK, OWASP IoT Top 10, CWE, CAPEC, mitigations and IoT CVEs (cited sources, no guessing).</div>
+          </div>
+        </div>
+        <div id="liveIntel"><div class="empty">Loading...</div></div>
+      </section>
       <section class="card">
         <div class="head" style="flex-wrap:wrap">
           <div>
@@ -612,7 +622,7 @@ footer input {
             <input class="q" id="kbq" placeholder="Search e.g. mirai, camera, T1486">
             <select id="kbl"><option value="">All layers</option></select>
             <button class="btn alt" id="kbgo">Search</button>
-            <button class="btn" id="repgo">Blue team report</button>
+            <button class="btn" id="repgo" title="The live threat-intelligence report of the selected time range, as Markdown">Blue team report</button>
             <a class="btn alt" id="repdl" style="text-decoration:none">Download .md</a>
           </div>
         </div>
@@ -730,7 +740,20 @@ function cards(layers) {
 }
 
 // Until the models post alerts (step 12), the attacks shown are the labeled ones: Task A's attack log.
-function detections(sum, runs) {
+// Which detectors caught an attack run: an alert on the attacker's address that overlaps the run (+-2 min).
+const DET_NAME = { rules: "Rules", lstm_ae: "LSTM-AE", vae: "VAE", temporal_gat: "GAT" };
+function caughtBy(run, alerts) {
+  const a0 = new Date(run.start_ts).getTime() - 120000, a1 = new Date(run.end_ts).getTime() + 120000;
+  const found = new Set();
+  alerts.forEach(a => {
+    const who = a.entity_id === run.attacker_ip || (a.src_ips || []).includes(run.attacker_ip);
+    const w0 = new Date(a.window_start).getTime(), w1 = new Date(a.window_end).getTime();
+    if (who && w0 <= a1 && w1 >= a0) found.add(DET_NAME[a.model_name] || a.model_name);
+  });
+  return [...found];
+}
+
+function detections(sum, runs, alerts = []) {
   const sc = Object.entries(sum.scenarios);
   ch.A.data.labels = sc.map(([k]) => nice(k));
   ch.A.data.datasets = [
@@ -747,15 +770,21 @@ function detections(sum, runs) {
     const n = sum.runs[r.run_id] || { events: 0, flows: 0 };
     td(dayTime(r.start_ts)); td(nice(r.scenario)); td(r.tool || "-"); td(r.target_device || "-"); td(r.attacker_ip);
     td(n.events.toLocaleString()); td(n.flows.toLocaleString());
+    const by = caughtBy(r, alerts);
+    const cell = td(by.length ? by.join(" · ") : "missed");
+    cell.style.cssText = "font-weight:600;color:" + (by.length ? "#22c55e" : "#ef4444");
     body.appendChild(tr);
   });
+  const caught = runs.items.filter(r => caughtBy(r, alerts).length).length;
+  if (runs.items.length) $("#atkSub").textContent += ` | detected: ${caught} of ${runs.items.length} attacks`;
 }
 
 // AI alerts: the models' output for a whole recording, so they are filtered by recording, not by the time buttons.
 const aiCaptures = new Set();
 async function loadAlerts() {
-  const params = new URLSearchParams({ order: "desc", limit: 1000, min_severity: $("#aiSev").value });
+  const params = new URLSearchParams({ order: "desc", limit: 5000, min_severity: $("#aiSev").value });
   if ($("#aiCap").value) params.set("capture", $("#aiCap").value);
+  else if (!capMode()) { const s = span(); params.set("from", s.from); params.set("to", s.to); }   // Live: the time buttons
   let alerts;
   const model = $("#aiModel").value;
   try {
@@ -910,6 +939,7 @@ async function loadCaptures() {
   const sel = $("#capSel"), keep = sel.value;
   try {
     captures = (await get("/api/v1/captures?order=desc&limit=500")).items;
+    $("#simPill").style.display = captures.some(c => c.capture_id === "cap-live-demo" && !c.end_ts) ? "" : "none";
   } catch (e) { captures = []; }
   sel.replaceChildren(new Option("Live", ""));
   captures.forEach(c => {
@@ -1120,7 +1150,8 @@ async function refresh() {
     ["sensors", `/api/v1/stats/sensors?${query(s)}`],
     ["events", `/api/v1/events?${query(s, { order: "desc", limit: 300, min_severity: $("#sev").value, ...sourceQuery })}`],
     ["histogram", `/api/v1/stats/events-histogram?${query(s)}`],
-    ["runs", `/api/v1/attack-runs?${query(s, { order: "desc", limit: 100 })}`]
+    ["runs", `/api/v1/attack-runs?${query(s, { order: "desc", limit: 100 })}`],
+    ["alerts", `/api/v1/alerts?${query({ from: s.from, to: s.to }, { order: "desc", limit: 5000 })}`]
   ];
   const results = Object.fromEntries(await Promise.all(requests.map(async ([key, path]) => {
     try { return [key, { ok: true, data: await get(path) }]; }
@@ -1144,7 +1175,7 @@ async function refresh() {
     const sum = results.summary.data;
     cards(sum);
     $("#vE").textContent = sum.events.toLocaleString();
-    detections(sum, results.runs.ok ? results.runs.data : { items: [] });
+    detections(sum, results.runs.ok ? results.runs.data : { items: [] }, results.alerts.ok ? results.alerts.data.items : []);
     if (!results.runs.ok) {
       $("#atkEmpty").textContent = "Counts loaded, but the attack runs could not be loaded.";
       $("#atkEmpty").style.display = "block";
@@ -1203,11 +1234,12 @@ async function refresh() {
   $("#err").style.display = errors.length ? "block" : "none";
   $("#upd").textContent = "Updated " + new Date().toLocaleTimeString();
   loadAlerts();
+  loadLiveIntel();
 }
 $("#seg").addEventListener("click", e => {
   if (e.target.tagName !== "BUTTON") return;
   document.querySelectorAll("#seg button").forEach(b => b.classList.toggle("on", b === e.target));
-  range = +e.target.dataset.m; $("#capSel").value = ""; refresh();   // a time button means Live
+  range = +e.target.dataset.m; $("#capSel").value = ""; intelAt = 0; refresh();   // a time button means Live
 });
 $("#capSel").addEventListener("change", () => {
   // the time buttons only mean something in Live mode
@@ -1218,12 +1250,50 @@ $("#srcFilter")?.addEventListener("change", refresh);
 $("#sev").addEventListener("change", refresh);
 $("#kbgo").addEventListener("click", () => searchKb().catch(e => alert(e.message)));
 $("#kbq").addEventListener("keydown", e => { if (e.key === "Enter") searchKb().catch(x => alert(x.message)); });
+// The blue-team report is built by our API from our own detections (backend/intel/report.py).
+const reportUrl = () => apiBase() + `/api/v1/intel/live-report?minutes=${range}&format=markdown`;
 $("#repgo").addEventListener("click", async () => {
   const pre = $("#rep"); pre.style.display = "block"; pre.textContent = "Generating...";
-  try { const r = await fetch(intelBase() + `/api/v1/reports/blue-team?minutes=${range}&format=markdown`); pre.textContent = await r.text(); }
+  try { const r = await fetch(reportUrl()); pre.textContent = await r.text(); }
   catch (e) { pre.textContent = "Could not load the report: " + e.message; }
 });
-function setDl() { $("#repdl").href = intelBase() + `/api/v1/reports/blue-team?minutes=${range}&format=markdown`; }
+function setDl() { $("#repdl").href = reportUrl(); $("#repdl").download = "aegex-threat-report.md"; }
+
+// Live threat intelligence: one card per incident (attacker + attack type) in the selected range.
+let intelAt = 0;
+async function loadLiveIntel(force = false) {
+  if (!force && Date.now() - intelAt < 15000) return;          // every 15 s is plenty
+  intelAt = Date.now();
+  const box = $("#liveIntel");
+  let r;
+  try { r = await get(`/api/v1/intel/live-report?minutes=${range}`); }
+  catch (e) { box.innerHTML = ""; const d = document.createElement("div"); d.className = "empty"; d.textContent = "Could not load: " + e.message; box.appendChild(d); return; }
+  const s = r.summary;
+  $("#liveIntelSub").textContent = `Last ${range >= 1440 ? range / 1440 + " day" : range >= 60 ? range / 60 + " h" : range + " min"}: ${s.incidents} incident(s) from ${s.attackers} attacker(s), built from ${s.alerts} detector alerts. Linked to MITRE ATT&CK, OWASP IoT Top 10, CWE, CAPEC, ATT&CK mitigations and IoT CVEs (cited, no guessing).`;
+  box.replaceChildren();
+  if (!r.incidents.length) { const d = document.createElement("div"); d.className = "empty"; d.textContent = "No attacks detected in this range."; box.appendChild(d); return; }
+  const el = (tag, text, css) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (css) e.style.cssText = css; return e; };
+  const line = (label, text) => { const p = el("div", "", "margin:4px 0;font-size:13px;line-height:1.45"); p.append(el("b", label + ": "), document.createTextNode(text)); return p; };
+  r.incidents.slice(0, 12).forEach(i => {
+    const c = el("div", "", "border:1px solid var(--line,#2a3142);border-radius:12px;padding:12px 14px;margin:10px 0");
+    const h = el("div", "", "display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px");
+    h.append(sevPill(i.severity), el("b", `${i.scenario_name} from ${i.attacker}`),
+             el("span", `${new Date(i.first_seen).toLocaleTimeString()} - ${new Date(i.last_seen).toLocaleTimeString()}`, "opacity:.7;font-size:12px"));
+    c.appendChild(h);
+    c.appendChild(line("Detected by", Object.entries(i.detectors).map(([d, n]) => `${d} (${n})`).join(", ")));
+    if (i.targets.length) c.appendChild(line("Targets", i.targets.join(", ")));
+    i.evidence.forEach(e => c.appendChild(line("Evidence", e)));
+    if (i.credentials_tried.length) c.appendChild(line("Passwords tried on our honeypot", i.credentials_tried.map(x => `${x.username}/${x.password}`).join(", ")));
+    const att = el("div", "", "margin:4px 0;font-size:13px"); att.appendChild(el("b", "MITRE ATT&CK: "));
+    i.attack_techniques.forEach((t, k) => { const a = el("a", `${t.id} ${t.name}`); a.href = t.url; a.target = "_blank"; a.rel = "noopener"; if (k) att.append(", "); att.appendChild(a); });
+    c.appendChild(att);
+    c.appendChild(line("OWASP IoT", i.owasp_iot.map(x => `${x.id} ${x.title}`).join("; ")));
+    c.appendChild(line("Weakness / pattern", [...i.cwe.slice(0, 2), ...i.capec.slice(0, 2)].map(x => `${x.id} ${x.title}`).join("; ")));
+    c.appendChild(line("What to do", i.mitigations.slice(0, 3).map(m => `${m.id} ${m.title}`).join("; ")));
+    if (i.cves.length) c.appendChild(line("Related IoT CVEs", i.cves.map(v => `${v.id} (CVSS ${v.cvss})`).join(", ")));
+    box.appendChild(c);
+  });
+}
 $("#seg").addEventListener("click", setDl); $("#intelApi").addEventListener("change", () => { setDl(); loadLayers(); }); setDl(); loadLayers();
 $("#api").addEventListener("change", () => loadCaptures().then(refresh));
 // A recorded capture doesn't change, so it is fetched once; Live refreshes every 5 seconds.
