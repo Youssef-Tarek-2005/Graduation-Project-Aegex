@@ -16,3 +16,6 @@ backend/pcaps/
 
 # Step 3 pipeline run reports: generated, one JSON per run (python -m ingest.pipeline run ...)
 backend/pipeline_runs/
+
+# Step 4 database backups (python -m ingest.datastore backup): large, local only
+backend/backups/

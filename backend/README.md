@@ -1016,5 +1016,29 @@ The stages are: check inputs → capture → flows (pcap → Zeek) → logs → 
 inputs are wrong, nothing is saved. Running it again saves nothing new. Each run's report is kept in
 `pipeline_runs/` (not in git).
 
+## The datastore: size, compression, backup (8-step plan, Step 4)
+
+There is one schema (`database/schema_v2.sql`) in three databases: `aegex` (sample lab), `aegex_poc` (the PoC
+lab, which the dashboard reads) and `aegex_datasets` (public datasets). [`ingest/datastore.py`](ingest/datastore.py)
+looks after them:
+
+```powershell
+.venv\Scripts\python -m ingest.datastore status                                   # size, rows, compression of each
+.venv\Scripts\python -m ingest.datastore compress --db aegex_datasets             # 20x smaller, still readable
+.venv\Scripts\python -m ingest.datastore compress --db aegex_poc --older-than '7 days'
+.venv\Scripts\python -m ingest.datastore backup --db aegex_poc                    # -> backups\aegex_poc_<time>.dump
+.venv\Scripts\python -m ingest.datastore restore backups\<file>.dump --db aegex_poc_restored
+```
+
+- **Indexes:** `flows (capture_id, ts_start)` and `events (capture_id, ts)`, because "everything of one capture"
+  is the most common read. On `aegex_poc`, counting one capture's flows went from 15 ms to 5 ms.
+- **Compression** (TimescaleDB) stores finished chunks per column, grouped by capture. Kitsune Mirai's flows went
+  from 56.7 MB to 2.6 MB with the same rows, and they can still be read, re-loaded and updated. Dataset loading
+  (`datasets.to_unified`, the pipeline) compresses automatically. The honeypot databases are only compressed when
+  you run `compress`.
+- **Backup / restore** run `pg_dump` / `pg_restore` inside the database container, so nothing needs installing
+  on Windows. A restore always creates a **new** database, so it can never overwrite live data. `backups/` is not
+  in git.
+
 **For the team:** [TEAM_GUIDE.md](TEAM_GUIDE.md) is the short version of this README: the steps in one table, and
 what each task does with the backend.
