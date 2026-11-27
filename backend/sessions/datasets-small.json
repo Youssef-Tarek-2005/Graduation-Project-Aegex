@@ -1,0 +1,6 @@
+{
+  "_about": "The small public datasets (Step 1 advice). Files go in the data folder first; missing ones are skipped. Run: python -m ingest.pipeline run sessions/datasets-small.json",
+  "datasets": ["kitsune", "xiiotid", "iot23"],
+  "data": "C:\\aegex_data",
+  "max_rows": 1000000
+}

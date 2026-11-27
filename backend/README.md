@@ -999,5 +999,22 @@ fake ESP32 reading every 2 s, an MQTT publish every 5 s, and an SSH brute force 
 `cap-sim-<time>` capture; `--clean` deletes it all afterwards. Live data stays unlabeled (`label = null`): only
 Task A's attack log labels data.
 
+## One command per recording: the pipeline (8-step plan, Step 3)
+
+Steps 4-8 above are separate commands. [`ingest/pipeline.py`](ingest/pipeline.py) runs them together for one
+recording session, described in a small JSON file ([`sessions/sample-lab.json`](sessions/sample-lab.json) is the
+sample lab):
+
+```powershell
+.venv\Scripts\python -m ingest.pipeline run sessions\sample-lab.json --check   # check the inputs, save nothing
+.venv\Scripts\python -m ingest.pipeline run sessions\sample-lab.json           # every stage
+.venv\Scripts\python -m ingest.pipeline run sessions\datasets-small.json       # public datasets -> aegex_datasets
+```
+
+The stages are: check inputs → capture → flows (pcap → Zeek) → logs → attack log + labels → features → detect
+(optional, the AI models). Each prints PASS / WARN / FAIL with its counts. The first FAIL stops the run, and if the
+inputs are wrong, nothing is saved. Running it again saves nothing new. Each run's report is kept in
+`pipeline_runs/` (not in git).
+
 **For the team:** [TEAM_GUIDE.md](TEAM_GUIDE.md) is the short version of this README: the steps in one table, and
 what each task does with the backend.

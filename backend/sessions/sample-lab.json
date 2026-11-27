@@ -1,0 +1,18 @@
+{
+  "_about": "The sample lab capture (normal traffic + one SSH brute force). Run: python -m ingest.pipeline run sessions/sample-lab.json",
+  "capture": {
+    "id": "cap-2026-11-20-a",
+    "start": "2026-11-20T14:00:00Z",
+    "end": "2026-11-20T15:00:00Z",
+    "kind": "mixed",
+    "notes": "Sample capture: normal traffic + one SSH brute force"
+  },
+  "pcap": "../samples/cap-2026-11-20-a.pcap",
+  "logs": [
+    {"source": "cowrie", "path": "../samples/cowrie.json", "device": "gw-01"},
+    {"source": "mosquitto", "path": "../samples/mosquitto.log", "device": "gw-01", "broker_ip": "192.168.56.10"},
+    {"source": "esp32", "path": "../samples/esp32.csv", "device": "esp32-smoke-01", "device_ip": "192.168.56.20", "tz": "UTC"}
+  ],
+  "attack_log": "../samples/attack_log.csv",
+  "features": true
+}
