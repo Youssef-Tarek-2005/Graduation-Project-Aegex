@@ -124,5 +124,6 @@ source host flagged in consecutive snapshots + its flagged links). It writes:
 Mirai, many targets / new ports → scanning, high volume to few targets → DoS), not from the GAT; the files say
 so. On a live capture: `score_traffic.py capture.pcap --calibrate normal.pcap --recalibrate-threshold --gat
 ..\..\models\gat\gat_v5` (adds `handoff/` to the output). Traffic from a network the GAT never trained on gets the
-pooled threshold and a warning. `models/gat/gat_v2` is the earlier GAT (trained on Kitsune, Edge, IoT-23 with
-port inputs), kept for the unseen-attack-type tests; `gat_v5` replaces it.
+pooled threshold and a warning. `gat_v5` replaced the earlier GAT (`gat_v2`, trained on Kitsune, Edge and IoT-23
+with port inputs); its bundle was removed. The unseen-attack-type numbers in `results_summary/gat_by_attack.csv`
+(`gat_v2_ho_*`) and on the results page were measured with that earlier GAT.

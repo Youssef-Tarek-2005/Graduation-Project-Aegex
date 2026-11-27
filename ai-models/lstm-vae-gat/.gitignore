@@ -17,7 +17,6 @@
 /models/*/*
 !/models/lstm_ae/lstm_ae_v8/
 !/models/vae/vae_v5/
-!/models/gat/gat_v2/
 !/models/lstm_ae/lstm_ae_xiiotid_v1/
 !/models/vae/vae_xiiotid_v1/
 !/models/lstm_ae/lstm_ae_gotham_v1/

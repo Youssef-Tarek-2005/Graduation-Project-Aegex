@@ -21,8 +21,12 @@ Evaluation (test only)
   edges              detection of attack-carrying host pairs
 
 Usage:
-    python train_gat.py [--lstm-run lstm_ae_v8] [--vae-run vae_v5] [--run gat_v1] [--epochs 20]
+    python train_gat.py [--lstm-run lstm_ae_v8] [--vae-run vae_v5] [--run gat_new] [--epochs 20]
                         [--node-blocks traffic stage latent] [--rebuild]
+
+The final GAT, gat_v5, was trained like this (on Kaggle, via scripts/kaggle/run_gat_on_kaggle.py):
+    python train_gat.py --run gat_v5 --datasets gotham iot23 xiiotid aci iot23x --test-datasets kitsune edge         --chain gotham=lstm_ae_gotham_v1:vae_gotham_v1 xiiotid=lstm_ae_xiiotid_v1:vae_xiiotid_v1                 aci=lstm_ae_aci_kaggle_v2:vae_aci_kaggle_v2 iot23x=lstm_ae_iot23x_kaggle_v2:vae_iot23x_kaggle_v2         --node-blocks traffic stage --relative-scores --drop-edge-features svc_
+(iot23, kitsune and edge use the default lstm_ae_v8 / vae_v5.)
 """
 import argparse
 import json
@@ -439,7 +443,7 @@ def main():
     a = argparse.ArgumentParser()
     a.add_argument("--lstm-run", default="lstm_ae_v8")
     a.add_argument("--vae-run", default="vae_v5")
-    a.add_argument("--run", default="gat_v1")
+    a.add_argument("--run", default="gat_new")
     a.add_argument("--datasets", nargs="+", default=ap.ACTIVE_DATASETS)
     a.add_argument("--node-blocks", nargs="+", default=list(ag.NODE_BLOCKS), choices=ag.ALL_NODE_BLOCKS)
     a.add_argument("--hidden", type=int, default=64)

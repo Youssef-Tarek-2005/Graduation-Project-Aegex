@@ -6,7 +6,7 @@ evaluation numbers (GAT vs stage-1/2 baseline, unseen-attack holdouts, control i
 Run gat_viz_export.py first (it writes viz_data.json). Rerun this after new holdout runs finish.
 
 Usage:
-    python gat_dashboard.py [--run gat_v2]
+    python gat_dashboard.py [--run gat_v5]
 """
 import argparse
 import json
@@ -37,7 +37,7 @@ def per_attack(run, metrics):
 
 def main():
     a = argparse.ArgumentParser()
-    a.add_argument("--run", default="gat_v2")
+    a.add_argument("--run", default="gat_v5")
     args = a.parse_args()
     rdir = os.path.join(am.DATA_ROOT, "model_results", "gat")
     viz = json.load(open(os.path.join(rdir, args.run, "viz_data.json")))
@@ -46,6 +46,8 @@ def main():
         mp = os.path.join(rdir, r, "metrics.json")
         if r.startswith(args.run) and os.path.exists(mp):
             m = json.load(open(mp))
+            if "benchmark" not in m or "dataset_test" not in m:     # e.g. gat_v5_calibrated: a different report
+                continue
             runs[r] = {"holdout": m.get("holdout"), "benchmark": m["benchmark"], "dataset_test": m["dataset_test"],
                        "controls": m.get("controls", {}), "per_attack": per_attack(r, m)}
     data = {"run": args.run, "upstream": viz["upstream"], "scenarios": viz["scenarios"], "runs": runs}

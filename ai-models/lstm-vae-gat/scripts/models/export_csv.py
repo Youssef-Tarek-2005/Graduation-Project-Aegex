@@ -3,7 +3,7 @@ Write CSV copies of model outputs that already exist as parquet (no retraining n
 New training / scoring runs write the CSV automatically (aegex_models.write_output).
 
 Usage:
-    python export_csv.py                         # lstm_ae_v8, vae_v5, gat_v2
+    python export_csv.py                         # lstm_ae_v8, vae_v5, gat_v5
     python export_csv.py --runs lstm_ae/lstm_ae_v8 vae/vae_v5
     python export_csv.py --path ..\\..\\live_results\\mycapture
 Each <name>.parquet gets a <name>.csv next to it (existing CSVs are overwritten).
@@ -21,7 +21,7 @@ import aegex_models as am
 
 def main():
     a = argparse.ArgumentParser()
-    a.add_argument("--runs", nargs="+", default=["lstm_ae/lstm_ae_v8", "vae/vae_v5", "gat/gat_v2"],
+    a.add_argument("--runs", nargs="+", default=["lstm_ae/lstm_ae_v8", "vae/vae_v5", "gat/gat_v5"],
                    help="<stage>/<run> under preprocessed/model_outputs")
     a.add_argument("--path", nargs="*", default=[], help="extra folders with parquet files (e.g. live_results/<capture>)")
     args = a.parse_args()

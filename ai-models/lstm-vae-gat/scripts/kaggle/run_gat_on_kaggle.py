@@ -16,7 +16,7 @@ Steps
 
 Usage (inside Kaggle):
     python run_gat_on_kaggle.py --new aci iot23x --train gotham iot23 xiiotid aci iot23x \
-        --test kitsune edge --chain gotham=lstm_ae_gotham_v1:vae_gotham_v1 ... --run gat_v4
+        --test kitsune edge --chain gotham=lstm_ae_gotham_v1:vae_gotham_v1 ... --run gat_v5 "--gat-args=--drop-edge-features svc_"
 """
 import argparse
 import glob

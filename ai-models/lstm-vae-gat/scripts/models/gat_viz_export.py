@@ -6,7 +6,7 @@ Export GAT results for the visual dashboard (model_results/gat/<run>/viz_data.js
   metrics     the evaluation numbers of the main run, the unseen-attack holdout runs and the controls
 
 Usage:
-    python gat_viz_export.py [--run gat_v2] [--lstm-run lstm_ae_v8] [--vae-run vae_v5] [--max-nodes 45]
+    python gat_viz_export.py [--run gat_v5] [--lstm-run lstm_ae_v8] [--vae-run vae_v5] [--max-nodes 45]
 """
 import argparse
 import json
@@ -39,11 +39,14 @@ def pick(seqs, per_key=1):
 
 def main():
     a = argparse.ArgumentParser()
-    a.add_argument("--run", default="gat_v2")
+    a.add_argument("--run", default="gat_v5")
     a.add_argument("--lstm-run", default="lstm_ae_v8")
     a.add_argument("--vae-run", default="vae_v5")
     a.add_argument("--max-nodes", type=int, default=45, help="hosts kept per snapshot (highest score / involved first)")
     a.add_argument("--context", type=int, default=6, help="snapshots kept before / after the attack")
+    a.add_argument("--inputs-tag", default=None,
+                   help="graph-input cache name in preprocessed/gat_inputs (default: <run> if present, else <lstm-run>__<vae-run>)")
+    a.add_argument("--datasets", nargs="*", default=None, help="only scenarios of these datasets")
     args = a.parse_args()
     dev = am.pick_device("auto")
     b = am.ModelBundle.load(os.path.join(am.MODELS_DIR, "gat", args.run), device=dev)
@@ -52,9 +55,20 @@ def main():
     norm = tuple(np.asarray(meta["norm"][k], np.float32) for k in ("node_mean", "node_std", "edge_mean", "edge_std"))
     thr = {"_all": meta["threshold"], **meta["per_dataset_thresholds"]}
     ethr = meta["edge_thresholds"]
-    cache = os.path.join(am.PREPROCESSED, "gat_inputs", f"{args.lstm_run}__{args.vae_run}.pkl")
+    gi = os.path.join(am.PREPROCESSED, "gat_inputs")
+    tag = args.inputs_tag or (args.run if os.path.exists(os.path.join(gi, f"{args.run}.pkl"))   # run_gat_on_kaggle.py
+                              else f"{args.lstm_run}__{args.vae_run}")                          # names the cache by run
+    cache = os.path.join(gi, f"{tag}.pkl")
     data = pickle.load(open(cache, "rb"))
     ctrl = pickle.load(open(cache.replace(".pkl", "__controls.pkl"), "rb"))
+    data = {"test_bench": data["test_bench"]}                      # only the test scenarios are replayed
+    if args.datasets:
+        data["test_bench"] = [s for s in data["test_bench"] if s["meta"]["dataset"] in args.datasets]
+        ctrl = [s for s in ctrl if s["meta"]["dataset"] in args.datasets]
+    drop = meta.get("dropped_edge_features") or []
+    if drop:                                                       # e.g. gat_v5: service link inputs removed
+        from train_gat import mask_edge_features
+        mask_edge_features({"test_bench": data["test_bench"], "ctrl": ctrl}, drop)
     chosen = pick(data["test_bench"]) + pick([s for s in ctrl if s["meta"].get("attack_class") in ("control_self", "control_other")])
 
     scenarios = []
