@@ -22,3 +22,6 @@ backend/backups/
 
 # Step 6 replay ground-truth files (python -m demo.replay): generated
 backend/replays/
+
+# Claude desktop app settings (local to each PC, not part of the project)
+.claude/
