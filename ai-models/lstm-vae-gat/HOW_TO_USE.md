@@ -153,6 +153,28 @@ Every table is written twice: as `.parquet` (fast, for code) and as `.csv` (open
 | `graph_nodes.*` / `graph_edges.*` | device / device pair per 60 s | The communication graph, with both stages' outputs already joined onto the nodes |
 | `flows.*` | flow | The traffic converted to flows (same layout as the training data) |
 | `run.json` | — | What was used: bundles, scaler source, thresholds (and per-device thresholds), counts of flows/devices/alerts |
+| `handoff\` | incident | Only with `--gat`: GAT incidents for the back end and the LLM / RAG (see below) |
+
+### Add the GAT and the team hand-off: `--gat`
+
+```powershell
+& $py -I score_traffic.py capture.pcap --model ..\..\models\lstm_ae\lstm_ae_v8 --vae ..\..\models\vae\vae_v5 `
+    --calibrate normal.pcap --recalibrate-threshold --gat ..\..\models\gat\gat_v5 [--gat-network gotham] [--postgres-url ...]
+```
+
+This also runs the temporal GAT (`gat_v5`, the final GAT) on the graph snapshots and writes
+`live_results\<name>\handoff\`: `alerts.json` (back end `alerts` table), `detections.json` (LLM / RAG
+`report.py`), `attack_analyses.json` (`aegex/` API table), `incidents.csv` and `handoff_summary.json`.
+`--gat-network` names the training network the traffic comes from (gotham, iot23, xiiotid, aci, iot23x) so its
+own GAT threshold is used; any other network gets the pooled threshold and a warning, because the GAT does not
+transfer to networks it was not trained on. The attack type in these files is a behaviour rule on the flagged
+links, not a GAT output.
+
+Offline check on a preprocessed dataset (reproduces the evaluation numbers exactly):
+
+```powershell
+& $py -I gat_handoff.py --gat ..\..\models\gat\gat_v5 --dataset gotham --split test --out ..\..\handoff\gotham
+```
 
 ---
 

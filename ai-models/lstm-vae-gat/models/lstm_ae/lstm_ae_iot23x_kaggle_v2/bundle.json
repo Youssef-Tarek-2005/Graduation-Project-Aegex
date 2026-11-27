@@ -1,0 +1,485 @@
+{
+ "bundle_format": 1,
+ "model_type": "lstm_autoencoder",
+ "run": "lstm_ae_iot23x_kaggle_v2",
+ "created": "2026-11-26T08:10:55",
+ "torch": "2.11.0+cpu",
+ "train_datasets": [
+  "iot23x"
+ ],
+ "init": {
+  "n_features": 50,
+  "hidden": 64,
+  "latent": 16,
+  "layers": 1,
+  "dropout": 0.0
+ },
+ "window": 32,
+ "stride": 16,
+ "snapshot_seconds": 60.0,
+ "hparams": {
+  "hidden": 64,
+  "latent": 16,
+  "layers": 1,
+  "dropout": 0.0,
+  "lr": 0.001,
+  "batch": 256,
+  "per_dataset": 20000,
+  "seed": 0
+ },
+ "score_agg": "topk:8",
+ "threshold_mode": "per_dataset",
+ "per_dataset_threshold_source": {
+  "iot23x": "LOW CONFIDENCE: train+val clean normal (53 windows)"
+ },
+ "threshold": 0.10711559653282166,
+ "threshold_rule": "window-weighted quantile 0.99 of val clean-benign window scores (topk:8 of per-flow errors)",
+ "per_dataset_thresholds": {
+  "iot23x": 2.9882397651672363
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "train_loss": 0.3707317113876343,
+   "val_loss": 0.08163610100746155,
+   "seconds": 0.1
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.367756724357605,
+   "val_loss": 0.07963238656520844,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.36492273211479187,
+   "val_loss": 0.07771851867437363,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.3621651828289032,
+   "val_loss": 0.07585346698760986,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 5,
+   "train_loss": 0.3594284653663635,
+   "val_loss": 0.07400611788034439,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 6,
+   "train_loss": 0.35666656494140625,
+   "val_loss": 0.07215464115142822,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 7,
+   "train_loss": 0.35384032130241394,
+   "val_loss": 0.07028737664222717,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 8,
+   "train_loss": 0.350918173789978,
+   "val_loss": 0.06840518116950989,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 9,
+   "train_loss": 0.34787890315055847,
+   "val_loss": 0.06652354449033737,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 10,
+   "train_loss": 0.3447134792804718,
+   "val_loss": 0.064677394926548,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 11,
+   "train_loss": 0.3414285480976105,
+   "val_loss": 0.06292514503002167,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 12,
+   "train_loss": 0.3380501866340637,
+   "val_loss": 0.06134386360645294,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 13,
+   "train_loss": 0.33461907505989075,
+   "val_loss": 0.06001036614179611,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 14,
+   "train_loss": 0.3311748504638672,
+   "val_loss": 0.05895203351974487,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 15,
+   "train_loss": 0.3277115523815155,
+   "val_loss": 0.058086369186639786,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 16,
+   "train_loss": 0.3241216838359833,
+   "val_loss": 0.05723537504673004,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 17,
+   "train_loss": 0.32021018862724304,
+   "val_loss": 0.05623784288764,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 18,
+   "train_loss": 0.3157958388328552,
+   "val_loss": 0.055082663893699646,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 19,
+   "train_loss": 0.3108298182487488,
+   "val_loss": 0.053927790373563766,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 20,
+   "train_loss": 0.30542048811912537,
+   "val_loss": 0.05299815908074379,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 21,
+   "train_loss": 0.2997504472732544,
+   "val_loss": 0.05242866650223732,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 22,
+   "train_loss": 0.2939471900463104,
+   "val_loss": 0.052121274173259735,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 23,
+   "train_loss": 0.2879582941532135,
+   "val_loss": 0.05184819921851158,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 24,
+   "train_loss": 0.2816392183303833,
+   "val_loss": 0.05149737000465393,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 25,
+   "train_loss": 0.27497175335884094,
+   "val_loss": 0.051109470427036285,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 26,
+   "train_loss": 0.26808837056159973,
+   "val_loss": 0.05079956352710724,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 27,
+   "train_loss": 0.2611900269985199,
+   "val_loss": 0.05065006762742996,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 28,
+   "train_loss": 0.25443243980407715,
+   "val_loss": 0.05060933157801628,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 29,
+   "train_loss": 0.2478058934211731,
+   "val_loss": 0.050543997436761856,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 30,
+   "train_loss": 0.24118667840957642,
+   "val_loss": 0.050467051565647125,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 31,
+   "train_loss": 0.2346218079328537,
+   "val_loss": 0.05052156373858452,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 32,
+   "train_loss": 0.22834768891334534,
+   "val_loss": 0.05068584159016609,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 33,
+   "train_loss": 0.22245417535305023,
+   "val_loss": 0.050732895731925964,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 34,
+   "train_loss": 0.21676841378211975,
+   "val_loss": 0.050611626356840134,
+   "seconds": 0.0
+  },
+  {
+   "epoch": 35,
+   "train_loss": 0.21123361587524414,
+   "val_loss": 0.05053316801786423,
+   "seconds": 0.0
+  }
+ ],
+ "pipeline": {
+  "feature_order": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s",
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "continuous": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s"
+  ],
+  "binary": [
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "tcp_udp_icmp_timeouts": {
+   "tcp": 300.0,
+   "udp": 60.0,
+   "icmp": 60.0,
+   "arp": 60.0,
+   "other": 60.0
+  },
+  "active_timeout": 120.0,
+  "service_ports": {
+   "dns": [
+    53
+   ],
+   "http": [
+    80,
+    8000,
+    8008,
+    8080,
+    8081
+   ],
+   "https": [
+    443,
+    8443
+   ],
+   "telnet": [
+    23,
+    2323
+   ],
+   "ssh": [
+    22
+   ],
+   "smb_rpc": [
+    135,
+    137,
+    138,
+    139,
+    445
+   ],
+   "mqtt": [
+    1883,
+    8883
+   ],
+   "modbus": [
+    502
+   ],
+   "ssdp_mdns": [
+    1900,
+    5353
+   ],
+   "ntp": [
+    123
+   ],
+   "ftp": [
+    20,
+    21
+   ],
+   "smtp": [
+    25,
+    465,
+    587
+   ],
+   "rdp": [
+    3389
+   ],
+   "metasploit": [
+    4444
+   ]
+  },
+  "min_device_flows": 3,
+  "scaler_min_scale": 0.1,
+  "scaler_tail_start": 3.0,
+  "device_context": {
+   "enabled": true,
+   "new_peer_gap": 300.0,
+   "rate_window": "10s",
+   "context_window": "60s"
+  }
+ },
+ "scalers": {
+  "iot23x": {
+   "method": "robust (x-median)/max(IQR, min_scale), log soft tails beyond tail_start, clipped",
+   "clip": 10.0,
+   "min_scale": 0.1,
+   "tail_start": 3.0,
+   "fit_on": "train split, benign flows only",
+   "center": {
+    "log_duration": 1.3863025903701782,
+    "log_fwd_pkts": 1.3862943649291992,
+    "log_bwd_pkts": 0.0,
+    "log_fwd_bytes": 5.579730033874512,
+    "log_bwd_bytes": 0.0,
+    "fwd_mean_pkt": 4.234106540679932,
+    "bwd_mean_pkt": 0.0,
+    "log_pkt_rate": 0.6929752230644226,
+    "log_byte_rate": 4.4882965087890625,
+    "fwd_byte_share": 1.0,
+    "fwd_pkt_share": 1.0,
+    "log_iat_device": 5.283203125,
+    "log_iat_pair": 5.283203125,
+    "log_dev_flows_10s": 0.6931471824645996,
+    "log_dev_new_peers_60s": 0.0,
+    "log_dev_new_ports_60s": 0.0,
+    "dev_reply_share_60s": 0.0
+   },
+   "scale": {
+    "log_duration": 3.3322060108184814,
+    "log_fwd_pkts": 0.9162907600402832,
+    "log_bwd_pkts": 0.1,
+    "log_fwd_bytes": 1.5740361213684082,
+    "log_bwd_bytes": 0.1,
+    "fwd_mean_pkt": 0.2545299530029297,
+    "bwd_mean_pkt": 0.1,
+    "log_pkt_rate": 6.763577237725258,
+    "log_byte_rate": 8.486481547355652,
+    "fwd_byte_share": 0.1,
+    "fwd_pkt_share": 0.1,
+    "log_iat_device": 0.922677755355835,
+    "log_iat_pair": 0.922677755355835,
+    "log_dev_flows_10s": 0.1,
+    "log_dev_new_peers_60s": 0.6931471824645996,
+    "log_dev_new_ports_60s": 0.6931471824645996,
+    "dev_reply_share_60s": 0.1
+   },
+   "fit_rows": 683
+  }
+ },
+ "scaler_note": "inputs were scaled per dataset on its own benign traffic; for new traffic calibrate on that network's benign traffic (score_traffic.py --calibrate)"
+}

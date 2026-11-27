@@ -26,8 +26,17 @@
 !/models/vae/vae_nftoniot_v1/
 !/models/lstm_ae/lstm_ae_aci_kaggle_v1/
 !/models/vae/vae_aci_kaggle_v1/
+# final GAT (gat_v5, 26 Nov 2026) + the Kaggle LSTM-AE / VAE pairs it was trained on (ACI, extra IoT-23 captures)
+!/models/gat/gat_v5/
+!/models/lstm_ae/lstm_ae_aci_kaggle_v2/
+!/models/vae/vae_aci_kaggle_v2/
+!/models/lstm_ae/lstm_ae_iot23x_kaggle_v2/
+!/models/vae/vae_iot23x_kaggle_v2/
 /model_results/*
 !/model_results/results_page/
+!/model_results/gat/
+/model_results/gat/*
+!/model_results/gat/gat_v5/
 /live_results/
 /kaggle_results/
 /kaggle_push/

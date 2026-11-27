@@ -1,0 +1,467 @@
+{
+ "thresholds": {
+  "_all": 0.6861838102340698,
+  "aci": 0.24981264770030975,
+  "gotham": 0.4829999804496765,
+  "iot23": 0.9697816371917725,
+  "iot23x": 0.9995338916778564,
+  "xiiotid": 0.6530882716178894
+ },
+ "edge_thresholds": {
+  "_all": 0.8364863395690918,
+  "aci": 0.30501416325569153,
+  "gotham": 0.8041617274284363,
+  "iot23": 0.9998753070831299,
+  "iot23x": 0.9994350671768188,
+  "xiiotid": 0.8342432975769043
+ },
+ "benchmark": {
+  "aci": {
+   "involved": 308,
+   "other": 33364,
+   "gat_detection": 0.935064935064935,
+   "gat_false_alarms": 0.0020081524997002755,
+   "baseline_detection": 0.07792207792207792,
+   "baseline_false_alarms": 0.017354034288454622,
+   "source_detection": 0.5416666666666666,
+   "target_detection": 0.9683098591549296,
+   "role_correct": 0.9166666666666666,
+   "top1_source_attribution": 0.4166666666666667,
+   "roc_auc": 0.9988339948027036,
+   "pr_auc": 0.964611346013953,
+   "threshold": 0.24981264770030975
+  },
+  "edge": {
+   "involved": 4144,
+   "other": 38971,
+   "gat_detection": 0.49927606177606176,
+   "gat_false_alarms": 0.3923430243001206,
+   "baseline_detection": 0.29174710424710426,
+   "baseline_false_alarms": 0.0913499781889097,
+   "source_detection": 0.5636293733179546,
+   "target_detection": 0.44727557820462566,
+   "role_correct": 0.8216529724504592,
+   "top1_source_attribution": 0.9458272327964861,
+   "roc_auc": 0.6531109219269966,
+   "pr_auc": 0.25072649204191194,
+   "threshold": 0.6861838102340698
+  },
+  "gotham": {
+   "involved": 2012,
+   "other": 43220,
+   "gat_detection": 0.9990059642147118,
+   "gat_false_alarms": 0.0023137436372049976,
+   "baseline_detection": 0.055168986083499,
+   "baseline_false_alarms": 0.024155483572420176,
+   "source_detection": 0.9821428571428571,
+   "target_detection": 1.0,
+   "role_correct": 0.9557213930348258,
+   "top1_source_attribution": 1.0,
+   "roc_auc": 0.9999965040851605,
+   "pr_auc": 0.9999289358748776,
+   "threshold": 0.4829999804496765
+  },
+  "iot23": {
+   "involved": 480,
+   "other": 2512,
+   "gat_detection": 0.9854166666666667,
+   "gat_false_alarms": 0.014331210191082803,
+   "baseline_detection": 0.19166666666666668,
+   "baseline_false_alarms": 0.03503184713375796,
+   "source_detection": 0.9833333333333333,
+   "target_detection": 0.9875,
+   "role_correct": 1.0,
+   "top1_source_attribution": 1.0,
+   "roc_auc": 0.999514828821656,
+   "pr_auc": 0.9977107019533824,
+   "threshold": 0.9697816371917725
+  },
+  "kitsune": {
+   "involved": 342,
+   "other": 5349,
+   "gat_detection": 1.0,
+   "gat_false_alarms": 0.4260609459712096,
+   "baseline_detection": 0.16666666666666666,
+   "baseline_false_alarms": 0.24752290147691158,
+   "source_detection": 1.0,
+   "target_detection": 1.0,
+   "role_correct": 0.9035087719298246,
+   "top1_source_attribution": 0.6363636363636364,
+   "roc_auc": 0.832893014926548,
+   "pr_auc": 0.1636278096244364,
+   "threshold": 0.6861838102340698
+  },
+  "xiiotid": {
+   "involved": 36,
+   "other": 293993,
+   "gat_detection": 1.0,
+   "gat_false_alarms": 0.0008843747980394091,
+   "baseline_detection": 0.6111111111111112,
+   "baseline_false_alarms": 0.011034276326307088,
+   "source_detection": 1.0,
+   "target_detection": 1.0,
+   "role_correct": 0.9722222222222222,
+   "top1_source_attribution": 1.0,
+   "roc_auc": 0.999993858508347,
+   "pr_auc": 0.9652946496562214,
+   "threshold": 0.6530882716178894
+  }
+ },
+ "dataset_test": {
+  "aci": {
+   "involved": 2687,
+   "other": 39598,
+   "gat_detection": 0.8913286192780052,
+   "gat_false_alarms": 0.02805697257437244,
+   "baseline_detection": 0.2597692593970971,
+   "baseline_false_alarms": 0.09442396080610131,
+   "source_detection": 0.9226804123711341,
+   "target_detection": 0.8958233317330773,
+   "role_correct": 0.8960334029227558,
+   "top1_source_attribution": 0.8776041666666666,
+   "roc_auc": 0.976547015217863,
+   "pr_auc": 0.8964374087474154,
+   "threshold": 0.24981264770030975
+  },
+  "edge": {
+   "involved": 3848,
+   "other": 1070,
+   "gat_detection": 0.9433471933471933,
+   "gat_false_alarms": 0.33925233644859815,
+   "baseline_detection": 0.017931392931392932,
+   "baseline_false_alarms": 0.1102803738317757,
+   "source_detection": 0.9525816649104321,
+   "target_detection": 0.7607843137254902,
+   "role_correct": 0.9997245179063361,
+   "top1_source_attribution": 1.0,
+   "roc_auc": 0.7902651213398877,
+   "pr_auc": 0.8597359743832991,
+   "threshold": 0.6861838102340698
+  },
+  "gotham": {
+   "involved": 10137,
+   "other": 6771,
+   "gat_detection": 0.9979283811778633,
+   "gat_false_alarms": 0.06778910057598582,
+   "baseline_detection": 0.0061162079510703364,
+   "baseline_false_alarms": 0.01787032934573918,
+   "source_detection": 0.9339622641509434,
+   "target_detection": 0.9986086265156032,
+   "role_correct": 0.9975286674574931,
+   "top1_source_attribution": 0.9574468085106383,
+   "roc_auc": 0.9984238674218734,
+   "pr_auc": 0.9985393892365412,
+   "threshold": 0.4829999804496765
+  },
+  "iot23": {
+   "involved": 1704,
+   "other": 700,
+   "gat_detection": 0.903169014084507,
+   "gat_false_alarms": 0.012857142857142857,
+   "baseline_detection": 0.2811032863849765,
+   "baseline_false_alarms": 0.005714285714285714,
+   "source_detection": 0.9974025974025974,
+   "target_detection": 0.8254817987152034,
+   "role_correct": 1.0,
+   "top1_source_attribution": 0.9974025974025974,
+   "roc_auc": 0.9742261904761904,
+   "pr_auc": 0.9903929041383449,
+   "threshold": 0.9697816371917725
+  },
+  "iot23x": {
+   "involved": 3179,
+   "other": 2719,
+   "gat_detection": 0.9597357659641397,
+   "gat_false_alarms": 0.000735564545788893,
+   "baseline_detection": 0.41145014155394777,
+   "baseline_false_alarms": 0.07061419639573373,
+   "source_detection": 0.9857697283311773,
+   "target_detection": 0.935247403787416,
+   "role_correct": 1.0,
+   "top1_source_attribution": 0.9993523316062176,
+   "roc_auc": 0.9977553596543888,
+   "pr_auc": 0.998426051912447,
+   "threshold": 0.9995338916778564
+  },
+  "kitsune": {
+   "involved": 2011,
+   "other": 438,
+   "gat_detection": 0.055196419691695676,
+   "gat_false_alarms": 0.454337899543379,
+   "baseline_detection": 0.0174042764793635,
+   "baseline_false_alarms": 0.2237442922374429,
+   "source_detection": 0.8148148148148148,
+   "target_detection": 0.04485887096774194,
+   "role_correct": 0.8918918918918919,
+   "top1_source_attribution": 0.75,
+   "roc_auc": 0.502431830412185,
+   "pr_auc": 0.765344139150259,
+   "threshold": 0.6861838102340698
+  },
+  "xiiotid": {
+   "involved": 6133,
+   "other": 21200,
+   "gat_detection": 0.015000815261699005,
+   "gat_false_alarms": 0.006226415094339623,
+   "baseline_detection": 0.14267079732594162,
+   "baseline_false_alarms": 0.012641509433962264,
+   "source_detection": 0.019165378670788255,
+   "target_detection": 0.015527950310559006,
+   "role_correct": 0.967391304347826,
+   "top1_source_attribution": 0.6952256376716809,
+   "roc_auc": 0.8459503451787269,
+   "pr_auc": 0.47632977163563145,
+   "threshold": 0.6530882716178894
+  }
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "train_loss": 1.3907917327621713,
+   "val_pr_auc": 0.8175706394796678,
+   "seconds": 140.2
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.6600328885185872,
+   "val_pr_auc": 0.8220891237961168,
+   "seconds": 137.7
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.2836043808399755,
+   "val_pr_auc": 0.8521903392794016,
+   "seconds": 137.4
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.23718475823155385,
+   "val_pr_auc": 0.847584826022524,
+   "seconds": 135.1
+  },
+  {
+   "epoch": 5,
+   "train_loss": 0.22750109619247483,
+   "val_pr_auc": 0.8292275276088301,
+   "seconds": 134.6
+  },
+  {
+   "epoch": 6,
+   "train_loss": 0.3026166865936827,
+   "val_pr_auc": 0.8524959784280135,
+   "seconds": 133.4
+  },
+  {
+   "epoch": 7,
+   "train_loss": 0.20651821619356278,
+   "val_pr_auc": 0.8659184144584345,
+   "seconds": 134.4
+  },
+  {
+   "epoch": 8,
+   "train_loss": 0.1426690204048503,
+   "val_pr_auc": 0.8702415817180573,
+   "seconds": 134.5
+  },
+  {
+   "epoch": 9,
+   "train_loss": 0.1519874435119937,
+   "val_pr_auc": 0.8360293676526797,
+   "seconds": 135.3
+  },
+  {
+   "epoch": 10,
+   "train_loss": 0.17492982722478045,
+   "val_pr_auc": 0.8495375133890064,
+   "seconds": 134.4
+  },
+  {
+   "epoch": 11,
+   "train_loss": 0.10864662061829303,
+   "val_pr_auc": 0.8393656396746727,
+   "seconds": 134.8
+  },
+  {
+   "epoch": 12,
+   "train_loss": 0.11560800516029027,
+   "val_pr_auc": 0.8649276727933619,
+   "seconds": 137.2
+  }
+ ],
+ "one_input_rule": {
+  "kitsune": {
+   "rule": "high max link fwd_syn",
+   "val_auc": 0.7968032963861771,
+   "chosen_on": "all val (test-only network)",
+   "detection": 0.0,
+   "false_alarms": 0.0
+  },
+  "edge": {
+   "rule": "high max link fwd_syn",
+   "val_auc": 0.7968032963861771,
+   "chosen_on": "all val (test-only network)",
+   "detection": 0.0,
+   "false_alarms": 0.0
+  },
+  "iot23": {
+   "rule": "high max link log_n_flows",
+   "val_auc": 0.9027066622103388,
+   "chosen_on": "own val",
+   "detection": 0.3854166666666667,
+   "false_alarms": 0.009156050955414012
+  },
+  "gotham": {
+   "rule": "high max link log_dev_flows_10s",
+   "val_auc": 0.98334859306328,
+   "chosen_on": "own val",
+   "detection": 0.45974155069582506,
+   "false_alarms": 0.00043961129106894956
+  },
+  "xiiotid": {
+   "rule": "high max link log_duration",
+   "val_auc": 0.8561453739519871,
+   "chosen_on": "own val",
+   "detection": 0.0,
+   "false_alarms": 0.017156871081964536
+  },
+  "aci": {
+   "rule": "high max link log_dev_flows_10s",
+   "val_auc": 0.9223385885044068,
+   "chosen_on": "own val",
+   "detection": 0.814935064935065,
+   "false_alarms": 0.005125284738041002
+  }
+ },
+ "dropped_edge_features": [
+  "svc_"
+ ],
+ "controls": {
+  "aci/control_other": {
+   "gat_injected": 0.0,
+   "gat_other": 0.0015794669299111549,
+   "baseline_injected": 0.0,
+   "baseline_other": 0.01618953603158934
+  },
+  "aci/control_self": {
+   "gat_injected": 0.0,
+   "gat_other": 0.001571400510705166,
+   "baseline_injected": 0.0,
+   "baseline_other": 0.016106855234727952
+  },
+  "aci/control_self_nomap": {
+   "gat_injected": 0.0,
+   "gat_other": 0.001571400510705166,
+   "baseline_injected": 0.0,
+   "baseline_other": 0.016106855234727952
+  },
+  "edge/control_other": {
+   "gat_injected": 1.0,
+   "gat_other": 0.3698224852071006,
+   "baseline_injected": 0.5,
+   "baseline_other": 0.08875739644970414
+  },
+  "edge/control_self": {
+   "gat_injected": 0.14309764309764308,
+   "gat_other": 0.3555276381909548,
+   "baseline_injected": 0.06902356902356903,
+   "baseline_other": 0.09108040201005026
+  },
+  "edge/control_self_nomap": {
+   "gat_injected": 0.13636363636363635,
+   "gat_other": 0.3575909661229611,
+   "baseline_injected": 0.06565656565656566,
+   "baseline_other": 0.09222082810539524
+  },
+  "gotham/control_other": {
+   "gat_injected": 0.0,
+   "gat_other": 0.0,
+   "baseline_injected": 0.03,
+   "baseline_other": 0.023351648351648352
+  },
+  "gotham/control_self": {
+   "gat_injected": 0.0,
+   "gat_other": 0.0,
+   "baseline_injected": 0.03,
+   "baseline_other": 0.023351648351648352
+  },
+  "gotham/control_self_nomap": {
+   "gat_injected": 0.0,
+   "gat_other": 0.0,
+   "baseline_injected": 0.0,
+   "baseline_other": 0.023351648351648352
+  },
+  "iot23/control_other": {
+   "gat_injected": 0.0,
+   "gat_other": 0.0,
+   "baseline_injected": 0.0,
+   "baseline_other": 0.017964071856287425
+  },
+  "iot23/control_self": {
+   "gat_injected": 0.022988505747126436,
+   "gat_other": 0.0,
+   "baseline_injected": 0.011494252873563218,
+   "baseline_other": 0.018633540372670808
+  },
+  "iot23/control_self_nomap": {
+   "gat_injected": 0.022988505747126436,
+   "gat_other": 0.0,
+   "baseline_injected": 0.011494252873563218,
+   "baseline_other": 0.018633540372670808
+  },
+  "kitsune/control_other": {
+   "gat_injected": 1.0,
+   "gat_other": 0.41421568627450983,
+   "baseline_injected": 0.6470588235294118,
+   "baseline_other": 0.2426470588235294
+  },
+  "kitsune/control_self": {
+   "gat_injected": 0.8192771084337349,
+   "gat_other": 0.4049159120310479,
+   "baseline_injected": 0.24096385542168675,
+   "baseline_other": 0.2626131953428202
+  },
+  "kitsune/control_self_nomap": {
+   "gat_injected": 0.7710843373493976,
+   "gat_other": 0.39197930142302717,
+   "baseline_injected": 0.1927710843373494,
+   "baseline_other": 0.2677878395860285
+  },
+  "xiiotid/control_other": {
+   "gat_injected": 0.0,
+   "gat_other": 0.0008877643873316022,
+   "baseline_injected": 0.12058823529411765,
+   "baseline_other": 0.011230219499744768
+  },
+  "xiiotid/control_self": {
+   "gat_injected": 0.0,
+   "gat_other": 0.000885582713425434,
+   "baseline_injected": 0.0,
+   "baseline_other": 0.011003365214311016
+  },
+  "xiiotid/control_self_nomap": {
+   "gat_injected": 0.0,
+   "gat_other": 0.000885582713425434,
+   "baseline_injected": 0.0,
+   "baseline_other": 0.011003365214311016
+  }
+ },
+ "holdout": null,
+ "incidents": {
+  "gat": {
+   "aci": 0.9166666666666666,
+   "edge": 1.0,
+   "gotham": 1.0,
+   "iot23": 1.0,
+   "kitsune": 1.0,
+   "xiiotid": 1.0
+  },
+  "baseline": {
+   "aci": 1.0,
+   "edge": 1.0,
+   "gotham": 1.0,
+   "iot23": 1.0,
+   "kitsune": 1.0,
+   "xiiotid": 1.0
+  }
+ }
+}

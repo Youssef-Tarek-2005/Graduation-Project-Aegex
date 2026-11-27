@@ -50,3 +50,27 @@ def test_alerts_csv_goes_into_the_database_and_the_api(client, db, results):
 
     assert client.get("/api/v1/alerts?min_severity=critical").json()["count"] == 1
     assert client.get("/api/v1/alerts?capture=other").json()["count"] == 0
+
+
+GAT_ALERT = {"alert_key": "gat-0123456789abcdef", "model_name": "temporal_gat", "model_version": "gat_v5",
+             "feature_version": "lstm-vae-gat", "entity_type": "device", "entity_id": "192.168.137.50",
+             "device_id": None, "src_ips": ["192.168.137.50"], "window_start": "2026-11-25T11:05:00Z",
+             "window_end": "2026-11-25T11:08:00Z", "score": 0.998, "threshold": 0.483, "is_anomaly": True,
+             "predicted_scenario": "vulnerability_scanning", "severity": "low",
+             "evidence": {"attention_edges": [{"src": "192.168.137.50", "dst": "192.168.56.20", "p_link": 0.99}],
+                          "predicted_scenario_from": "behaviour rule on the flagged links (not the GAT)"}}
+
+
+def test_gat_incidents_go_into_the_database_and_the_api(client, db, results):
+    (results / "handoff").mkdir()
+    (results / "handoff" / "alerts.json").write_text(json.dumps([GAT_ALERT]), encoding="utf-8")
+    (results / "handoff" / "handoff_summary.json").write_text(json.dumps({"threshold": 0.483}), encoding="utf-8")
+    detect.save_alerts(results, "cap-g")                                # replaces this capture's alerts first
+    assert detect.save_gat_alerts(results, "cap-g") == 1
+    items = client.get("/api/v1/alerts?capture=cap-g").json()["items"]
+    gat = [a for a in items if a["model_name"] == "temporal_gat"]
+    assert len(gat) == 1 and gat[0]["model_version"] == "gat_v5" and gat[0]["score"] == 0.998
+    assert gat[0]["evidence"]["attention_edges"][0]["dst"] == "192.168.56.20"
+    detect.save_alerts(results, "cap-g")                                # re-run: GAT rows replaced too
+    assert detect.save_gat_alerts(results, "cap-g") == 1
+    assert db.execute("SELECT count(*) FROM alerts WHERE model_name = 'temporal_gat'").fetchone()[0] == 1

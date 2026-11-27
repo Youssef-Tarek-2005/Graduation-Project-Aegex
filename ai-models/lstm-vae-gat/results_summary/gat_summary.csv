@@ -1,37 +1,75 @@
-gat_run,held_out_attack,test_set,dataset,gat_detection,gat_false_alarms,window_alerts_detection,window_alerts_false_alarms,attacker_ranked_first,role_correct,roc_auc,involved_host_minutes,other_host_minutes,quoted
-gat_v1,,benchmark,edge,0.8591,0.0155,0.292,0.0906,0.979,0.9983,0.9758,4144,38971,no
-gat_v1,,benchmark,iot23,0.9792,0.0,0.15,0.0553,0.9958,1.0,0.9997,480,2512,no
-gat_v1,,benchmark,kitsune,0.9971,0.012,0.1667,0.2309,1.0,0.9971,0.9995,342,5349,no
-gat_v1,,dataset_test,edge,0.9961,0.0224,0.0179,0.1065,1.0,1.0,0.9968,3848,1070,no
-gat_v1,,dataset_test,iot23,0.9161,0.0357,0.2001,0.0157,1.0,1.0,0.9828,1704,700,no
-gat_v1,,dataset_test,kitsune,0.9935,0.0342,0.0174,0.1986,0.875,1.0,0.9952,2011,438,no
-gat_v2,,benchmark,edge,0.8403,0.021,0.2917,0.0913,0.9527,0.998,0.9796,4144,38971,yes
-gat_v2,,benchmark,iot23,0.9896,0.0,0.1917,0.035,1.0,1.0,1.0,480,2512,yes
-gat_v2,,benchmark,kitsune,0.9942,0.0049,0.1667,0.2475,0.9697,0.9971,0.9993,342,5349,yes
-gat_v2,,dataset_test,edge,0.9945,0.015,0.0179,0.1103,1.0,1.0,0.9984,3848,1070,no
-gat_v2,,dataset_test,iot23,0.9114,0.0443,0.2811,0.0057,1.0,1.0,0.9716,1704,700,no
-gat_v2,,dataset_test,kitsune,0.9935,0.0525,0.0174,0.2237,0.9167,1.0,0.9849,2011,438,no
-gat_v2_ho_ddos,ddos,benchmark,edge,0.772,0.0099,0.2917,0.0913,0.9346,0.9547,0.9822,4144,38971,yes
-gat_v2_ho_ddos,ddos,benchmark,iot23,0.9667,0.0111,0.1917,0.035,0.9958,1.0,0.9961,480,2512,yes
-gat_v2_ho_ddos,ddos,benchmark,kitsune,0.9649,0.0045,0.1667,0.2475,1.0,1.0,0.9993,342,5349,yes
-gat_v2_ho_ddos,ddos,dataset_test,edge,0.2794,0.0112,0.0179,0.1103,1.0,1.0,0.9623,3848,1070,no
-gat_v2_ho_ddos,ddos,dataset_test,iot23,1.0,0.6729,0.2811,0.0057,1.0,1.0,0.6921,1704,700,no
-gat_v2_ho_ddos,ddos,dataset_test,kitsune,0.1805,0.0388,0.0174,0.2237,0.9167,0.9972,0.9577,2011,438,no
-gat_v2_ho_mirai,mirai,benchmark,edge,0.8323,0.0071,0.2917,0.0913,0.9741,0.9904,0.9832,4144,38971,yes
-gat_v2_ho_mirai,mirai,benchmark,iot23,0.1104,0.0143,0.1917,0.035,0.9042,0.9623,0.64,480,2512,yes
-gat_v2_ho_mirai,mirai,benchmark,kitsune,0.6199,0.0168,0.1667,0.2475,1.0,1.0,0.9882,342,5349,yes
-gat_v2_ho_mirai,mirai,dataset_test,edge,0.9917,0.0084,0.0179,0.1103,1.0,1.0,0.9994,3848,1070,no
-gat_v2_ho_mirai,mirai,dataset_test,iot23,0.4959,0.5843,0.2811,0.0057,1.0,1.0,0.5737,1704,700,no
-gat_v2_ho_mirai,mirai,dataset_test,kitsune,0.0497,0.0479,0.0174,0.2237,0.875,1.0,0.8704,2011,438,no
-gat_v2_ho_ransomware,ransomware,benchmark,edge,0.8323,0.0134,0.2917,0.0913,0.9727,0.9971,0.9784,4144,38971,yes
-gat_v2_ho_ransomware,ransomware,benchmark,iot23,0.9812,0.0,0.1917,0.035,0.9958,1.0,0.9997,480,2512,yes
-gat_v2_ho_ransomware,ransomware,benchmark,kitsune,0.9649,0.0045,0.1667,0.2475,1.0,1.0,0.9972,342,5349,yes
-gat_v2_ho_ransomware,ransomware,dataset_test,edge,0.9906,0.0047,0.0179,0.1103,1.0,1.0,0.9974,3848,1070,no
-gat_v2_ho_ransomware,ransomware,dataset_test,iot23,0.9225,0.0729,0.2811,0.0057,1.0,1.0,0.9815,1704,700,no
-gat_v2_ho_ransomware,ransomware,dataset_test,kitsune,0.0517,0.0616,0.0174,0.2237,0.875,1.0,0.9349,2011,438,no
-gat_v2_ho_scanning,scanning,benchmark,edge,0.4377,0.0048,0.2917,0.0913,0.9346,0.9394,0.8457,4144,38971,yes
-gat_v2_ho_scanning,scanning,benchmark,iot23,0.9917,0.0,0.1917,0.035,1.0,1.0,0.9998,480,2512,yes
-gat_v2_ho_scanning,scanning,benchmark,kitsune,0.2544,0.0006,0.1667,0.2475,0.8788,0.908,0.9959,342,5349,yes
-gat_v2_ho_scanning,scanning,dataset_test,edge,0.9831,0.0065,0.0179,0.1103,0.9828,0.9974,0.9965,3848,1070,no
-gat_v2_ho_scanning,scanning,dataset_test,iot23,0.9102,0.0529,0.2811,0.0057,1.0,1.0,0.9714,1704,700,no
-gat_v2_ho_scanning,scanning,dataset_test,kitsune,0.4217,0.0434,0.0174,0.2237,0.9167,0.9976,0.951,2011,438,no
+gat_run,held_out_attack,test_set,dataset,gat_detection,gat_false_alarms,window_alerts_detection,window_alerts_false_alarms,attacker_ranked_first,role_correct,roc_auc,involved_host_minutes,other_host_minutes,one_input_rule_detection,one_input_rule_false_alarms,one_input_rule,trained_on_network,quoted
+gat_v1,,benchmark,edge,0.8591,0.0155,0.292,0.0906,0.979,0.9983,0.9758,4144,38971,,,,yes,no
+gat_v1,,benchmark,iot23,0.9792,0.0,0.15,0.0553,0.9958,1.0,0.9997,480,2512,,,,yes,no
+gat_v1,,benchmark,kitsune,0.9971,0.012,0.1667,0.2309,1.0,0.9971,0.9995,342,5349,,,,yes,no
+gat_v1,,dataset_test,edge,0.9961,0.0224,0.0179,0.1065,1.0,1.0,0.9968,3848,1070,,,,yes,no
+gat_v1,,dataset_test,iot23,0.9161,0.0357,0.2001,0.0157,1.0,1.0,0.9828,1704,700,,,,yes,no
+gat_v1,,dataset_test,kitsune,0.9935,0.0342,0.0174,0.1986,0.875,1.0,0.9952,2011,438,,,,yes,no
+gat_v2,,benchmark,edge,0.8403,0.021,0.2917,0.0913,0.9527,0.998,0.9796,4144,38971,,,,yes,no
+gat_v2,,benchmark,iot23,0.9896,0.0,0.1917,0.035,1.0,1.0,1.0,480,2512,,,,yes,no
+gat_v2,,benchmark,kitsune,0.9942,0.0049,0.1667,0.2475,0.9697,0.9971,0.9993,342,5349,,,,yes,no
+gat_v2,,dataset_test,edge,0.9945,0.015,0.0179,0.1103,1.0,1.0,0.9984,3848,1070,,,,yes,no
+gat_v2,,dataset_test,iot23,0.9114,0.0443,0.2811,0.0057,1.0,1.0,0.9716,1704,700,,,,yes,no
+gat_v2,,dataset_test,kitsune,0.9935,0.0525,0.0174,0.2237,0.9167,1.0,0.9849,2011,438,,,,yes,no
+gat_v2_ho_ddos,ddos,benchmark,edge,0.772,0.0099,0.2917,0.0913,0.9346,0.9547,0.9822,4144,38971,,,,yes,yes
+gat_v2_ho_ddos,ddos,benchmark,iot23,0.9667,0.0111,0.1917,0.035,0.9958,1.0,0.9961,480,2512,,,,yes,yes
+gat_v2_ho_ddos,ddos,benchmark,kitsune,0.9649,0.0045,0.1667,0.2475,1.0,1.0,0.9993,342,5349,,,,yes,yes
+gat_v2_ho_ddos,ddos,dataset_test,edge,0.2794,0.0112,0.0179,0.1103,1.0,1.0,0.9623,3848,1070,,,,yes,no
+gat_v2_ho_ddos,ddos,dataset_test,iot23,1.0,0.6729,0.2811,0.0057,1.0,1.0,0.6921,1704,700,,,,yes,no
+gat_v2_ho_ddos,ddos,dataset_test,kitsune,0.1805,0.0388,0.0174,0.2237,0.9167,0.9972,0.9577,2011,438,,,,yes,no
+gat_v2_ho_mirai,mirai,benchmark,edge,0.8323,0.0071,0.2917,0.0913,0.9741,0.9904,0.9832,4144,38971,,,,yes,yes
+gat_v2_ho_mirai,mirai,benchmark,iot23,0.1104,0.0143,0.1917,0.035,0.9042,0.9623,0.64,480,2512,,,,yes,yes
+gat_v2_ho_mirai,mirai,benchmark,kitsune,0.6199,0.0168,0.1667,0.2475,1.0,1.0,0.9882,342,5349,,,,yes,yes
+gat_v2_ho_mirai,mirai,dataset_test,edge,0.9917,0.0084,0.0179,0.1103,1.0,1.0,0.9994,3848,1070,,,,yes,no
+gat_v2_ho_mirai,mirai,dataset_test,iot23,0.4959,0.5843,0.2811,0.0057,1.0,1.0,0.5737,1704,700,,,,yes,no
+gat_v2_ho_mirai,mirai,dataset_test,kitsune,0.0497,0.0479,0.0174,0.2237,0.875,1.0,0.8704,2011,438,,,,yes,no
+gat_v2_ho_ransomware,ransomware,benchmark,edge,0.8323,0.0134,0.2917,0.0913,0.9727,0.9971,0.9784,4144,38971,,,,yes,yes
+gat_v2_ho_ransomware,ransomware,benchmark,iot23,0.9812,0.0,0.1917,0.035,0.9958,1.0,0.9997,480,2512,,,,yes,yes
+gat_v2_ho_ransomware,ransomware,benchmark,kitsune,0.9649,0.0045,0.1667,0.2475,1.0,1.0,0.9972,342,5349,,,,yes,yes
+gat_v2_ho_ransomware,ransomware,dataset_test,edge,0.9906,0.0047,0.0179,0.1103,1.0,1.0,0.9974,3848,1070,,,,yes,no
+gat_v2_ho_ransomware,ransomware,dataset_test,iot23,0.9225,0.0729,0.2811,0.0057,1.0,1.0,0.9815,1704,700,,,,yes,no
+gat_v2_ho_ransomware,ransomware,dataset_test,kitsune,0.0517,0.0616,0.0174,0.2237,0.875,1.0,0.9349,2011,438,,,,yes,no
+gat_v2_ho_scanning,scanning,benchmark,edge,0.4377,0.0048,0.2917,0.0913,0.9346,0.9394,0.8457,4144,38971,,,,yes,yes
+gat_v2_ho_scanning,scanning,benchmark,iot23,0.9917,0.0,0.1917,0.035,1.0,1.0,0.9998,480,2512,,,,yes,yes
+gat_v2_ho_scanning,scanning,benchmark,kitsune,0.2544,0.0006,0.1667,0.2475,0.8788,0.908,0.9959,342,5349,,,,yes,yes
+gat_v2_ho_scanning,scanning,dataset_test,edge,0.9831,0.0065,0.0179,0.1103,0.9828,0.9974,0.9965,3848,1070,,,,yes,no
+gat_v2_ho_scanning,scanning,dataset_test,iot23,0.9102,0.0529,0.2811,0.0057,1.0,1.0,0.9714,1704,700,,,,yes,no
+gat_v2_ho_scanning,scanning,dataset_test,kitsune,0.4217,0.0434,0.0174,0.2237,0.9167,0.9976,0.951,2011,438,,,,yes,no
+gat_v3,,benchmark,edge,0.3371,0.1887,0.2917,0.0913,0.8209,0.9241,0.6386,4144,38971,0.0,0.0,high max link fwd_syn,no,no
+gat_v3,,benchmark,gotham,0.9264,0.005,0.0552,0.0242,1.0,0.9962,0.998,2012,43220,0.8464,0.0,high max link svc_telnet,yes,no
+gat_v3,,benchmark,iot23,0.8771,0.0104,0.1917,0.035,1.0,1.0,0.9935,480,2512,0.3854,0.0092,high max link log_n_flows,yes,no
+gat_v3,,benchmark,kitsune,0.2456,0.0877,0.1667,0.2475,0.4242,0.6905,0.6676,342,5349,0.0,0.0,high max link fwd_syn,no,no
+gat_v3,,benchmark,nf_toniot,0.0393,0.01,0.1417,0.2311,0.6942,0.9583,0.8025,1221,27427,0.0,0.0,high max link svc_http,yes,no
+gat_v3,,benchmark,xiiotid,0.8889,0.0051,0.6111,0.011,1.0,1.0,0.9974,36,293993,0.0,0.0172,high max link log_duration,yes,no
+gat_v3,,dataset_test,edge,0.0096,0.072,0.0179,0.1103,1.0,1.0,0.6926,3848,1070,,,,no,no
+gat_v3,,dataset_test,gotham,0.9967,0.0177,0.0061,0.0179,0.9574,0.9984,0.9897,10137,6771,,,,yes,no
+gat_v3,,dataset_test,iot23,0.8955,0.0071,0.2811,0.0057,1.0,1.0,0.9506,1704,700,,,,yes,no
+gat_v3,,dataset_test,kitsune,0.0393,0.1027,0.0174,0.2237,0.75,0.8734,0.2254,2011,438,,,,no,no
+gat_v3,,dataset_test,nf_toniot,0.2885,0.0284,0.4502,0.1235,0.9256,0.9997,0.9148,13693,16495,,,,yes,no
+gat_v3,,dataset_test,xiiotid,0.5099,0.0137,0.1427,0.0126,0.9859,0.9917,0.8027,6133,21200,,,,yes,no
+gat_v4,,benchmark,aci,0.9091,0.005,0.0779,0.0174,0.375,0.9607,0.9936,308,33364,,,,yes,no
+gat_v4,,benchmark,edge,0.4361,0.2149,0.2917,0.0913,0.7984,0.8052,0.6117,4144,38971,,,,no,no
+gat_v4,,benchmark,gotham,1.0,0.004,0.0552,0.0242,0.9787,0.9896,0.999,2012,43220,,,,yes,no
+gat_v4,,benchmark,iot23,1.0,0.0056,0.1917,0.035,1.0,1.0,1.0,480,2512,,,,yes,no
+gat_v4,,benchmark,kitsune,0.3567,0.1999,0.1667,0.2475,0.5758,0.7295,0.7418,342,5349,,,,no,no
+gat_v4,,benchmark,xiiotid,1.0,0.0027,0.6111,0.011,1.0,1.0,1.0,36,293993,,,,yes,no
+gat_v4,,dataset_test,aci,0.7045,0.0166,0.2598,0.0944,0.7552,0.9461,0.9531,2687,39598,,,,yes,no
+gat_v4,,dataset_test,edge,0.9418,0.2271,0.0179,0.1103,0.9828,0.7552,0.8173,3848,1070,,,,no,no
+gat_v4,,dataset_test,gotham,0.9967,0.0639,0.0061,0.0179,0.8085,0.9984,0.9938,10137,6771,,,,yes,no
+gat_v4,,dataset_test,iot23,0.9043,0.0229,0.2811,0.0057,1.0,1.0,0.9648,1704,700,,,,yes,no
+gat_v4,,dataset_test,iot23x,0.7908,0.0,0.4115,0.0706,1.0,1.0,0.9988,3179,2719,,,,yes,no
+gat_v4,,dataset_test,kitsune,0.0547,0.2192,0.0174,0.2237,0.7917,0.8364,0.6039,2011,438,,,,no,no
+gat_v4,,dataset_test,xiiotid,0.0152,0.0176,0.1427,0.0126,0.4434,0.9677,0.6786,6133,21200,,,,yes,no
+gat_v5,,benchmark,aci,0.9351,0.002,0.0779,0.0174,0.4167,0.9167,0.9988,308,33364,0.8149,0.0051,high max link log_dev_flows_10s,yes,yes
+gat_v5,,benchmark,edge,0.4993,0.3923,0.2917,0.0913,0.9458,0.8217,0.6531,4144,38971,0.0,0.0,high max link fwd_syn,no,yes
+gat_v5,,benchmark,gotham,0.999,0.0023,0.0552,0.0242,1.0,0.9557,1.0,2012,43220,0.4597,0.0004,high max link log_dev_flows_10s,yes,yes
+gat_v5,,benchmark,iot23,0.9854,0.0143,0.1917,0.035,1.0,1.0,0.9995,480,2512,0.3854,0.0092,high max link log_n_flows,yes,yes
+gat_v5,,benchmark,kitsune,1.0,0.4261,0.1667,0.2475,0.6364,0.9035,0.8329,342,5349,0.0,0.0,high max link fwd_syn,no,yes
+gat_v5,,benchmark,xiiotid,1.0,0.0009,0.6111,0.011,1.0,0.9722,1.0,36,293993,0.0,0.0172,high max link log_duration,yes,yes
+gat_v5,,dataset_test,aci,0.8913,0.0281,0.2598,0.0944,0.8776,0.896,0.9765,2687,39598,,,,yes,no
+gat_v5,,dataset_test,edge,0.9433,0.3393,0.0179,0.1103,1.0,0.9997,0.7903,3848,1070,,,,no,no
+gat_v5,,dataset_test,gotham,0.9979,0.0678,0.0061,0.0179,0.9574,0.9975,0.9984,10137,6771,,,,yes,no
+gat_v5,,dataset_test,iot23,0.9032,0.0129,0.2811,0.0057,0.9974,1.0,0.9742,1704,700,,,,yes,no
+gat_v5,,dataset_test,iot23x,0.9597,0.0007,0.4115,0.0706,0.9994,1.0,0.9978,3179,2719,,,,yes,no
+gat_v5,,dataset_test,kitsune,0.0552,0.4543,0.0174,0.2237,0.75,0.8919,0.5024,2011,438,,,,no,no
+gat_v5,,dataset_test,xiiotid,0.015,0.0062,0.1427,0.0126,0.6952,0.9674,0.846,6133,21200,,,,yes,no

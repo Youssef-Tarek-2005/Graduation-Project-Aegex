@@ -36,7 +36,8 @@ RESULTS = os.path.join(am.DATA_ROOT, "model_results")
 import aegex_datasets as reg
 
 QUOTED_BENCH = reg.quoted_runs()
-QUOTED_GAT = {"gat_v2", "gat_v2_ho_scanning", "gat_v2_ho_mirai", "gat_v2_ho_ddos", "gat_v2_ho_ransomware"}
+QUOTED_GAT = {"gat_v5", "gat_v2_ho_scanning", "gat_v2_ho_mirai", "gat_v2_ho_ddos", "gat_v2_ho_ransomware"}
+# gat_v5: main GAT (no port/service link inputs, 26 Nov 2026); gat_v2_ho_*: unseen-attack-type tests
 METHOD_NAME = {"lstm": "LSTM-AE", "vae": "VAE", "either": "LSTM or VAE", "rule": "one-line rule"}
 
 
@@ -109,6 +110,8 @@ def gat_tables():
         run = os.path.basename(os.path.dirname(mpath))
         m = json.load(open(mpath))
         ho = m.get("holdout") or ""
+        bpath = os.path.join(am.MODELS_DIR, "gat", run, "bundle.json")
+        test_only = (json.load(open(bpath)).get("test_only_datasets") or []) if os.path.exists(bpath) else []
         quoted = "yes" if run in QUOTED_GAT else "no"
         for test in ("benchmark", "dataset_test"):
             for ds, d in (m.get(test) or {}).items():
@@ -119,6 +122,12 @@ def gat_tables():
                              "attacker_ranked_first": r4(d.get("top1_source_attribution")),
                              "role_correct": r4(d.get("role_correct")), "roc_auc": r4(d.get("roc_auc")),
                              "involved_host_minutes": d.get("involved"), "other_host_minutes": d.get("other"),
+                             "one_input_rule_detection": r4((m.get("one_input_rule") or {}).get(ds, {}).get("detection"))
+                             if test == "benchmark" else None,
+                             "one_input_rule_false_alarms": r4((m.get("one_input_rule") or {}).get(ds, {}).get("false_alarms"))
+                             if test == "benchmark" else None,
+                             "one_input_rule": (m.get("one_input_rule") or {}).get(ds, {}).get("rule") if test == "benchmark" else None,
+                             "trained_on_network": ("no" if ds in test_only else "yes"),
                              "quoted": quoted if test == "benchmark" else "no"})
         for key, v in per_attack(run, m).items():
             ds, att = key.split("/", 1)
@@ -180,6 +189,8 @@ gat_summary.csv          GAT (which host is attacking / attacked, per minute) vs
                          test_set benchmark = realistic benchmark (quoted); dataset_test = datasets' own split.
                          held_out_attack = attack type removed from GAT training in that run.
 gat_by_attack.csv        GAT detection per attack; seen_in_training = no -> the unseen-attack result
+                         one_input_rule_* = best single GAT input (chosen + thresholded on val only); the GAT
+                         only counts for what it adds above it. gat_v5 was trained without port/service link inputs.
 gat_controls.csv         GAT on hosts that only received injected NORMAL traffic (should be low)
 test_split_summary.csv   datasets' OWN test split per class (optimistic: attacks come as pure blocks; not quoted).
                          For benign rows the flagged share is the false-alarm rate.

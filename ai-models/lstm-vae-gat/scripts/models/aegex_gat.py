@@ -41,6 +41,10 @@ NODE_TRAFFIC = ["log_out_flows", "log_in_flows", "log_out_peers", "log_in_peers"
 NODE_STAGE = ["lstm_max_score", "lstm_mean_score", "lstm_any_anomaly", "lstm_n_windows",
               "vae_max_score", "vae_mean_score", "vae_any_anomaly", "vae_confidence", "zero_day_candidate", "has_windows"]
 NODE_BLOCKS = ("traffic", "stage", "latent")
+ALL_NODE_BLOCKS = NODE_BLOCKS + ("deviation",)   # "deviation" needs train_gat.py --relative-inputs
+# --relative-inputs (train_gat.py): each host's traffic vs ITS OWN recent history (EWMA z-score, 0 for a new host)
+NODE_DEV_BASE = ["log_out_flows", "log_in_flows", "log_out_peers", "log_in_peers", "log_out_bytes", "log_in_bytes"]
+NODE_DEV = [f"dev_{c}" for c in NODE_DEV_BASE]
 EDGE_FEATURES = list(ap.FEATURES) + ["log_n_flows", "is_reverse"]
 
 
@@ -52,6 +56,8 @@ def node_feature_names(blocks, vae_latent):
         n += NODE_STAGE
     if "latent" in blocks:
         n += [f"mu_{i}" for i in range(vae_latent)]
+    if "deviation" in blocks:
+        n += NODE_DEV
     return n
 
 

@@ -117,9 +117,9 @@ footer{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padd
 <main>
 
 <header style="display:grid;gap:14px">
-  <div class="eyebrow">Aegex · GP27/CyS08 · results as of 25 Nov 2026</div>
+  <div class="eyebrow">Aegex · GP27/CyS08 · results as of 26 Nov 2026</div>
   <h1>How well does Aegex detect IoT attacks?</h1>
-  <p class="lede">All numbers on this page come from a realistic benchmark: real attack traffic hidden inside the real normal traffic of a busy device, test data only, alarm lines set on validation data. On Edge-IIoTset and Kitsune the VAE catches almost every attack window while flagging about 1–8 % of normal windows. The GAT then names the attacking host with far fewer false alarms than the window alerts alone. On X-IIoTID, a 32-device industrial network added this week, the VAE catches 90.7 % of mixed-in attacks at 1.1 % false alarms once its alarm lines are set per device. Two more networks followed: on Gotham, the only one with Mirai, DDoS and scanning together, the VAE catches 96.5 % at 0.19 % false alarms, and on ACI-IoT-2023 (70 devices, run on Kaggle) 80.3 % at 1.7 %. On NF-ToN-IoT-v3, a busy 55-device network whose attacks are naturally mixed with normal traffic, it catches 94.2 % at 3.5 % false alarms, including 93–99 % of ransomware, which gives ransomware its second source. IoT-23 remains weak, and the GAT does not recognise attack types it was never trained on.</p>
+  <p class="lede">All numbers on this page come from a realistic benchmark: real attack traffic hidden inside the real normal traffic of a busy device, test data only, alarm lines set on validation data. On Edge-IIoTset and Kitsune the VAE catches almost every attack window while flagging about 1–8 % of normal windows. The GAT then names the attacking host with far fewer false alarms than the window alerts alone. On X-IIoTID, a 32-device industrial network added this week, the VAE catches 90.7 % of mixed-in attacks at 1.1 % false alarms once its alarm lines are set per device. Two more networks followed: on Gotham, the only one with Mirai, DDoS and scanning together, the VAE catches 96.5 % at 0.19 % false alarms, and on ACI-IoT-2023 (70 devices, run on Kaggle) 80.3 % at 1.7 %. On NF-ToN-IoT-v3, a busy 55-device network whose attacks are naturally mixed with normal traffic, it catches 94.2 % at 3.5 % false alarms, including 93–99 % of ransomware, which gives ransomware its second source. IoT-23 remains weak. The GAT (gat_v5, trained without port/service inputs so it cannot rely on giveaways such as "any Telnet link") finds the attacking hosts on Gotham, IoT-23 and ACI-IoT-2023 at 93.5–99.9 % with 0.2–1.4 % false alarms, far above the best one-input rule, but it does not recognise attack types or networks it was never trained on.</p>
 </header>
 
 <section>
@@ -132,7 +132,7 @@ footer{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padd
     <div class="fact"><span class="v">96.5 %</span><span class="k">Gotham attack windows caught by the VAE: Mirai, DDoS and scanning on one network (normal flagged 0.19 %)</span></div>
     <div class="fact"><span class="v">80.3 %</span><span class="k">ACI-IoT-2023 attack windows caught by the VAE (normal flagged 1.7 %)</span></div>
     <div class="fact"><span class="v">94.2 %</span><span class="k">NF-ToN-IoT attack windows caught by the VAE, ransomware 93–99 % (normal flagged 3.5 %)</span></div>
-    <div class="fact"><span class="v">84–99 %</span><span class="k">attacking/target hosts found by the GAT, at 0–2.1 % false alarms</span></div>
+    <div class="fact"><span class="v">93.5–99.9 %</span><span class="k">attacking/target hosts found by the GAT (gat_v5) on Gotham, IoT-23 and ACI-IoT-2023, at 0.2–1.4 % false alarms; best one-input rule 38.5–81.5 %</span></div>
     <div class="fact"><span class="v">282 / 282</span><span class="k">injected attacks with at least one alert (all seven networks)</span></div>
   </div>
   <p class="note">* On Kitsune's separate Mirai network the normal traffic is noisy: 37 % of its normal windows are flagged without per-network calibration.</p>
@@ -360,17 +360,23 @@ footer{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padd
 <section>
   <div class="eyebrow">Stage 3 · temporal GAT</div>
   <h2>Which host is attacking, every minute</h2>
-  <p>Same benchmark, judged per host per 60 seconds. The comparison is the window alerts alone: a host counts as flagged if the LSTM or VAE raised any alert for it in that minute.</p>
+  <p>Same benchmark, judged per host per 60 seconds. Model <span class="mono">gat_v5</span>: each network feeds the GAT through its own LSTM-AE and VAE, and the GAT is <b>not given any port or service inputs</b> (Telnet, HTTP, "registered port" and so on). An earlier version leaned on them: on Gotham, "any Telnet link" alone flagged 85 % of attackers at 0 % false alarms, because only Mirai uses Telnet there. Without them the GAT has to use behaviour: connection rates, peers, replies, TCP flags and volumes.</p>
+  <p>Two comparisons: the <b>window alerts alone</b> (a host counts as flagged if the LSTM or VAE raised any alert for it that minute) and the <b>best one-input rule</b> (the single GAT input that separates attackers best, chosen and thresholded on validation data only). The GAT only counts for what it adds above that rule.</p>
   <div class="tbl"><table>
-    <thead><tr><th>Network</th><th class="num">GAT finds attacker / target</th><th class="num">GAT false alarms</th><th class="num">Window alerts find</th><th class="num">Window alerts false alarms</th><th class="num">True attacker ranked first</th></tr></thead>
+    <thead><tr><th>Network</th><th class="num">GAT finds attacker / target</th><th class="num">GAT false alarms</th><th class="num">Best one-input rule</th><th class="num">Window alerts find / false alarms</th><th class="num">True attacker ranked first</th></tr></thead>
     <tbody>
-      <tr><td>Edge-IIoTset</td><td class="num">84.0 %</td><td class="num">2.1 %</td><td class="num">29.2 %</td><td class="num">9.1 %</td><td class="num">95.3 %</td></tr>
-      <tr><td>Kitsune</td><td class="num">99.4 %</td><td class="num">0.5 %</td><td class="num">16.7 %</td><td class="num">24.8 %</td><td class="num">97.0 %</td></tr>
-      <tr><td>IoT-23</td><td class="num">99.0 %</td><td class="num">0.0 %</td><td class="num">19.2 %</td><td class="num">3.5 %</td><td class="num">100 %</td></tr>
+      <tr><td>Gotham</td><td class="num">99.9 %</td><td class="num">0.23 %</td><td class="num">46.0 % / 0.04 %</td><td class="num">5.5 % / 2.4 %</td><td class="num">100 %</td></tr>
+      <tr><td>IoT-23</td><td class="num">98.5 %</td><td class="num">1.43 %</td><td class="num">38.5 % / 0.92 %</td><td class="num">19.2 % / 3.5 %</td><td class="num">100 %</td></tr>
+      <tr><td>ACI-IoT-2023</td><td class="num">93.5 %</td><td class="num">0.20 %</td><td class="num">81.5 % / 0.51 %</td><td class="num">7.8 % / 1.7 %</td><td class="num"><span class="chip warn">41.7 %</span></td></tr>
+      <tr><td>X-IIoTID*</td><td class="num">100 %</td><td class="num">0.09 %</td><td class="num">0 % / 1.7 %</td><td class="num">61.1 % / 1.1 %</td><td class="num">100 %</td></tr>
     </tbody>
   </table></div>
-  <p>Hosts that only received extra normal traffic are flagged 0–6 % of the time (another device's traffic: Edge 12.5 %, Kitsune 41 %), so the GAT is not keying on how attacks were inserted.</p>
+  <p class="note">* X-IIoTID has only 36 attacked host-minutes in the benchmark, and on its own test split the GAT finds just 1.5 %, so its 100 % is not quoted as a result. Trained on Gotham, IoT-23 (plus 17 extra IoT-23 malware captures), X-IIoTID and ACI-IoT-2023; trained on Kaggle, 26 Nov 2026.</p>
+  <p>Weak spots: on ACI-IoT-2023 the GAT finds only 37.5 % of DDoS host-minutes (32 in total) and ranks the true attacker first 41.7 % of the time; there, "many connections in 10 seconds" alone already gets 81.5 %. Hosts that only received extra normal traffic are flagged 0–2.3 % of the time on every training network, so the GAT is not keying on how attacks were inserted.</p>
+  <h3>Networks it never trained on</h3>
+  <p>On Kitsune and Edge-IIoTset, which were left out of training on purpose, the GAT flags about 40 % of normal hosts (Kitsune 42.6 %, Edge 39.2 % false alarms). It learns each network's own behaviour and does not carry over, so a deployment needs the GAT trained or fine-tuned on a recording of the network it protects.</p>
   <h3>Attack types it never saw in training</h3>
+  <p class="note">Measured with the earlier GAT (<span class="mono">gat_v2</span>, Edge-IIoTset, Kitsune and IoT-23), retrained four times with one attack type removed each time.</p>
   <div class="tbl"><table>
     <thead><tr><th>Network · attack</th><th class="num">Type in training</th><th class="num">Type removed from training</th></tr></thead>
     <tbody>
@@ -477,7 +483,7 @@ footer{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padd
 </section>
 
 <footer>
-  Models: LSTM autoencoder <span class="mono">lstm_ae_v8</span>, VAE <span class="mono">vae_v5</span>, temporal GAT <span class="mono">gat_v2</span>, trained 20 Nov 2026 on an RTX 4060; X-IIoTID: <span class="mono">lstm_ae_xiiotid_v1</span> + <span class="mono">vae_xiiotid_v1</span>, trained 24 Nov 2026; Gotham: <span class="mono">lstm_ae_gotham_v1</span> + <span class="mono">vae_gotham_v1</span>; ACI-IoT-2023: <span class="mono">lstm_ae_aci_kaggle_v1</span> + <span class="mono">vae_aci_kaggle_v1</span> (trained on Kaggle); NF-ToN-IoT-v3: <span class="mono">lstm_ae_nftoniot_v1</span> + <span class="mono">vae_nftoniot_v1</span>, 25 Nov 2026. Alarm lines are set from validation data only; test data was never used to tune anything. Full numbers: <span class="mono">model_results\benchmark\</span>, <span class="mono">model_results\gat\</span> and <span class="mono">model_results\shortcut_checks\</span> in the project folder.
+  Models: LSTM autoencoder <span class="mono">lstm_ae_v8</span>, VAE <span class="mono">vae_v5</span>, temporal GAT <span class="mono">gat_v5</span> (trained on Kaggle 26 Nov 2026, no port/service link inputs; the unseen-attack tests used <span class="mono">gat_v2</span>), LSTM-AE and VAE trained 20 Nov 2026 on an RTX 4060; X-IIoTID: <span class="mono">lstm_ae_xiiotid_v1</span> + <span class="mono">vae_xiiotid_v1</span>, trained 24 Nov 2026; Gotham: <span class="mono">lstm_ae_gotham_v1</span> + <span class="mono">vae_gotham_v1</span>; ACI-IoT-2023: <span class="mono">lstm_ae_aci_kaggle_v1</span> + <span class="mono">vae_aci_kaggle_v1</span> (trained on Kaggle); NF-ToN-IoT-v3: <span class="mono">lstm_ae_nftoniot_v1</span> + <span class="mono">vae_nftoniot_v1</span>, 25 Nov 2026. Alarm lines are set from validation data only; test data was never used to tune anything. Full numbers: <span class="mono">model_results\benchmark\</span>, <span class="mono">model_results\gat\</span> and <span class="mono">model_results\shortcut_checks\</span> in the project folder.
 </footer>
 
 </main>

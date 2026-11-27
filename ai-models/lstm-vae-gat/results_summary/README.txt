@@ -1,4 +1,4 @@
-Aegex results summary  (generated 2026-11-25 02:10 by scripts\models\export_results_summary.py)
+Aegex results summary  (generated 2026-11-26 19:05 by scripts\models\export_results_summary.py)
 
 All rates are shares between 0 and 1 (0.907 = 90.7 %). Column `quoted` = yes for the numbers on the results page.
 
@@ -22,6 +22,8 @@ gat_summary.csv          GAT (which host is attacking / attacked, per minute) vs
                          test_set benchmark = realistic benchmark (quoted); dataset_test = datasets' own split.
                          held_out_attack = attack type removed from GAT training in that run.
 gat_by_attack.csv        GAT detection per attack; seen_in_training = no -> the unseen-attack result
+                         one_input_rule_* = best single GAT input (chosen + thresholded on val only); the GAT
+                         only counts for what it adds above it. gat_v5 was trained without port/service link inputs.
 gat_controls.csv         GAT on hosts that only received injected NORMAL traffic (should be low)
 test_split_summary.csv   datasets' OWN test split per class (optimistic: attacks come as pure blocks; not quoted).
                          For benign rows the flagged share is the false-alarm rate.

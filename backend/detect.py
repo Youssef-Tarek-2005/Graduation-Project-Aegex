@@ -11,6 +11,10 @@ What it does, in 3 steps:
 
 The models are used exactly as the AI team wrote them; nothing here changes how they decide.
 Running it again on the same recording replaces that recording's alerts (no duplicates).
+
+--gat also runs the temporal GAT (gat_v5): one alert per incident (attack source host + its flagged links),
+model_name 'temporal_gat'. The GAT was trained on other networks (Gotham, IoT-23, X-IIoTID, ACI); on a network it
+never saw it uses a pooled threshold and can raise many false alarms, so treat its alerts as a second opinion.
 """
 from __future__ import annotations
 
@@ -30,17 +34,20 @@ REPO = Path(__file__).resolve().parents[1]
 MODELS = REPO / "ai-models" / "lstm-vae-gat"
 SCORE_SCRIPT = MODELS / "scripts" / "models" / "score_traffic.py"
 LSTM, VAE = "lstm_ae_v8", "vae_v5"                      # the pair HOW_TO_USE.md recommends
+GAT = "gat_v5"                                          # the final temporal GAT (ai-models/lstm-vae-gat/README.md)
 RUNS = Path(__file__).resolve().parent / "model_runs"   # the models' output files go here
 
 # The VAE's "closest known attack" -> our scenario names (contract), so the dashboard speaks one language.
 SCENARIO = {"scanning": "vulnerability_scanning", "ddos": "dos", "mirai": "mirai_botnet", "ransomware": "ransomware"}
 
 
-def run_models(pcap: Path, normal: Path, name: str) -> Path:
+def run_models(pcap: Path, normal: Path, name: str, gat: bool = False) -> Path:
     """Step 1: the AI team's script. Returns the folder with its results."""
     cmd = [sys.executable, "-I", str(SCORE_SCRIPT), str(pcap),
            "--model", str(MODELS / "models" / "lstm_ae" / LSTM), "--vae", str(MODELS / "models" / "vae" / VAE),
            "--calibrate", str(normal), "--recalibrate-threshold", "--name", name, "--out", str(RUNS)]
+    if gat:
+        cmd += ["--gat", str(MODELS / "models" / "gat" / GAT)]
     print(f"running the models on {pcap.name} (calibrated on {normal.name}) ...", flush=True)
     subprocess.run(cmd, check=True)
     return RUNS / name
@@ -82,11 +89,37 @@ def save_alerts(results: Path, capture: str) -> int:
     return len(alerts)
 
 
+def save_gat_alerts(results: Path, capture: str) -> int:
+    """--gat: handoff/alerts.json (written by gat_handoff.py in the alert_format of the contract) -> alerts table."""
+    path = results / "handoff" / "alerts.json"
+    if not path.exists():
+        return 0
+    alerts = json.loads(path.read_text(encoding="utf-8"))
+    summary = json.loads((results / "handoff" / "handoff_summary.json").read_text(encoding="utf-8"))
+    with connect() as conn, conn.transaction():
+        ours = dict(conn.execute("SELECT host(ip), device_id FROM devices WHERE ip IS NOT NULL").fetchall())
+        conn.execute("INSERT INTO model_versions (model_name, version, feature_version, threshold, is_active) "
+                     "VALUES ('temporal_gat', %s, 'lstm-vae-gat', %s, FALSE) ON CONFLICT (model_name, version) "
+                     "DO UPDATE SET threshold = EXCLUDED.threshold", (GAT, summary["threshold"]))
+        for a in alerts:
+            ev = {**a["evidence"], "capture": capture, "results_folder": str(results)}
+            conn.execute(
+                "INSERT INTO alerts (ts, model_name, model_version, feature_version, entity_type, entity_id, device_id,"
+                " src_ips, window_start, window_end, score, threshold, is_anomaly, predicted_scenario, severity, evidence)"
+                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s::inet[], %s, %s, %s, %s, %s, %s, %s, %s)",
+                (a["window_end"], a["model_name"], a["model_version"], a["feature_version"], a["entity_type"],
+                 ours.get(a["entity_id"], a["entity_id"]), ours.get(a["entity_id"]), a["src_ips"],
+                 a["window_start"], a["window_end"], a["score"], a["threshold"], a["is_anomaly"],
+                 a["predicted_scenario"], a["severity"], Jsonb(ev)))
+    return len(alerts)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Score a recording with the AI models and save the alerts.")
     ap.add_argument("pcap", type=Path, help="the recording to check (Wireshark .pcap)")
     ap.add_argument("--normal", type=Path, required=True, help="a recording of NORMAL traffic on the same network")
     ap.add_argument("--capture", help="name for this recording in the alerts (default: the file name)")
+    ap.add_argument("--gat", action="store_true", help="also run the temporal GAT (gat_v5) and save its incidents")
     a = ap.parse_args()
     for f in (a.pcap, a.normal):
         if not f.exists():
@@ -96,8 +129,11 @@ def main() -> int:
         print(f"ERROR: the AI models are not here: {MODELS}")
         return 1
     capture = a.capture or a.pcap.stem
-    results = run_models(a.pcap, a.normal, capture)
+    results = run_models(a.pcap, a.normal, capture, gat=a.gat)
     n = save_alerts(results, capture)
+    if a.gat:
+        g = save_gat_alerts(results, capture)
+        print(f"saved {g} temporal GAT incident alerts for {capture}")
     print(f"\nsaved {n} alerts for {capture}. See them: GET http://localhost:8001/api/v1/alerts?capture={capture}")
     if n:
         df = pd.read_csv(results / "alerts.csv")

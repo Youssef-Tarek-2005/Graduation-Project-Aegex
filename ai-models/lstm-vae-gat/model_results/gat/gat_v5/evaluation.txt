@@ -1,0 +1,85 @@
+Temporal GAT 'gat_v5' on LSTM-AE 'lstm_ae_aci_kaggle_v2+lstm_ae_gotham_v1+lstm_ae_iot23x_kaggle_v2+lstm_ae_v8+lstm_ae_xiiotid_v1' + VAE 'vae_aci_kaggle_v2+vae_gotham_v1+vae_iot23x_kaggle_v2+vae_v5+vae_xiiotid_v1' | node inputs ['traffic', 'stage']
+threshold per dataset = 99th pct of NON-involved host scores on VAL data (no test data used)
+trained on ['gotham', 'iot23', 'xiiotid', 'aci', 'iot23x']; test-only networks (never trained on, pooled threshold): ['kitsune', 'edge']
+stage scores fed as score / alarm line
+involved = host is attack source or target in the 60 s snapshot; 'base' = stage-1/2 baseline: host has
+a flagged LSTM-AE or VAE window in the snapshot. FA = flagged share of non-involved host-snapshots.
+
+REALISTIC BENCHMARK (test scenarios: attacks injected into normal traffic)
+  dataset   involved     other |  GAT det  GAT FA base det  base FA | src det tgt det role ok top-1 src | ROC-AUC  PR-AUC
+  aci            308    33,364 |    93.5%   0.20%     7.8%    1.74% |   54.2%   96.8%   91.7%     41.7% |  0.9988  0.9646
+  edge         4,144    38,971 |    49.9%  39.23%    29.2%    9.13% |   56.4%   44.7%   82.2%     94.6% |  0.6531  0.2507
+  gotham       2,012    43,220 |    99.9%   0.23%     5.5%    2.42% |   98.2%  100.0%   95.6%    100.0% |  1.0000  0.9999
+  iot23          480     2,512 |    98.5%   1.43%    19.2%    3.50% |   98.3%   98.8%  100.0%    100.0% |  0.9995  0.9977
+  kitsune        342     5,349 |   100.0%  42.61%    16.7%   24.75% |  100.0%  100.0%   90.4%     63.6% |  0.8329  0.1636
+  xiiotid         36   293,993 |   100.0%   0.09%    61.1%    1.10% |  100.0%  100.0%   97.2%    100.0% |  1.0000  0.9653
+
+ONE-INPUT RULE vs GAT (benchmark test; rule = best single GAT input, chosen + thresholded on VAL only).
+The GAT only counts for what it adds above this rule.
+edge inputs left out of the GAT and the rule: ['svc_']
+  kitsune   rule det   0.0% FA  0.00% | GAT det 100.0% FA 42.61% | rule = high max link fwd_syn (val AUC 0.797, all val (test-only network))
+  edge      rule det   0.0% FA  0.00% | GAT det  49.9% FA 39.23% | rule = high max link fwd_syn (val AUC 0.797, all val (test-only network))
+  iot23     rule det  38.5% FA  0.92% | GAT det  98.5% FA  1.43% | rule = high max link log_n_flows (val AUC 0.903, own val)
+  gotham    rule det  46.0% FA  0.04% | GAT det  99.9% FA  0.23% | rule = high max link log_dev_flows_10s (val AUC 0.983, own val)
+  xiiotid   rule det   0.0% FA  1.72% | GAT det 100.0% FA  0.09% | rule = high max link log_duration (val AUC 0.856, own val)
+  aci       rule det  81.5% FA  0.51% | GAT det  93.5% FA  0.20% | rule = high max link log_dev_flows_10s (val AUC 0.922, own val)
+
+DATASET TEST SPLITS (original captures; Edge attacks are separate attack-only files)
+  dataset   involved     other |  GAT det  GAT FA base det  base FA | src det tgt det role ok top-1 src | ROC-AUC  PR-AUC
+  aci          2,687    39,598 |    89.1%   2.81%    26.0%    9.44% |   92.3%   89.6%   89.6%     87.8% |  0.9765  0.8964
+  edge         3,848     1,070 |    94.3%  33.93%     1.8%   11.03% |   95.3%   76.1%  100.0%    100.0% |  0.7903  0.8597
+  gotham      10,137     6,771 |    99.8%   6.78%     0.6%    1.79% |   93.4%   99.9%   99.8%     95.7% |  0.9984  0.9985
+  iot23        1,704       700 |    90.3%   1.29%    28.1%    0.57% |   99.7%   82.5%  100.0%     99.7% |  0.9742  0.9904
+  iot23x       3,179     2,719 |    96.0%   0.07%    41.1%    7.06% |   98.6%   93.5%  100.0%     99.9% |  0.9978  0.9984
+  kitsune      2,011       438 |     5.5%  45.43%     1.7%   22.37% |   81.5%    4.5%   89.2%     75.0% |  0.5024  0.7653
+  xiiotid      6,133    21,200 |     1.5%   0.62%    14.3%    1.26% |    1.9%    1.6%   96.7%     69.5% |  0.8460  0.4763
+
+Incidents (benchmark scenarios with >= 1 alert on an involved host):
+  aci      GAT 11/12   baseline 12/12
+  edge     GAT 152/152   baseline 152/152
+  gotham   GAT 28/28   baseline 28/28
+  iot23    GAT 28/28   baseline 28/28
+  kitsune  GAT 22/22   baseline 22/22
+  xiiotid  GAT 12/12   baseline 12/12
+
+Benchmark node detection per attack type (GAT | baseline):
+  aci      ddos             32 involved host-snapshots | GAT  37.5% | baseline  50.0%
+  aci      scanning        276 involved host-snapshots | GAT 100.0% | baseline   2.9%
+  edge     ddos            508 involved host-snapshots | GAT  94.5% | baseline  44.5%
+  edge     ransomware    1,257 involved host-snapshots | GAT  43.8% | baseline  21.2%
+  edge     scanning      2,379 involved host-snapshots | GAT  43.6% | baseline  30.1%
+  gotham   ddos             26 involved host-snapshots | GAT 100.0% | baseline  50.0%
+  gotham   mirai         1,695 involved host-snapshots | GAT  99.9% | baseline   2.1%
+  gotham   scanning        291 involved host-snapshots | GAT 100.0% | baseline  21.3%
+  iot23    ddos             36 involved host-snapshots | GAT 100.0% | baseline  47.2%
+  iot23    mirai           444 involved host-snapshots | GAT  98.4% | baseline  16.9%
+  kitsune  ddos             12 involved host-snapshots | GAT 100.0% | baseline  75.0%
+  kitsune  mirai           304 involved host-snapshots | GAT 100.0% | baseline   8.6%
+  kitsune  scanning         26 involved host-snapshots | GAT 100.0% | baseline  84.6%
+  xiiotid  ddos             24 involved host-snapshots | GAT 100.0% | baseline  66.7%
+  xiiotid  scanning         12 involved host-snapshots | GAT 100.0% | baseline  50.0%
+
+Edges (benchmark): aci attack edges 284 detected 95.8%, benign edges flagged 0.11% | edge attack edges 2,826 detected 44.6%, benign edges flagged 10.05% | gotham attack edges 1,981 detected 99.9%, benign edges flagged 0.05% | iot23 attack edges 240 detected 97.1%, benign edges flagged 0.09% | kitsune attack edges 309 detected 100.0%, benign edges flagged 24.10% | xiiotid attack edges 22 detected 100.0%, benign edges flagged 0.00%
+Edges (dataset test): aci attack edges 3,342 detected 75.3%, benign edges flagged 2.03% | edge attack edges 3,948 detected 91.1%, benign edges flagged 11.67% | gotham attack edges 12,284 detected 99.9%, benign edges flagged 6.74% | iot23 attack edges 934 detected 82.3%, benign edges flagged 6.64% | iot23x attack edges 1,637 detected 98.5%, benign edges flagged 0.34% | kitsune attack edges 1,985 detected 40.9%, benign edges flagged 34.68% | xiiotid attack edges 3,235 detected 0.9%, benign edges flagged 0.21%
+
+CONTROL injections (NORMAL traffic injected exactly like an attack - the 'injected' hosts did nothing
+abnormal, so their flag rate should be close to the false-alarm rate; higher = the model detects the
+injection procedure, not attacks):
+  aci      control_other           244 injected host-snapshots | GAT   0.0% (other hosts 0.16%) | baseline   0.0% (other hosts 1.62%)
+  aci      control_self             68 injected host-snapshots | GAT   0.0% (other hosts 0.16%) | baseline   0.0% (other hosts 1.61%)
+  aci      control_self_nomap       68 injected host-snapshots | GAT   0.0% (other hosts 0.16%) | baseline   0.0% (other hosts 1.61%)
+  edge     control_other            40 injected host-snapshots | GAT 100.0% (other hosts 36.98%) | baseline  50.0% (other hosts 8.88%)
+  edge     control_self            594 injected host-snapshots | GAT  14.3% (other hosts 35.55%) | baseline   6.9% (other hosts 9.11%)
+  edge     control_self_nomap      594 injected host-snapshots | GAT  13.6% (other hosts 35.76%) | baseline   6.6% (other hosts 9.22%)
+  gotham   control_other           100 injected host-snapshots | GAT   0.0% (other hosts 0.00%) | baseline   3.0% (other hosts 2.34%)
+  gotham   control_self            100 injected host-snapshots | GAT   0.0% (other hosts 0.00%) | baseline   3.0% (other hosts 2.34%)
+  gotham   control_self_nomap      100 injected host-snapshots | GAT   0.0% (other hosts 0.00%) | baseline   0.0% (other hosts 2.34%)
+  iot23    control_other            70 injected host-snapshots | GAT   0.0% (other hosts 0.00%) | baseline   0.0% (other hosts 1.80%)
+  iot23    control_self            174 injected host-snapshots | GAT   2.3% (other hosts 0.00%) | baseline   1.1% (other hosts 1.86%)
+  iot23    control_self_nomap      174 injected host-snapshots | GAT   2.3% (other hosts 0.00%) | baseline   1.1% (other hosts 1.86%)
+  kitsune  control_other            34 injected host-snapshots | GAT 100.0% (other hosts 41.42%) | baseline  64.7% (other hosts 24.26%)
+  kitsune  control_self             83 injected host-snapshots | GAT  81.9% (other hosts 40.49%) | baseline  24.1% (other hosts 26.26%)
+  kitsune  control_self_nomap       83 injected host-snapshots | GAT  77.1% (other hosts 39.20%) | baseline  19.3% (other hosts 26.78%)
+  xiiotid  control_other           340 injected host-snapshots | GAT   0.0% (other hosts 0.09%) | baseline  12.1% (other hosts 1.12%)
+  xiiotid  control_self             70 injected host-snapshots | GAT   0.0% (other hosts 0.09%) | baseline   0.0% (other hosts 1.10%)
+  xiiotid  control_self_nomap       70 injected host-snapshots | GAT   0.0% (other hosts 0.09%) | baseline   0.0% (other hosts 1.10%)

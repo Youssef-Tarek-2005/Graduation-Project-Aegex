@@ -21,6 +21,8 @@ Outputs (in --out/<capture name>/):
     alerts.csv                  windows flagged by any stage: device, time, scores, worst features,
                                 VAE confidence, closest known class, zero-day candidate
     run.json                    what was used (bundles, scaler, thresholds, counts)
+    handoff/                    with --gat: GAT incidents as detections.json (LLM/RAG) + attack_analyses.json
+                                (back end table), see gat_handoff.py
 
 Usage:
     python score_traffic.py <capture.pcap|.pcapng|.zip> --model ..\\..\\models\\lstm_ae\\lstm_ae_v8
@@ -63,6 +65,10 @@ def main():
     a.add_argument("--name", help="capture name (default: file name)")
     a.add_argument("--out", default=os.path.join(am.DATA_ROOT, "live_results"))
     a.add_argument("--device", default="auto")
+    a.add_argument("--gat", help="GAT bundle directory: also run the GAT and write the team hand-off files "
+                                 "(detections.json for the LLM/RAG, attack_analyses.json for the back end)")
+    a.add_argument("--gat-network", help="training network this traffic is from (selects the GAT threshold)")
+    a.add_argument("--postgres-url", help="with --gat: insert the GAT incidents into the back end's attack_analyses")
     args = a.parse_args()
     if args.per_device and not (args.calibrate and args.recalibrate_threshold):
         a.error("--per-device needs --calibrate <normal capture> and --recalibrate-threshold")
@@ -173,6 +179,10 @@ def main():
                 "devices_with_alerts": al.device.value_counts().head(20).to_dict(),
                 "snapshots": int(edges.snapshot.nunique()) if len(edges) else 0, "finished": am.now_iso()})
     json.dump(run, open(os.path.join(out, "run.json"), "w"), indent=1, default=str)
+    if args.gat:                                   # stage 3 + hand-off to the back end / LLM-RAG
+        import gat_handoff
+        gat_handoff.run_handoff(args.gat, os.path.join(out, "handoff"), capture_dir=out, network=args.gat_network,
+                                postgres_url=args.postgres_url, device=args.device)
     log(f"{len(flows):,} flows | {len(S):,} windows | {run['anomalous_windows']:,} anomalous "
         f"({run['anomalous_windows'] / max(len(S), 1):.1%}) | results -> {out}")
     if len(al):

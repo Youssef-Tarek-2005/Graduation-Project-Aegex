@@ -59,6 +59,7 @@ changes: preprocessing, training, the benchmark and the results summary read the
 | `gotham` | Gotham 2025 | separate model |
 | `xiiotid` | X-IIoTID | separate model |
 | `aci` | ACI-IoT-2023 | separate model (run on Kaggle) |
+| `iot23x` | 17 extra IoT-23 malware captures | Kaggle only (GAT training) |
 
 ## Results (realistic benchmark)
 
@@ -81,3 +82,47 @@ NF-ToN-IoT), part of the detection comes from the insertion itself, not the atta
 numbers are upper bounds. The VAE does most of the detecting, and the LSTM-AE alone is weak on varied
 networks. Thresholds use per-device calibration where it helped (X-IIoTID, ACI, Gotham); otherwise the
 thresholds saved in the models are used.
+
+## Temporal GAT — final model: `gat_v5`
+
+`models/gat/gat_v5` finds WHICH hosts are the attacker and the target, and which links carry the attack, per
+60 s graph snapshot. Inputs: per-host traffic + the LSTM-AE / VAE outputs of that network (scores divided by
+their alarm line) and per-link flow features. Port / service flags are left out on purpose: alone they gave
+85 % on Gotham (a shortcut, not learned behaviour). Trained on Gotham 2025, IoT-23, X-IIoTID, ACI-IoT-2023 and
+the extra IoT-23 captures; Kitsune and Edge-IIoTset were kept out of training (test only).
+
+Realistic benchmark, host level (attack source or target in a 60 s snapshot; thresholds set on validation data):
+
+| Network | GAT detection | GAT false alarms | Best single input (one-input rule) | Controls* |
+|---|---|---|---|---|
+| Gotham 2025 | 99.9 % | 0.23 % | 46.0 % | 0 % |
+| IoT-23 | 98.5 % | 1.43 % | 38.5 % | 0 % |
+| ACI-IoT-2023 | 93.5 % | 0.20 % | 81.5 % | 0–0.4 % |
+| X-IIoTID | 100 % (only 36 attacked host-minutes; own test split 1.5 %) | 0.09 % | 0 % | 0–2.3 % |
+| Kitsune (never trained on) | 100 % | 42.6 % | – | high |
+| Edge-IIoTset (never trained on) | 49.9 % | 39.2 % | – | high |
+
+\*Normal traffic injected exactly like an attack; should be flagged at about the false-alarm rate.
+**Limit:** the GAT works on networks it was trained on and does not transfer to unseen networks (Kitsune, Edge).
+A per-network alarm line (`calibrate_gat.py`) and relative inputs (`train_gat.py --relative-inputs`, gat_v6)
+were both tested and did not fix this; a new network needs its own training data. The GAT does not classify
+the attack type. Full numbers: `model_results/gat/gat_v5/evaluation.txt`, `results_summary/gat_*.csv`.
+
+### Hand-off to the back end and the LLM / RAG
+
+`scripts/models/gat_handoff.py` runs `gat_v5` exactly as evaluated and groups its alerts into incidents (a
+source host flagged in consecutive snapshots + its flagged links). It writes:
+
+| File | Read by |
+|---|---|
+| `alerts.json` | `backend/` `alerts` table (`database/schema_v2.sql`, contract `alert_format`): `model_name = temporal_gat`, entity = attack source, score = P(source), `attention_edges` = flagged links. `python -m detect <pcap> --normal <pcap> --gat` saves them. |
+| `detections.json` | `ai-models/threat-intel/llm-rag/report.py --detections detections.json` (same format as `examples/detections.json`) |
+| `attack_analyses.json` | the `aegex/` API's `attack_analyses` table (`--postgres-url` inserts them) |
+| `incidents.csv` | people |
+
+`predicted_scenario` / `attack_type` come from a transparent behaviour rule on the flagged links (Telnet →
+Mirai, many targets / new ports → scanning, high volume to few targets → DoS), not from the GAT; the files say
+so. On a live capture: `score_traffic.py capture.pcap --calibrate normal.pcap --recalibrate-threshold --gat
+..\..\models\gat\gat_v5` (adds `handoff/` to the output). Traffic from a network the GAT never trained on gets the
+pooled threshold and a warning. `models/gat/gat_v2` is the earlier GAT (trained on Kitsune, Edge, IoT-23 with
+port inputs), kept for the unseen-attack-type tests; `gat_v5` replaces it.

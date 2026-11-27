@@ -1,0 +1,543 @@
+{
+ "bundle_format": 1,
+ "model_type": "temporal_gat",
+ "run": "gat_v5",
+ "created": "2026-11-26T12:27:31",
+ "torch": "2.11.0+cpu",
+ "init": {
+  "n_node": 19,
+  "n_edge": 35,
+  "hidden": 64,
+  "heads": 4,
+  "layers": 2,
+  "dropout": 0.1
+ },
+ "node_blocks": [
+  "traffic",
+  "stage"
+ ],
+ "node_features": [
+  "log_out_flows",
+  "log_in_flows",
+  "log_out_peers",
+  "log_in_peers",
+  "log_out_bytes",
+  "log_in_bytes",
+  "is_private",
+  "is_external",
+  "log_gap_snapshots",
+  "lstm_max_score",
+  "lstm_mean_score",
+  "lstm_any_anomaly",
+  "lstm_n_windows",
+  "vae_max_score",
+  "vae_mean_score",
+  "vae_any_anomaly",
+  "vae_confidence",
+  "zero_day_candidate",
+  "has_windows"
+ ],
+ "edge_features": [
+  "log_duration",
+  "log_fwd_pkts",
+  "log_bwd_pkts",
+  "log_fwd_bytes",
+  "log_bwd_bytes",
+  "fwd_mean_pkt",
+  "bwd_mean_pkt",
+  "log_pkt_rate",
+  "log_byte_rate",
+  "fwd_byte_share",
+  "fwd_pkt_share",
+  "log_iat_device",
+  "log_iat_pair",
+  "log_dev_flows_10s",
+  "log_dev_new_peers_60s",
+  "log_dev_new_ports_60s",
+  "dev_reply_share_60s",
+  "proto_tcp",
+  "proto_udp",
+  "proto_icmp",
+  "proto_arp",
+  "has_reply",
+  "dev_new_peer",
+  "fwd_syn",
+  "fwd_ack",
+  "fwd_fin",
+  "fwd_rst",
+  "fwd_psh",
+  "bwd_syn",
+  "bwd_ack",
+  "bwd_fin",
+  "bwd_rst",
+  "bwd_psh",
+  "log_n_flows",
+  "is_reverse"
+ ],
+ "dropped_edge_features": [
+  "svc_"
+ ],
+ "vae_latent": 8,
+ "norm": {
+  "node_mean": [
+   1.2027097940444946,
+   0.9360052347183228,
+   0.6984429955482483,
+   0.5837373733520508,
+   5.008664608001709,
+   2.4195165634155273,
+   0.9036993980407715,
+   0.07076359540224075,
+   1.1471039056777954,
+   0.06139451265335083,
+   0.05945667624473572,
+   0.00973436888307333,
+   0.2387864738702774,
+   0.11897619813680649,
+   0.11681501567363739,
+   0.03933160752058029,
+   0.14929990470409393,
+   0.0006081857136450708,
+   0.24654625356197357
+  ],
+  "node_std": [
+   1.2659767866134644,
+   1.2912788391113281,
+   0.6014814972877502,
+   0.6488263010978699,
+   4.191845893859863,
+   3.7530274391174316,
+   0.2950030267238617,
+   0.2564295828342438,
+   1.424404501914978,
+   0.1541183590888977,
+   0.14840301871299744,
+   0.09818151593208313,
+   0.6098926663398743,
+   0.2828909754753113,
+   0.27707573771476746,
+   0.1943826824426651,
+   0.30814144015312195,
+   0.02465391717851162,
+   0.4310002326965332
+  ],
+  "edge_mean": [
+   1.9706579446792603,
+   0.21747995913028717,
+   0.04493415728211403,
+   0.0955498144030571,
+   -0.5471177101135254,
+   0.09521135687828064,
+   -1.0218805074691772,
+   -1.2503107786178589,
+   -1.4318846464157104,
+   0.7235959768295288,
+   0.797921895980835,
+   0.3252612054347992,
+   0.878275990486145,
+   0.5123757719993591,
+   1.2388960123062134,
+   0.8514977097511292,
+   -0.9116374254226685,
+   0.33866602182388306,
+   0.48032885789871216,
+   0.05358951911330223,
+   0.12741148471832275,
+   0.7315728068351746,
+   0.12415444850921631,
+   0.24566136300563812,
+   0.18768085539340973,
+   0.10939797759056091,
+   0.01771630346775055,
+   0.1821427047252655,
+   0.09729894995689392,
+   0.18636009097099304,
+   0.04841461777687073,
+   0.010839670896530151,
+   0.09701988101005554,
+   1.133130669593811,
+   0.0
+  ],
+  "edge_std": [
+   2.889008045196533,
+   0.7780959606170654,
+   0.9263838529586792,
+   0.6441888809204102,
+   1.75679612159729,
+   1.3429784774780273,
+   2.381215810775757,
+   1.9964781999588013,
+   2.0740966796875,
+   1.7732666730880737,
+   1.6275171041488647,
+   0.9722776412963867,
+   0.9099316596984863,
+   1.6430423259735107,
+   2.419269561767578,
+   1.892730474472046,
+   1.895580530166626,
+   0.46285703778266907,
+   0.4932478666305542,
+   0.2129424810409546,
+   0.33330440521240234,
+   0.4357123076915741,
+   0.3087446987628937,
+   0.4183291494846344,
+   0.3790537118911743,
+   0.2981932759284973,
+   0.12240049242973328,
+   0.369184672832489,
+   0.2810121476650238,
+   0.37487173080444336,
+   0.20269693434238434,
+   0.09823189675807953,
+   0.2852233052253723,
+   0.8728410601615906,
+   1.0
+  ]
+ },
+ "threshold": 0.6861838102340698,
+ "threshold_mode": "per_dataset",
+ "per_dataset_thresholds": {
+  "aci": 0.24981264770030975,
+  "gotham": 0.4829999804496765,
+  "iot23": 0.9697816371917725,
+  "iot23x": 0.9995338916778564,
+  "xiiotid": 0.6530882716178894
+ },
+ "edge_thresholds": {
+  "_all": 0.8364863395690918,
+  "aci": 0.30501416325569153,
+  "gotham": 0.8041617274284363,
+  "iot23": 0.9998753070831299,
+  "iot23x": 0.9994350671768188,
+  "xiiotid": 0.8342432975769043
+ },
+ "snapshot_seconds": 60.0,
+ "upstream": {
+  "lstm_run": "lstm_ae_aci_kaggle_v2+lstm_ae_gotham_v1+lstm_ae_iot23x_kaggle_v2+lstm_ae_v8+lstm_ae_xiiotid_v1",
+  "vae_run": "vae_aci_kaggle_v2+vae_gotham_v1+vae_iot23x_kaggle_v2+vae_v5+vae_xiiotid_v1",
+  "per_dataset": true
+ },
+ "upstream_per_dataset": {
+  "gotham": {
+   "lstm_run": "lstm_ae_gotham_v1",
+   "lstm_model_sha256": "8ca224d27292233d76164f24ed149c3bb4ad9ba00a753e8ae6761a583f53b6da",
+   "vae_run": "vae_gotham_v1",
+   "vae_model_sha256": "43f777d38ced37400476cf0eb8d005da480c6c519db5584e3375e05ed5884b60"
+  },
+  "iot23": {
+   "lstm_run": "lstm_ae_v8",
+   "lstm_model_sha256": "7a672ea4c7e783de3ee6341989d4c8b6546f52207510cde110575d3b4d1ec029",
+   "vae_run": "vae_v5",
+   "vae_model_sha256": "830b01aaf93021af4f50beaf2ba3fd29972c31340682e9c78c86e8040f135fda"
+  },
+  "xiiotid": {
+   "lstm_run": "lstm_ae_xiiotid_v1",
+   "lstm_model_sha256": "2618f620bd55b29aea9e6dd97aab7562d8fd4ee7db2fe8d8dcbdaa8c501d34e6",
+   "vae_run": "vae_xiiotid_v1",
+   "vae_model_sha256": "a9ce491e8d088685ef7edcad0dd54376cbdd2ec73ed14580f51bb08190c0aa1c"
+  },
+  "aci": {
+   "lstm_run": "lstm_ae_aci_kaggle_v2",
+   "lstm_model_sha256": "aec871f0b770c4bc63f6333b4b7edd1c03273647c7a00f64e892ab77d8f8a61b",
+   "vae_run": "vae_aci_kaggle_v2",
+   "vae_model_sha256": "9a1264e9d08fa9c11a521eaa1993087c1a2b25425036c23594a84503358ab111"
+  },
+  "iot23x": {
+   "lstm_run": "lstm_ae_iot23x_kaggle_v2",
+   "lstm_model_sha256": "857c1e6483e8408aae769e1e3b666481e77a03a6f71c9d7b26c993cccb0b4070",
+   "vae_run": "vae_iot23x_kaggle_v2",
+   "vae_model_sha256": "88c9a92215cb8050ff039bfdf9ba18beeb6fa6d9ea26ca39c14bd7c5a587a4ab"
+  },
+  "kitsune": {
+   "lstm_run": "lstm_ae_v8",
+   "lstm_model_sha256": "7a672ea4c7e783de3ee6341989d4c8b6546f52207510cde110575d3b4d1ec029",
+   "vae_run": "vae_v5",
+   "vae_model_sha256": "830b01aaf93021af4f50beaf2ba3fd29972c31340682e9c78c86e8040f135fda"
+  },
+  "edge": {
+   "lstm_run": "lstm_ae_v8",
+   "lstm_model_sha256": "7a672ea4c7e783de3ee6341989d4c8b6546f52207510cde110575d3b4d1ec029",
+   "vae_run": "vae_v5",
+   "vae_model_sha256": "830b01aaf93021af4f50beaf2ba3fd29972c31340682e9c78c86e8040f135fda"
+  }
+ },
+ "relative_scores": true,
+ "test_only_datasets": [
+  "kitsune",
+  "edge"
+ ],
+ "pipeline": {
+  "feature_order": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s",
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "continuous": [
+   "log_duration",
+   "log_fwd_pkts",
+   "log_bwd_pkts",
+   "log_fwd_bytes",
+   "log_bwd_bytes",
+   "fwd_mean_pkt",
+   "bwd_mean_pkt",
+   "log_pkt_rate",
+   "log_byte_rate",
+   "fwd_byte_share",
+   "fwd_pkt_share",
+   "log_iat_device",
+   "log_iat_pair",
+   "log_dev_flows_10s",
+   "log_dev_new_peers_60s",
+   "log_dev_new_ports_60s",
+   "dev_reply_share_60s"
+  ],
+  "binary": [
+   "proto_tcp",
+   "proto_udp",
+   "proto_icmp",
+   "proto_arp",
+   "has_reply",
+   "dev_new_peer",
+   "fwd_syn",
+   "fwd_ack",
+   "fwd_fin",
+   "fwd_rst",
+   "fwd_psh",
+   "bwd_syn",
+   "bwd_ack",
+   "bwd_fin",
+   "bwd_rst",
+   "bwd_psh",
+   "svc_dns",
+   "svc_http",
+   "svc_https",
+   "svc_telnet",
+   "svc_ssh",
+   "svc_smb_rpc",
+   "svc_mqtt",
+   "svc_modbus",
+   "svc_ssdp_mdns",
+   "svc_ntp",
+   "svc_ftp",
+   "svc_smtp",
+   "svc_rdp",
+   "svc_metasploit",
+   "svc_wellknown_other",
+   "svc_registered",
+   "svc_ephemeral"
+  ],
+  "tcp_udp_icmp_timeouts": {
+   "tcp": 300.0,
+   "udp": 60.0,
+   "icmp": 60.0,
+   "arp": 60.0,
+   "other": 60.0
+  },
+  "active_timeout": 120.0,
+  "service_ports": {
+   "dns": [
+    53
+   ],
+   "http": [
+    80,
+    8000,
+    8008,
+    8080,
+    8081
+   ],
+   "https": [
+    443,
+    8443
+   ],
+   "telnet": [
+    23,
+    2323
+   ],
+   "ssh": [
+    22
+   ],
+   "smb_rpc": [
+    135,
+    137,
+    138,
+    139,
+    445
+   ],
+   "mqtt": [
+    1883,
+    8883
+   ],
+   "modbus": [
+    502
+   ],
+   "ssdp_mdns": [
+    1900,
+    5353
+   ],
+   "ntp": [
+    123
+   ],
+   "ftp": [
+    20,
+    21
+   ],
+   "smtp": [
+    25,
+    465,
+    587
+   ],
+   "rdp": [
+    3389
+   ],
+   "metasploit": [
+    4444
+   ]
+  },
+  "min_device_flows": 3,
+  "scaler_min_scale": 0.1,
+  "scaler_tail_start": 3.0,
+  "device_context": {
+   "enabled": true,
+   "new_peer_gap": 300.0,
+   "rate_window": "10s",
+   "context_window": "60s"
+  }
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "train_loss": 1.3907917327621713,
+   "val_pr_auc": 0.8175706394796678,
+   "seconds": 140.2
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.6600328885185872,
+   "val_pr_auc": 0.8220891237961168,
+   "seconds": 137.7
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.2836043808399755,
+   "val_pr_auc": 0.8521903392794016,
+   "seconds": 137.4
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.23718475823155385,
+   "val_pr_auc": 0.847584826022524,
+   "seconds": 135.1
+  },
+  {
+   "epoch": 5,
+   "train_loss": 0.22750109619247483,
+   "val_pr_auc": 0.8292275276088301,
+   "seconds": 134.6
+  },
+  {
+   "epoch": 6,
+   "train_loss": 0.3026166865936827,
+   "val_pr_auc": 0.8524959784280135,
+   "seconds": 133.4
+  },
+  {
+   "epoch": 7,
+   "train_loss": 0.20651821619356278,
+   "val_pr_auc": 0.8659184144584345,
+   "seconds": 134.4
+  },
+  {
+   "epoch": 8,
+   "train_loss": 0.1426690204048503,
+   "val_pr_auc": 0.8702415817180573,
+   "seconds": 134.5
+  },
+  {
+   "epoch": 9,
+   "train_loss": 0.1519874435119937,
+   "val_pr_auc": 0.8360293676526797,
+   "seconds": 135.3
+  },
+  {
+   "epoch": 10,
+   "train_loss": 0.17492982722478045,
+   "val_pr_auc": 0.8495375133890064,
+   "seconds": 134.4
+  },
+  {
+   "epoch": 11,
+   "train_loss": 0.10864662061829303,
+   "val_pr_auc": 0.8393656396746727,
+   "seconds": 134.8
+  },
+  {
+   "epoch": 12,
+   "train_loss": 0.11560800516029027,
+   "val_pr_auc": 0.8649276727933619,
+   "seconds": 137.2
+  }
+ ],
+ "train_datasets": [
+  "gotham",
+  "iot23",
+  "xiiotid",
+  "aci",
+  "iot23x"
+ ],
+ "hparams": {
+  "lr": 0.001,
+  "chunk": 32,
+  "seed": 0,
+  "fpr": 0.01
+ },
+ "holdout_attack": null
+}

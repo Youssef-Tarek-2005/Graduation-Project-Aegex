@@ -48,14 +48,58 @@ def log(*a):
     print(time.strftime("%H:%M:%S"), *a, flush=True)
 
 
+# ------------------------------------------------------------------------------------------ chains
+class Chain:
+    """The LSTM-AE + VAE pair that feeds the GAT for ONE dataset (network). gat_v1/v2 used one pair for all
+    datasets; from gat_v3 each dataset can use its own pair (--chain ds=lstm_run:vae_run)."""
+
+    def __init__(self, lstm_run, vae_run, dev, cache):
+        key = (lstm_run, vae_run)
+        if key not in cache:
+            ldir = os.path.join(am.MODELS_DIR, "lstm_ae", lstm_run)
+            vdir = os.path.join(am.MODELS_DIR, "vae", vae_run)
+            l, v = am.ModelBundle.load(ldir, device=dev), am.ModelBundle.load(vdir, device=dev)
+            am.check_vae_matches_lstm(v.meta, ldir)
+            cache[key] = (l, v, ldir, vdir)
+        self.lstm_run, self.vae_run = key
+        self.lstm, self.vae, self.ldir, self.vdir = cache[key]
+
+    def upstream(self):
+        return {"lstm_run": self.lstm_run, "lstm_model_sha256": am.file_sha256(os.path.join(self.ldir, "model.pt")),
+                "vae_run": self.vae_run, "vae_model_sha256": am.file_sha256(os.path.join(self.vdir, "model.pt"))}
+
+
+SCORE_COLS = {"lstm": ("lstm_max_score", "lstm_mean_score"), "vae": ("vae_max_score", "vae_mean_score")}
+
+
+def relative_scores(st, chain, ds):
+    """Divide the stage scores by that stage's alarm line for this dataset (1.0 = on the line), so scores from
+    different LSTM / VAE models mean the same to the GAT."""
+    st = st.copy()
+    for stage, b in (("lstm", chain.lstm), ("vae", chain.vae)):
+        t = am.threshold_for(b.meta, ds)
+        for c in SCORE_COLS[stage]:
+            if c in st:
+                st[c] = st[c] / t
+    return st
+
+
+def ordered(datasets):
+    """Datasets in ACTIVE order first (so benchmark scenario seeds match earlier GAT runs), then the rest."""
+    act = [d for d in ap.ACTIVE_DATASETS if d in datasets]
+    return act + [d for d in datasets if d not in act]
+
+
 # ------------------------------------------------------------------------------------------ data
-def dataset_sequences(ds, lstm_run, vae_run, vae_latent):
+def dataset_sequences(ds, lstm_run, vae_run, vae_latent, rel_chain=None):
     """Step-3 graphs of a dataset -> {split: [sequence, ...]} with stage outputs attached."""
     gdir = os.path.join(am.PREPROCESSED, "graphs", ds)
     ln = pd.read_parquet(os.path.join(am.PREPROCESSED, "model_outputs", "lstm_ae", lstm_run, f"{ds}_node_snapshots.parquet"))
     vn = pd.read_parquet(os.path.join(am.PREPROCESSED, "model_outputs", "vae", vae_run, f"{ds}_node_snapshots.parquet"))
     ln = ln[["capture", "snapshot", "node", "lstm_max_score", "lstm_mean_score", "lstm_n_windows", "lstm_any_anomaly"]]
     st = ln.merge(vn, on=["capture", "snapshot", "node"], how="outer")
+    if rel_chain is not None:
+        st = relative_scores(st, rel_chain, ds)
     out = {"train": [], "val": [], "test": []}
     for cap in json.load(open(os.path.join(gdir, "_summary.json"))):
         E = pd.read_parquet(os.path.join(gdir, f"{cap}_edges.parquet"))
@@ -76,14 +120,20 @@ def dataset_sequences(ds, lstm_run, vae_run, vae_latent):
     return out
 
 
-def scenario_sequences(phase, datasets, lstm, vae, dev, reps, slowdowns, n_attack, vae_latent):
-    T, S_, snap = int(lstm.meta["window"]), int(lstm.meta["stride"]), float(lstm.meta["snapshot_seconds"])
-    specs = ab.scenario_specs(phase, datasets, slowdowns, reps, n_attack)
+def scenario_stage(sc, chain, ds, dev, snap, rel):
+    scored = ab.score_scenario(sc, chain.lstm, chain.vae, dev)
+    stage = ag.node_stage_table(scored, sc["info"]["t0"], snap)
+    return relative_scores(stage, chain, ds) if rel else stage
+
+
+def scenario_sequences(phase, datasets, chains, dev, reps, slowdowns, n_attack, vae_latent, rel=False):
+    specs = ab.scenario_specs(phase, ordered(datasets), slowdowns, reps, n_attack)
     seqs = []
     for i, spec in enumerate(specs, 1):
-        sc = ab.build_scenario(spec, ap.RobustScaler.from_dict(lstm.meta["scalers"][spec["dataset"]]), T, S_, snap)
-        scored = ab.score_scenario(sc, lstm, vae, dev)
-        stage = ag.node_stage_table(scored, sc["info"]["t0"], snap)
+        ch = chains[spec["dataset"]]
+        T, S_, snap = int(ch.lstm.meta["window"]), int(ch.lstm.meta["stride"]), float(ch.lstm.meta["snapshot_seconds"])
+        sc = ab.build_scenario(spec, ap.RobustScaler.from_dict(ch.lstm.meta["scalers"][spec["dataset"]]), T, S_, snap)
+        stage = scenario_stage(sc, ch, spec["dataset"], dev, snap, rel)
         info = {k: v for k, v in sc["info"].items()}
         info.update(source="benchmark", split=phase)
         seqs.append(ag.snapshot_sequence(sc["edges"], sc["nodes"], stage, vae_latent, spec["id"], info))
@@ -92,38 +142,48 @@ def scenario_sequences(phase, datasets, lstm, vae, dev, reps, slowdowns, n_attac
     return seqs
 
 
-def build_inputs(args, lstm, vae, dev, vae_latent, cache):
+def build_inputs(args, chains, dev, vae_latent, cache):
+    """Training datasets -> train / val / test; --test-datasets (networks never trained on) -> test only."""
     if os.path.exists(cache) and not args.rebuild:
         log(f"loading cached graph inputs {cache}")
         return pickle.load(open(cache, "rb"))
     data = {"train": [], "val": [], "test": [], "test_bench": []}
-    for ds in args.datasets:
-        d = dataset_sequences(ds, args.lstm_run, args.vae_run, vae_latent)
-        for k in ("train", "val", "test"):
+    rel = args.relative_scores
+    for ds in args.datasets + args.test_datasets:
+        ch = chains[ds]
+        d = dataset_sequences(ds, ch.lstm_run, ch.vae_run, vae_latent, ch if rel else None)
+        for k in (("train", "val", "test") if ds in args.datasets else ("test",)):
             data[k] += d[k]
-        log(f"[{ds}] dataset graph sequences: " + ", ".join(f"{k} {len(v)}" for k, v in d.items()))
-    data["train"] += scenario_sequences("train", args.datasets, lstm, vae, dev, 2, args.slowdowns, args.n_attack, vae_latent)
-    data["val"] += scenario_sequences("val", args.datasets, lstm, vae, dev, 1, args.slowdowns, args.n_attack, vae_latent)
-    data["test_bench"] = scenario_sequences("test", args.datasets, lstm, vae, dev, 2, args.slowdowns, args.n_attack, vae_latent)
+        if ds not in args.datasets:              # unlabelled warm-up of a new network: only its attack-free
+            data.setdefault("warm_train", []).extend(d["train"])   # snapshots are used (input scale / threshold)
+            data.setdefault("warm_val", []).extend(d["val"])
+        log(f"[{ds}] dataset graph sequences: " + ", ".join(f"{k} {len(v)}" for k, v in d.items())
+            + ("" if ds in args.datasets else "  (test only: network never trained on)"))
+    data["train"] += scenario_sequences("train", args.datasets, chains, dev, 2, args.slowdowns, args.n_attack, vae_latent, rel)
+    data["val"] += scenario_sequences("val", args.datasets, chains, dev, 1, args.slowdowns, args.n_attack, vae_latent, rel)
+    data["test_bench"] = scenario_sequences("test", args.datasets + args.test_datasets, chains, dev, 2, args.slowdowns,
+                                            args.n_attack, vae_latent, rel)
     os.makedirs(os.path.dirname(cache), exist_ok=True)
     pickle.dump(data, open(cache, "wb"), protocol=4)
     return data
 
 
-def control_inputs(args, lstm, vae, dev, vae_latent, cache):
+def control_inputs(args, chains, dev, vae_latent, cache):
     """Test-phase CONTROL scenarios: normal traffic injected exactly like an attack (aegex_bench.CONTROL_KINDS).
     Its 'involved' hosts did nothing abnormal, so the GAT should flag them only at its false-alarm rate."""
     if os.path.exists(cache) and not args.rebuild:
         return pickle.load(open(cache, "rb"))
-    T, S_, snap = int(lstm.meta["window"]), int(lstm.meta["stride"]), float(lstm.meta["snapshot_seconds"])
     seqs = []
-    for spec in ab.scenario_specs("test", args.datasets, (1,), 2, args.n_attack, controls=ab.CONTROL_KINDS, attacks=False):
+    for spec in ab.scenario_specs("test", ordered(args.datasets + args.test_datasets), (1,), 2, args.n_attack,
+                                  controls=ab.CONTROL_KINDS, attacks=False):
         if spec["attack_capture"] is None:
             continue
-        sc = ab.build_scenario(spec, ap.RobustScaler.from_dict(lstm.meta["scalers"][spec["dataset"]]), T, S_, snap)
-        scored = ab.score_scenario(sc, lstm, vae, dev)
+        ch = chains[spec["dataset"]]
+        T, S_, snap = int(ch.lstm.meta["window"]), int(ch.lstm.meta["stride"]), float(ch.lstm.meta["snapshot_seconds"])
+        sc = ab.build_scenario(spec, ap.RobustScaler.from_dict(ch.lstm.meta["scalers"][spec["dataset"]]), T, S_, snap)
         info = dict(sc["info"]); info.update(source="control", split="test")
-        seqs.append(ag.snapshot_sequence(sc["edges"], sc["nodes"], ag.node_stage_table(scored, sc["info"]["t0"], snap),
+        seqs.append(ag.snapshot_sequence(sc["edges"], sc["nodes"], scenario_stage(sc, ch, spec["dataset"], dev, snap,
+                                                                                  args.relative_scores),
                                          vae_latent, spec["id"], info))
     log(f"control scenarios: {len(seqs)}")
     pickle.dump(seqs, open(cache, "wb"), protocol=4)
@@ -158,6 +218,154 @@ def drop_holdout(data, holdout, datasets):
     return data
 
 
+def mask_edge_features(data, drop):
+    """Remove edge inputs whose name starts with one of the `drop` prefixes from every snapshot (in place).
+    Returns the edge input names the GAT sees (incl. the is_reverse flag added at run time)."""
+    base = ag.EDGE_FEATURES[:-1]                       # stored columns; is_reverse is appended by add_reverse
+    keep = [i for i, n in enumerate(base) if not any(n.startswith(p) for p in drop)]
+    if len(keep) < len(base):
+        seen = set()
+        for seqs in data.values():
+            for sq in seqs:
+                for s in sq["snaps"]:
+                    if id(s) not in seen and s["e"].shape[1] == len(base):
+                        s["e"] = s["e"][:, keep]; seen.add(id(s))
+        log(f"edge inputs: dropped {len(base) - len(keep)} ({sorted(set(base) - {base[i] for i in keep})})")
+    return [base[i] for i in keep] + ["is_reverse"]
+
+
+def _rule_candidates(seqs, blocks, vae_latent, edge_names):
+    """Per host-snapshot: the node inputs plus, for every edge input, its max and min over the host's links.
+    Returns {dataset: (matrix, y_involved)} and the candidate names."""
+    names = None
+    out = {}
+    for sq in seqs:
+        ds = sq["meta"]["dataset"]
+        for s in sq["snaps"]:
+            x = ag.select_blocks(s["x"], sq["feat_cols"], blocks, vae_latent)
+            n, ne = len(x), s["e"].shape[1]
+            mx = np.full((n, ne), -np.inf, np.float32); mn = np.full((n, ne), np.inf, np.float32)
+            if len(s["src"]):
+                for idx in (s["src"], s["dst"]):
+                    np.maximum.at(mx, idx, s["e"]); np.minimum.at(mn, idx, s["e"])
+            mx[~np.isfinite(mx)] = 0; mn[~np.isfinite(mn)] = 0
+            out.setdefault(ds, ([], []))
+            out[ds][0].append(np.concatenate([x, mx, mn], 1))
+            out[ds][1].append((s["y_node"].sum(1) > 0).astype(np.int8))
+        if names is None:
+            en = edge_names[:-1]
+            names = ag.node_feature_names(blocks, vae_latent) + [f"max link {c}" for c in en] + [f"min link {c}" for c in en]
+    return {k: (np.concatenate(v[0]), np.concatenate(v[1])) for k, v in out.items()}, names
+
+
+def rule_baseline(data, blocks, vae_latent, edge_names, fpr):
+    """The 'no model' reference for the GAT: ONE input (a host input, or the max / min of one link input over the
+    host's links), chosen per network by VAL ROC-AUC and thresholded at the val non-involved (1 - fpr) quantile,
+    then applied to the benchmark TEST. Networks without val data (test-only) use the rule chosen on all val data."""
+    V, names = _rule_candidates(data["val"], blocks, vae_latent, edge_names)
+    T, _ = _rule_candidates(data["test_bench"], blocks, vae_latent, edge_names)
+    pooled = (np.concatenate([v[0] for v in V.values()]), np.concatenate([v[1] for v in V.values()]))
+
+    def choose(X, y):
+        best = (-1, 0, 1, 0.0)
+        for j in range(X.shape[1]):
+            v = X[:, j]
+            if v.std() == 0 or y.min() == y.max():
+                continue
+            a = roc_auc_score(y, v)
+            sg = 1 if a >= 0.5 else -1
+            if max(a, 1 - a) > best[0]:
+                best = (max(a, 1 - a), j, sg, float(np.quantile(sg * v[y == 0], 1 - fpr)))
+        return best
+    res = {}
+    for ds, (X, y) in T.items():
+        src = V.get(ds) if ds in V and V[ds][1].any() else pooled
+        auc, j, sg, t = choose(*src)
+        f = sg * X[:, j] > t
+        res[ds] = {"rule": f"{'high' if sg > 0 else 'low'} {names[j]}", "val_auc": auc,
+                   "chosen_on": "own val" if src is not pooled else "all val (test-only network)",
+                   "detection": rate(f[y == 1]), "false_alarms": rate(f[y == 0])}
+    return res
+
+
+# ------------------------------------------------------------------------------------------ relative inputs
+REL_EDGE = list(ap.CONT_FEATURES) + ["log_n_flows"]      # continuous link inputs (flags / 0-1 shares kept raw)
+DEV_ALPHA, DEV_FLOOR = 0.2, 0.5
+
+
+def attack_free(seqs):
+    out = []
+    for s in seqs:
+        keep = [sn for sn in s["snaps"] if not sn["y_node"].any()]
+        if keep:
+            out.append({**s, "snaps": keep})
+    return out
+
+
+def relative_inputs(data):
+    """--relative-inputs (in place, once per sequence):
+      1. per-network scale: continuous host traffic + link inputs -> z-score with mean / std of THAT network's
+         attack-free train snapshots (training networks: their train split; test-only networks: their unlabelled
+         warm-up = own train split). Uses no test data.
+      2. deviation block: each host's traffic vs its own history in the sequence (EWMA mean / var, alpha 0.2,
+         std floor 0.5 in log units); 0 when the host has no history yet.
+    Returns the per-network stats (stored in the bundle)."""
+    ecols = list(ap.FEATURES) + ["log_n_flows"]
+    eidx = [ecols.index(c) for c in REL_EDGE]
+    seqs = list({id(s): s for v in data.values() for s in v}.values())
+    warm = {}
+    for s in seqs:
+        m = s["meta"]
+        if m.get("source") == "dataset" and m.get("split") == "train":
+            warm.setdefault(m["dataset"], []).append(s)
+    stats = {}
+    for ds, ws in warm.items():
+        ws = attack_free(ws)
+        if not ws:
+            continue
+        fc = ws[0]["feat_cols"]
+        nidx = [fc.index(c) for c in ag.NODE_DEV_BASE]
+        X = np.concatenate([sn["x"][:, nidx] for s in ws for sn in s["snaps"]])
+        E = np.concatenate([sn["e"][:, eidx] for s in ws for sn in s["snaps"] if len(sn["e"])])
+        stats[ds] = {"node_mean": X.mean(0).tolist(), "node_std": np.maximum(X.std(0), 0.1).tolist(),
+                     "edge_mean": E.mean(0).tolist(), "edge_std": np.maximum(E.std(0), 0.1).tolist(),
+                     "warmup_snapshots": int(sum(len(s["snaps"]) for s in ws))}
+        log(f"[{ds}] relative inputs: scale from {stats[ds]['warmup_snapshots']:,} attack-free train snapshots")
+    for s in seqs:
+        if s.get("relative"):
+            continue
+        ds = s["meta"]["dataset"]
+        if ds not in stats:
+            raise SystemExit(f"--relative-inputs: no attack-free train snapshots for network '{ds}'")
+        st = stats[ds]
+        nm, ns = np.asarray(st["node_mean"], np.float32), np.asarray(st["node_std"], np.float32)
+        em, es = np.asarray(st["edge_mean"], np.float32), np.asarray(st["edge_std"], np.float32)
+        fc = s["feat_cols"]
+        nidx = [fc.index(c) for c in ag.NODE_DEV_BASE]
+        H = len(s["hosts"])
+        mu, var = np.zeros((H, len(nidx)), np.float32), np.zeros((H, len(nidx)), np.float32)
+        seen = np.zeros(H, bool)
+        for sn in s["snaps"]:
+            raw = sn["x"][:, nidx].astype(np.float32)
+            h = sn["nid"]
+            old = seen[h][:, None]
+            dev = np.where(old, (raw - mu[h]) / np.sqrt(var[h] + DEV_FLOOR ** 2), 0.0).astype(np.float32)
+            d = raw - mu[h]
+            new_mu = np.where(old, mu[h] + DEV_ALPHA * d, raw)
+            new_var = np.where(old, (1 - DEV_ALPHA) * (var[h] + DEV_ALPHA * d * d), 0.0)
+            mu[h], var[h], seen[h] = new_mu, new_var, True
+            x = sn["x"].copy()
+            x[:, nidx] = (raw - nm) / ns
+            sn["x"] = np.concatenate([x, np.clip(dev, -10, 10)], 1).astype(np.float32)
+            if len(sn["e"]):
+                e = sn["e"].copy()
+                e[:, eidx] = (e[:, eidx] - em) / es
+                sn["e"] = e
+        s["feat_cols"] = list(fc) + ag.NODE_DEV
+        s["relative"] = True
+    return stats
+
+
 # ------------------------------------------------------------------------------------------ eval helpers
 def collect(model, seqs, norm, dev, blocks, vae_latent):
     """Run sequences -> node table + edge table (scores, labels, baseline flags, ids)."""
@@ -179,8 +387,10 @@ def collect(model, seqs, norm, dev, blocks, vae_latent):
                     "y_source": s["y_node"][:, 0], "y_target": s["y_node"][:, 1],
                     "baseline": ((s["x"][:, li] > 0) | (s["x"][:, vi] > 0)).astype(np.int8)}))
                 if len(s["src"]):
+                    hn = np.array(sq["hosts"], dtype=object)[s["nid"]]   # host names (used by gat_handoff.py)
                     erows.append(pd.DataFrame({"seq": sq["name"], "dataset": m["dataset"], "source": m["source"],
-                                               "snapshot": s["snapshot"], "p_edge": pe, "y_edge": s["y_edge"]}))
+                                               "snapshot": s["snapshot"], "p_edge": pe, "y_edge": s["y_edge"],
+                                               "src": hn[s["src"]], "dst": hn[s["dst"]]}))
     N = pd.concat(nrows, ignore_index=True)
     N["p_involved"] = N[["p_source", "p_target"]].max(axis=1)
     N["y_involved"] = ((N.y_source + N.y_target) > 0).astype(np.int8)
@@ -231,7 +441,7 @@ def main():
     a.add_argument("--vae-run", default="vae_v5")
     a.add_argument("--run", default="gat_v1")
     a.add_argument("--datasets", nargs="+", default=ap.ACTIVE_DATASETS)
-    a.add_argument("--node-blocks", nargs="+", default=list(ag.NODE_BLOCKS), choices=ag.NODE_BLOCKS)
+    a.add_argument("--node-blocks", nargs="+", default=list(ag.NODE_BLOCKS), choices=ag.ALL_NODE_BLOCKS)
     a.add_argument("--hidden", type=int, default=64)
     a.add_argument("--heads", type=int, default=4)
     a.add_argument("--layers", type=int, default=2)
@@ -248,17 +458,47 @@ def main():
     a.add_argument("--eval-only", action="store_true", help="load models/gat/<run> and only evaluate")
     a.add_argument("--device", default="auto")
     a.add_argument("--seed", type=int, default=0)
+    a.add_argument("--drop-edge-features", nargs="*", default=[], metavar="PREFIX",
+                   help="leave these edge inputs out (name prefixes, e.g. svc_ = port/service identity)")
+    a.add_argument("--chain", nargs="*", default=[], metavar="DS=LSTM_RUN:VAE_RUN",
+                   help="per-dataset LSTM-AE + VAE runs (others use --lstm-run / --vae-run)")
+    a.add_argument("--test-datasets", nargs="*", default=[],
+                   help="networks used ONLY for testing (never trained on; they get the pooled threshold)")
+    a.add_argument("--relative-scores", action="store_true",
+                   help="feed stage scores as score / that stage's alarm line (needed when chains differ)")
+    a.add_argument("--relative-inputs", action="store_true",
+                   help="per-network standardised traffic / link inputs (stats from the network's own attack-free "
+                        "train snapshots) + 'deviation' node block (each host vs its own history)")
+    a.add_argument("--inputs-tag", default=None, help="cache name for the graph inputs (default <lstm>__<vae>)")
     args = a.parse_args()
     torch.manual_seed(args.seed); rng = np.random.default_rng(args.seed)
     dev = am.pick_device(args.device)
-    ldir = os.path.join(am.MODELS_DIR, "lstm_ae", args.lstm_run)
-    vdir = os.path.join(am.MODELS_DIR, "vae", args.vae_run)
-    lstm, vae = am.ModelBundle.load(ldir, device=dev), am.ModelBundle.load(vdir, device=dev)
-    am.check_vae_matches_lstm(vae.meta, ldir)
-    vae_latent = int(vae.meta["init"]["latent"])
-    cache = os.path.join(am.PREPROCESSED, "gat_inputs", f"{args.lstm_run}__{args.vae_run}.pkl")
-    data = build_inputs(args, lstm, vae, dev, vae_latent, cache)
-    data["test_control"] = control_inputs(args, lstm, vae, dev, vae_latent, cache.replace(".pkl", "__controls.pkl"))
+    pairs = {ds: (args.lstm_run, args.vae_run) for ds in args.datasets + args.test_datasets}
+    for c in args.chain:
+        ds, _, runs = c.partition("=")
+        pairs[ds] = tuple(runs.split(":"))
+    loaded = {}
+    chains = {ds: Chain(l, v, dev, loaded) for ds, (l, v) in pairs.items()}
+    lat = {int(ch.vae.meta["init"]["latent"]) for ch in chains.values()}
+    if len(lat) != 1:
+        raise SystemExit(f"all VAEs must have the same latent size, got {lat}")
+    vae_latent = lat.pop()
+    if len(loaded) > 1 and "latent" in args.node_blocks:
+        log("WARNING: VAE latents of different VAEs are not comparable; consider --node-blocks traffic stage")
+    args.lstm_run = "+".join(sorted({c.lstm_run for c in chains.values()})) if len(loaded) > 1 else args.lstm_run
+    args.vae_run = "+".join(sorted({c.vae_run for c in chains.values()})) if len(loaded) > 1 else args.vae_run
+    tag = args.inputs_tag or f"{args.lstm_run}__{args.vae_run}"
+    cache = os.path.join(am.PREPROCESSED, "gat_inputs", f"{tag}.pkl")
+    data = build_inputs(args, chains, dev, vae_latent, cache)
+    data["test_control"] = control_inputs(args, chains, dev, vae_latent, cache.replace(".pkl", "__controls.pkl"))
+    args.chains = chains
+    if "deviation" in args.node_blocks and not args.relative_inputs:
+        raise SystemExit("--node-blocks deviation needs --relative-inputs")
+    args.rel_stats = relative_inputs(data) if args.relative_inputs else None
+    if args.eval_only:       # an evaluated bundle decides which edge inputs exist
+        args.drop_edge_features = am.ModelBundle.load(os.path.join(am.MODELS_DIR, "gat", args.run), device="cpu") \
+            .meta.get("dropped_edge_features", [])
+    args.edge_names = mask_edge_features(data, args.drop_edge_features)
     if args.holdout:
         data = drop_holdout(data, args.holdout, args.datasets)
     for k, v in data.items():
@@ -277,11 +517,12 @@ def main():
         ethr, hist = meta["edge_thresholds"], meta["history"]
         log(f"eval-only: loaded {bdir}")
     else:
-        model, meta, norm, thr, ethr, hist = train(args, data, blocks, vae_latent, dev, rng, ldir, vdir, lstm, bdir)
+        model, meta, norm, thr, ethr, hist = train(args, data, blocks, vae_latent, dev, rng, bdir)
     evaluate(args, model, data, norm, thr, ethr, hist, blocks, vae_latent, dev)
 
 
-def train(args, data, blocks, vae_latent, dev, rng, ldir, vdir, lstm, bdir):
+def train(args, data, blocks, vae_latent, dev, rng, bdir):
+    lstm = next(iter(args.chains.values())).lstm
     # ---------------------------------------------------------------- normalisation (train only)
     X = np.concatenate([ag.select_blocks(sn["x"], s["feat_cols"], blocks, vae_latent) for s in data["train"] for sn in s["snaps"]])
     Ef = np.concatenate([sn["e"] for s in data["train"] for sn in s["snaps"] if len(sn["e"])])
@@ -304,7 +545,7 @@ def train(args, data, blocks, vae_latent, dev, rng, ldir, vdir, lstm, bdir):
         return l
 
     # ---------------------------------------------------------------- train
-    model = ag.TemporalGAT(len(ag.node_feature_names(blocks, vae_latent)), len(ag.EDGE_FEATURES), args.hidden,
+    model = ag.TemporalGAT(len(ag.node_feature_names(blocks, vae_latent)), len(args.edge_names), args.hidden,
                            args.heads, args.layers, args.dropout).to(dev)
     opt = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
     best, best_state, bad, hist = -np.inf, None, 0, []
@@ -339,15 +580,19 @@ def train(args, data, blocks, vae_latent, dev, rng, ldir, vdir, lstm, bdir):
 
     meta = {"bundle_format": am.BUNDLE_FORMAT, "model_type": "temporal_gat", "run": args.run, "created": am.now_iso(),
             "torch": torch.__version__,
-            "init": {"n_node": len(ag.node_feature_names(blocks, vae_latent)), "n_edge": len(ag.EDGE_FEATURES),
+            "init": {"n_node": len(ag.node_feature_names(blocks, vae_latent)), "n_edge": len(args.edge_names),
                      "hidden": args.hidden, "heads": args.heads, "layers": args.layers, "dropout": args.dropout},
-            "node_blocks": blocks, "node_features": ag.node_feature_names(blocks, vae_latent), "edge_features": ag.EDGE_FEATURES,
+            "node_blocks": blocks, "node_features": ag.node_feature_names(blocks, vae_latent), "edge_features": args.edge_names, "dropped_edge_features": args.drop_edge_features,
             "vae_latent": vae_latent, "norm": {"node_mean": nmean.tolist(), "node_std": nstd.tolist(),
                                                "edge_mean": emean.tolist(), "edge_std": estd.tolist()},
             "threshold": thr["_all"], "threshold_mode": "per_dataset", "per_dataset_thresholds": {k: v for k, v in thr.items() if k != "_all"},
             "edge_thresholds": ethr, "snapshot_seconds": float(lstm.meta["snapshot_seconds"]),
-            "upstream": {"lstm_run": args.lstm_run, "lstm_model_sha256": am.file_sha256(os.path.join(ldir, "model.pt")),
-                         "vae_run": args.vae_run, "vae_model_sha256": am.file_sha256(os.path.join(vdir, "model.pt"))},
+            "upstream": ({**next(iter(args.chains.values())).upstream()}
+                         if len({(c.lstm_run, c.vae_run) for c in args.chains.values()}) == 1 else
+                         {"lstm_run": args.lstm_run, "vae_run": args.vae_run, "per_dataset": True}),
+            "upstream_per_dataset": {ds: c.upstream() for ds, c in args.chains.items()},
+            "relative_scores": bool(args.relative_scores), "test_only_datasets": args.test_datasets,
+            "relative_inputs": args.rel_stats,
             "pipeline": am.pipeline_fingerprint(), "history": hist, "train_datasets": args.datasets,
             "hparams": {"lr": args.lr, "chunk": args.chunk, "seed": args.seed, "fpr": args.fpr},
             "holdout_attack": args.holdout}
@@ -367,11 +612,24 @@ def evaluate(args, model, data, norm, thr, ethr, hist, blocks, vae_latent, dev):
         ap.write_parquet(Nx, os.path.join(odir, f"{nm}_nodes.parquet"))
     lines = [f"Temporal GAT '{args.run}' on LSTM-AE '{args.lstm_run}' + VAE '{args.vae_run}' | node inputs {blocks}",
              "threshold per dataset = 99th pct of NON-involved host scores on VAL data (no test data used)",
+             f"trained on {args.datasets}; test-only networks (never trained on, pooled threshold): {args.test_datasets or 'none'}",
+             "stage scores fed as score / alarm line" if args.relative_scores else "stage scores fed raw",
              "involved = host is attack source or target in the 60 s snapshot; 'base' = stage-1/2 baseline: host has",
              "a flagged LSTM-AE or VAE window in the snapshot. FA = flagged share of non-involved host-snapshots.", ""]
     L1, r1 = node_report(Nb, thr, "REALISTIC BENCHMARK (test scenarios: attacks injected into normal traffic)")
     L2, r2 = node_report(Nt, thr, "DATASET TEST SPLITS (original captures; Edge attacks are separate attack-only files)")
-    lines += L1 + [""] + L2 + [""]
+    lines += L1 + [""]
+    rules = rule_baseline(data, blocks, vae_latent, args.edge_names, args.fpr)
+    lines.append("ONE-INPUT RULE vs GAT (benchmark test; rule = best single GAT input, chosen + thresholded on VAL only).")
+    lines.append("The GAT only counts for what it adds above this rule.")
+    if args.drop_edge_features:
+        lines.append(f"edge inputs left out of the GAT and the rule: {args.drop_edge_features}")
+    for ds, r in rules.items():
+        g = r1.get(ds, {})
+        lines.append(f"  {ds:9s} rule det {r['detection']:6.1%} FA {r['false_alarms']:6.2%} | GAT det "
+                     f"{g.get('gat_detection', float('nan')):6.1%} FA {g.get('gat_false_alarms', float('nan')):6.2%} | "
+                     f"rule = {r['rule']} (val AUC {r['val_auc']:.3f}, {r['chosen_on']})")
+    lines += [""] + L2 + [""]
     # incidents (benchmark): any alert on an involved host during the attack
     inc = []
     for seq, g in Nb[Nb.attack.notna()].groupby("seq"):
@@ -411,12 +669,38 @@ def evaluate(args, model, data, norm, thr, ethr, hist, blocks, vae_latent, dev):
             lines.append(f"  {ds:8s} {att:20s} {len(inv):6,} injected host-snapshots | GAT {rate(inv.p_involved >= t):6.1%} "
                          f"(other hosts {rate(oth.p_involved >= t):5.2%}) | baseline {rate(inv.baseline == 1):6.1%} "
                          f"(other hosts {rate(oth.baseline == 1):5.2%})")
+    warm_rows = {}
+    if args.test_datasets and data.get("warm_val"):
+        lines += ["", "TEST-ONLY NETWORKS, OWN WARM-UP THRESHOLD (99th pct of host scores in the network's attack-free",
+                  "val snapshots; no attack labels needed in a deployment) instead of the pooled threshold above:"]
+        Nw, _ = collect(model, attack_free(data["warm_val"]), norm, dev, blocks, vae_latent)
+        for ds in args.test_datasets:
+            w = Nw[Nw.dataset == ds]
+            if len(w) < 20:
+                lines.append(f"  {ds:8s} too few warm-up host-snapshots ({len(w)})")
+                continue
+            t = float(np.quantile(w.p_involved, 1 - args.fpr))
+            _, rr = node_report(Nb[Nb.dataset == ds], {"_all": t}, "")
+            _, rt = node_report(Nt[Nt.dataset == ds], {"_all": t}, "")
+            B, T = rr.get(ds, {}), rt.get(ds, {})
+            ci = co = float("nan")
+            if data.get("test_control") and (Nc.dataset == ds).any():
+                g = Nc[Nc.dataset == ds]
+                ci, co = rate(g[g.y_involved == 1].p_involved >= t), rate(g[g.y_involved == 0].p_involved >= t)
+            warm_rows[ds] = {"threshold": t, "warmup_host_snapshots": int(len(w)), "benchmark": B, "dataset_test": T,
+                             "control_injected": ci, "control_other": co}
+            lines.append(f"  {ds:8s} thr {t:.4f} ({len(w):,} warm-up host-snapshots) | bench det "
+                         f"{B.get('gat_detection', np.nan):6.1%} FA {B.get('gat_false_alarms', np.nan):6.2%} "
+                         f"ROC-AUC {B.get('roc_auc', np.nan):.4f} | split det {T.get('gat_detection', np.nan):6.1%} "
+                         f"FA {T.get('gat_false_alarms', np.nan):6.2%} | controls injected {ci:6.1%} other {co:6.2%}")
     if args.holdout:
         lines.insert(0, f"HOLDOUT RUN: attack class '{args.holdout}' was removed from train + val -> its test rows are UNSEEN attacks")
     text = "\n".join(lines) + "\n"
     open(os.path.join(rdir, "evaluation.txt"), "w", encoding="utf-8").write(text)
     json.dump({"thresholds": thr, "edge_thresholds": ethr, "benchmark": r1, "dataset_test": r2, "history": hist,
+               "one_input_rule": rules, "dropped_edge_features": args.drop_edge_features,
                "controls": ctrl, "holdout": args.holdout,
+               "test_only_own_threshold": warm_rows, "relative_inputs": bool(args.relative_inputs),
                "incidents": I.groupby("dataset")[["gat", "baseline"]].mean().to_dict() if len(I) else {}},
               open(os.path.join(rdir, "metrics.json"), "w"), indent=1, default=float)
     print(text)
