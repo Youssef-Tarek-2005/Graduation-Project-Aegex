@@ -213,7 +213,7 @@ docker exec aegex-db psql -U aegex -d aegex_poc -c "SELECT timescaledb_post_rest
 `pg_dump` prints warnings about "circular foreign-key constraints": that's normal for TimescaleDB and harmless.
 Stop the API before restoring (the `WITH (FORCE)` would cut its connections anyway).
 
-## 6c. Run the AI models on a recording (LSTM-AE + VAE)
+## 6c. Run the AI models on a recording (LSTM-AE + VAE, and the temporal GAT)
 
 The AI team's models live in `ai-models/lstm-vae-gat/`. `detect.py` is the connection: it runs their own script
 on a recording and saves what they flag in the `alerts` table.
@@ -231,6 +231,20 @@ here (about 1% of normal windows will still alarm, by design). The alerts then a
 recording (port scan + HTTP flood from `192.168.137.50`) into `pcaps\`. On 2026-11-25:
 `python -m detect pcaps\poc-attack.pcap --normal pcaps\poc-normal.pcap` took 4 s and gave 100 alerts: 99 on the
 attacker `192.168.137.50`, 1 false alarm on the phone. The normal recording alone gave 1 alert in 33 windows.
+
+**Add the temporal GAT with `--gat`** (`gat_v5`, added by the AI team on 2026-11-27):
+
+```powershell
+.venv/Scripts/python -m detect pcaps\poc-attack.pcap --normal pcaps\poc-normal.pcap --gat
+```
+
+The GAT gives one alert per **incident** (an attack source and the hosts it reached), saved with
+`model_name = temporal_gat` next to the LSTM-AE / VAE alerts. Its attack type comes from a behaviour rule on the
+flagged links, not from the GAT. The GAT never trained on our network, so it uses a pooled threshold and warns
+that it may raise false alarms: treat it as a second opinion. On 2026-11-27 the test recording gave 5 GAT
+incidents: 2 on the attacker `192.168.137.50` (the scan at 11:04, as `vulnerability_scanning`, and the flood at
+11:09), plus 3 false alarms (twice the phone `.20`, once the ESP32). The dashboard's **AI alerts** page shows both
+kinds, with a model filter.
 
 ## 7. Test it all without the hardware
 

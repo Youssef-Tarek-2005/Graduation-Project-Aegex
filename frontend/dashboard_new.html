@@ -534,17 +534,22 @@ footer input {
       </section>
     </section>
 
-    <!-- VIEW 3b: AI alerts (LSTM-AE + VAE, saved by python -m detect) -->
+    <!-- VIEW 3b: AI alerts (LSTM-AE + VAE + temporal GAT, saved by python -m detect [--gat]) -->
     <section id="v-ai" class="page-view">
       <section class="kpis" id="aiCards"></section>
       <section class="card">
         <div class="head" style="flex-wrap:wrap">
           <div>
             <div class="lbl">AI model alerts</div>
-            <div class="sub" id="aiSub">LSTM-AE + VAE alerts, one per suspicious window of one device</div>
+            <div class="sub" id="aiSub">LSTM-AE + VAE: one alert per suspicious window of one device. Temporal GAT: one alert per incident (an attack source and the hosts it reached).</div>
           </div>
           <div style="display:flex;gap:8px">
             <select id="aiCap" title="Which scored recording to show"><option value="">All recordings</option></select>
+            <select id="aiModel" title="Which model's alerts to show">
+              <option value="">All models</option>
+              <option value="window">LSTM-AE + VAE</option>
+              <option value="temporal_gat">Temporal GAT</option>
+            </select>
             <select id="aiSev">
               <option value="low">All severities</option>
               <option value="medium">Medium and above</option>
@@ -555,7 +560,7 @@ footer input {
         </div>
         <div class="scroll" style="max-height: 500px;">
           <table>
-            <thead><tr><th>Window start</th><th>Severity</th><th>Device / IP</th><th>Model</th><th>Score</th><th>Closest attack type</th><th>Most unusual features</th></tr></thead>
+            <thead><tr><th>Window start</th><th>Severity</th><th>Device / IP</th><th>Model</th><th>Score</th><th>Attack type</th><th>Details</th></tr></thead>
             <tbody id="aiRows"></tbody>
           </table>
           <div class="empty" id="aiEmpty" style="display:none">No AI alerts yet</div>
@@ -751,7 +756,11 @@ async function loadAlerts() {
   const params = new URLSearchParams({ order: "desc", limit: 1000, min_severity: $("#aiSev").value });
   if ($("#aiCap").value) params.set("capture", $("#aiCap").value);
   let alerts;
-  try { alerts = (await get("/api/v1/alerts?" + params)).items; }
+  const model = $("#aiModel").value;
+  try {
+    alerts = (await get("/api/v1/alerts?" + params)).items
+      .filter(a => !model || (model === "temporal_gat" ? a.model_name === "temporal_gat" : a.model_name !== "temporal_gat"));
+  }
   catch (e) {
     $("#aiRows").replaceChildren(); $("#aiCards").replaceChildren();
     $("#aiEmpty").textContent = "Could not load the AI alerts: " + e.message; $("#aiEmpty").style.display = "block";
@@ -777,7 +786,8 @@ async function loadAlerts() {
     const d = document.createElement("div"); d.className = "delta"; d.textContent = sub;
     c.append(l, v, d); box.appendChild(c);
   };
-  add("AI alerts", alerts.length.toLocaleString(), "suspicious windows");
+  const gatCount = alerts.filter(a => a.model_name === "temporal_gat").length;
+  add("AI alerts", alerts.length.toLocaleString(), `${(alerts.length - gatCount).toLocaleString()} windows (LSTM-AE + VAE), ${gatCount} GAT incidents`);
   add("High or critical", alerts.filter(a => a.severity === "high" || a.severity === "critical").length.toLocaleString(), "score 3+ times the alarm line");
   add("Devices / IPs flagged", Object.keys(who).length.toLocaleString(), "distinct sources");
   add("Most flagged", top ? top[0] : "-", top ? `${top[1]} alerts` : "no alerts");
@@ -792,15 +802,22 @@ async function loadAlerts() {
     td(new Date(a.window_start).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" }));
     td("").appendChild(sevPill(a.severity));
     td(a.device_id || a.entity_id);
-    td(a.model_name === "lstm_ae" ? "LSTM-AE" : a.model_name === "vae" ? "VAE" : a.model_name);
+    const gat = a.model_name === "temporal_gat";
+    td(a.model_name === "lstm_ae" ? "LSTM-AE" : a.model_name === "vae" ? "VAE" : gat ? "Temporal GAT" : a.model_name);
     td(Number(a.score).toFixed(2));
-    td(nice(ev.closest_known_class ?? "-") + (ev.zero_day_candidate ? " (unknown pattern)" : ""));
-    td(String(ev.worst_features || "-").replace(/,/g, ", "), "det");
+    if (gat) {   // the GAT finds the attack source; the attack type comes from a behaviour rule on its links
+      td(nice(a.predicted_scenario || "-"));
+      td(`reached: ${(ev.targets || []).join(", ") || "-"}. ${ev.verdict || ""}`, "det");
+    } else {
+      td(nice(ev.closest_known_class ?? "-") + (ev.zero_day_candidate ? " (unknown pattern)" : ""));
+      td("unusual: " + String(ev.worst_features || "-").replace(/,/g, ", "), "det");
+    }
     body.appendChild(tr);
   });
 }
 $("#aiCap").addEventListener("change", loadAlerts);
 $("#aiSev").addEventListener("change", loadAlerts);
+$("#aiModel").addEventListener("change", loadAlerts);
 
 async function searchKb() {
   const q = $("#kbq").value.trim(), box = $("#kbres"); box.replaceChildren();
