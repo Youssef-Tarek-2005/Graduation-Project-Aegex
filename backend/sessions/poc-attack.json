@@ -1,0 +1,15 @@
+{
+  "_about": "The PoC test recording (make it first: python -m demo.make_poc_pcaps). The second laptop (.50) port-scans the ESP32-S3 at 11:05 and floods it at 11:10. Into aegex_poc: rules + AI models + GAT, then python -m evaluate --capture poc-attack --db aegex_poc",
+  "capture": {
+    "id": "poc-attack",
+    "start": "2026-11-25T11:00:00Z",
+    "end": "2026-11-25T11:16:00Z",
+    "kind": "attack",
+    "notes": "PoC test recording (demo.make_poc_pcaps): normal hotspot traffic + port scan 11:05 + HTTP flood 11:10 from 192.168.137.50"
+  },
+  "pcap": "../pcaps/poc-attack.pcap",
+  "attack_log": "poc-attack-log.csv",
+  "features": true,
+  "correlate": true,
+  "detect": {"normal": "../pcaps/poc-normal.pcap", "gat": true}
+}

@@ -1,0 +1,361 @@
+[
+ {
+  "capture": "ds-kitsune-mirai",
+  "kind": "mixed",
+  "dataset": "kitsune",
+  "notes": "Kitsune / mirai: public dataset, all 50,032 connections (datasets.to_unified)",
+  "scored_from": "2018-10-25T06:58:00+00:00",
+  "flows": 27966,
+  "attack_flows": 13104,
+  "detectors": {
+   "Rule baseline": {
+    "alerts": 1,
+    "flow": {
+     "tp": 13099,
+     "fp": 2417,
+     "fn": 5,
+     "tn": 12445,
+     "precision": 0.8442,
+     "recall": 0.9996,
+     "f1": 0.9154,
+     "false_alarm_rate": 0.1626
+    },
+    "attacker": {
+     "attackers": 2,
+     "attackers_found": 1,
+     "attackers_missed": [
+      "192.168.2.107"
+     ],
+     "normal_hosts": 292,
+     "normal_hosts_flagged": 0,
+     "flagged_normal": [],
+     "time_to_detect_s": {
+      "192.168.2.110": 70.9
+     }
+    }
+   },
+   "LSTM-AE": {
+    "alerts": 187,
+    "flow": {
+     "tp": 7465,
+     "fp": 1401,
+     "fn": 5639,
+     "tn": 13461,
+     "precision": 0.842,
+     "recall": 0.5697,
+     "f1": 0.6796,
+     "false_alarm_rate": 0.0943
+    },
+    "attacker": {
+     "attackers": 2,
+     "attackers_found": 1,
+     "attackers_missed": [
+      "192.168.2.107"
+     ],
+     "normal_hosts": 292,
+     "normal_hosts_flagged": 2,
+     "flagged_normal": [
+      "192.168.2.101",
+      "192.168.2.126"
+     ],
+     "time_to_detect_s": {
+      "192.168.2.110": 83.4
+     }
+    }
+   },
+   "VAE": {
+    "alerts": 707,
+    "flow": {
+     "tp": 12359,
+     "fp": 2986,
+     "fn": 745,
+     "tn": 11876,
+     "precision": 0.8054,
+     "recall": 0.9431,
+     "f1": 0.8689,
+     "false_alarm_rate": 0.2009
+    },
+    "attacker": {
+     "attackers": 2,
+     "attackers_found": 1,
+     "attackers_missed": [
+      "192.168.2.107"
+     ],
+     "normal_hosts": 292,
+     "normal_hosts_flagged": 1,
+     "flagged_normal": [
+      "192.168.2.115"
+     ],
+     "time_to_detect_s": {
+      "192.168.2.110": 94.4
+     }
+    }
+   },
+   "LSTM-AE + VAE": {
+    "alerts": 744,
+    "flow": {
+     "tp": 12884,
+     "fp": 3180,
+     "fn": 220,
+     "tn": 11682,
+     "precision": 0.802,
+     "recall": 0.9832,
+     "f1": 0.8834,
+     "false_alarm_rate": 0.214
+    },
+    "attacker": {
+     "attackers": 2,
+     "attackers_found": 1,
+     "attackers_missed": [
+      "192.168.2.107"
+     ],
+     "normal_hosts": 292,
+     "normal_hosts_flagged": 3,
+     "flagged_normal": [
+      "192.168.2.101",
+      "192.168.2.115",
+      "192.168.2.126"
+     ],
+     "time_to_detect_s": {
+      "192.168.2.110": 83.4
+     }
+    }
+   },
+   "Temporal GAT": {
+    "alerts": 16,
+    "flow": {
+     "tp": 13102,
+     "fp": 10097,
+     "fn": 2,
+     "tn": 4765,
+     "precision": 0.5648,
+     "recall": 0.9998,
+     "f1": 0.7218,
+     "false_alarm_rate": 0.6794
+    },
+    "attacker": {
+     "attackers": 2,
+     "attackers_found": 2,
+     "attackers_missed": [],
+     "normal_hosts": 292,
+     "normal_hosts_flagged": 8,
+     "flagged_normal": [
+      "192.168.2.1",
+      "192.168.2.101",
+      "192.168.2.108",
+      "192.168.2.109",
+      "192.168.2.112",
+      "192.168.2.113",
+      "192.168.2.115",
+      "192.168.2.121"
+     ],
+     "time_to_detect_s": {
+      "192.168.2.107": 0.0,
+      "192.168.2.110": 0.0
+     }
+    }
+   },
+   "Any detector": {
+    "alerts": 761,
+    "flow": {
+     "tp": 13102,
+     "fp": 10833,
+     "fn": 2,
+     "tn": 4029,
+     "precision": 0.5474,
+     "recall": 0.9998,
+     "f1": 0.7075,
+     "false_alarm_rate": 0.7289
+    },
+    "attacker": {
+     "attackers": 2,
+     "attackers_found": 2,
+     "attackers_missed": [],
+     "normal_hosts": 292,
+     "normal_hosts_flagged": 9,
+     "flagged_normal": [
+      "192.168.2.1",
+      "192.168.2.101",
+      "192.168.2.108",
+      "192.168.2.109",
+      "192.168.2.112",
+      "192.168.2.113",
+      "192.168.2.115",
+      "192.168.2.121",
+      "192.168.2.126"
+     ],
+     "time_to_detect_s": {
+      "192.168.2.107": 0.0,
+      "192.168.2.110": 0.0
+     }
+    }
+   }
+  }
+ },
+ {
+  "capture": "poc-attack",
+  "kind": "attack",
+  "dataset": null,
+  "notes": "PoC test recording (demo.make_poc_pcaps): normal hotspot traffic + port scan 11:05 + HTTP flood 11:10 from 192.168.137.50",
+  "flows": 1866,
+  "attack_flows": 1599,
+  "detectors": {
+   "Rule baseline": {
+    "alerts": 2,
+    "flow": {
+     "tp": 1599,
+     "fp": 0,
+     "fn": 0,
+     "tn": 267,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "false_alarm_rate": 0.0
+    },
+    "attacker": {
+     "attackers": 1,
+     "attackers_found": 1,
+     "attackers_missed": [],
+     "normal_hosts": 3,
+     "normal_hosts_flagged": 0,
+     "flagged_normal": [],
+     "time_to_detect_s": {
+      "192.168.137.50": 0.0
+     }
+    }
+   },
+   "LSTM-AE": {
+    "alerts": 100,
+    "flow": {
+     "tp": 1599,
+     "fp": 32,
+     "fn": 0,
+     "tn": 235,
+     "precision": 0.9804,
+     "recall": 1.0,
+     "f1": 0.9901,
+     "false_alarm_rate": 0.1199
+    },
+    "attacker": {
+     "attackers": 1,
+     "attackers_found": 1,
+     "attackers_missed": [],
+     "normal_hosts": 3,
+     "normal_hosts_flagged": 1,
+     "flagged_normal": [
+      "192.168.137.20"
+     ],
+     "time_to_detect_s": {
+      "192.168.137.50": 0.0
+     }
+    }
+   },
+   "VAE": {
+    "alerts": 100,
+    "flow": {
+     "tp": 1599,
+     "fp": 32,
+     "fn": 0,
+     "tn": 235,
+     "precision": 0.9804,
+     "recall": 1.0,
+     "f1": 0.9901,
+     "false_alarm_rate": 0.1199
+    },
+    "attacker": {
+     "attackers": 1,
+     "attackers_found": 1,
+     "attackers_missed": [],
+     "normal_hosts": 3,
+     "normal_hosts_flagged": 1,
+     "flagged_normal": [
+      "192.168.137.20"
+     ],
+     "time_to_detect_s": {
+      "192.168.137.50": 0.0
+     }
+    }
+   },
+   "LSTM-AE + VAE": {
+    "alerts": 100,
+    "flow": {
+     "tp": 1599,
+     "fp": 32,
+     "fn": 0,
+     "tn": 235,
+     "precision": 0.9804,
+     "recall": 1.0,
+     "f1": 0.9901,
+     "false_alarm_rate": 0.1199
+    },
+    "attacker": {
+     "attackers": 1,
+     "attackers_found": 1,
+     "attackers_missed": [],
+     "normal_hosts": 3,
+     "normal_hosts_flagged": 1,
+     "flagged_normal": [
+      "192.168.137.20"
+     ],
+     "time_to_detect_s": {
+      "192.168.137.50": 0.0
+     }
+    }
+   },
+   "Temporal GAT": {
+    "alerts": 5,
+    "flow": {
+     "tp": 1599,
+     "fp": 37,
+     "fn": 0,
+     "tn": 230,
+     "precision": 0.9774,
+     "recall": 1.0,
+     "f1": 0.9886,
+     "false_alarm_rate": 0.1386
+    },
+    "attacker": {
+     "attackers": 1,
+     "attackers_found": 1,
+     "attackers_missed": [],
+     "normal_hosts": 3,
+     "normal_hosts_flagged": 2,
+     "flagged_normal": [
+      "192.168.137.20",
+      "192.168.137.57"
+     ],
+     "time_to_detect_s": {
+      "192.168.137.50": 0.0
+     }
+    }
+   },
+   "Any detector": {
+    "alerts": 107,
+    "flow": {
+     "tp": 1599,
+     "fp": 60,
+     "fn": 0,
+     "tn": 207,
+     "precision": 0.9638,
+     "recall": 1.0,
+     "f1": 0.9816,
+     "false_alarm_rate": 0.2247
+    },
+    "attacker": {
+     "attackers": 1,
+     "attackers_found": 1,
+     "attackers_missed": [],
+     "normal_hosts": 3,
+     "normal_hosts_flagged": 2,
+     "flagged_normal": [
+      "192.168.137.20",
+      "192.168.137.57"
+     ],
+     "time_to_detect_s": {
+      "192.168.137.50": 0.0
+     }
+    }
+   }
+  }
+ }
+]

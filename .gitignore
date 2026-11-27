@@ -19,3 +19,6 @@ backend/pipeline_runs/
 
 # Step 4 database backups (python -m ingest.datastore backup): large, local only
 backend/backups/
+
+# Step 6 replay ground-truth files (python -m demo.replay): generated
+backend/replays/

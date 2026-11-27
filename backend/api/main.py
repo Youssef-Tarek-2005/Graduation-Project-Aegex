@@ -16,7 +16,7 @@ from psycopg_pool import PoolTimeout
 
 from ingest.event import CONTRACT
 
-from . import db, ingest, lab, read, stats
+from . import db, ingest, lab, operations, read, stats
 from .schemas import Health
 
 DESCRIPTION = """
@@ -46,7 +46,11 @@ app = FastAPI(title="AEGEX backend", version=CONTRACT["feature_version"], descri
                             {"name": "Features (for the models)", "description": "Window features and graph "
                              "edges for C and D. Not scaled: apply the step 9 scalers."},
                             {"name": "Dashboard", "description": "Counts and chart-ready series for "
-                             "frontend/dashboard.html."}])
+                             "frontend/dashboard.html."},
+                            {"name": "Datasets", "description": "The public IoT dataset catalogue and what is "
+                             "loaded (8-step plan, steps 1-2)."},
+                            {"name": "Pipeline", "description": "Run reports of the one-command pipeline (step 3)."},
+                            {"name": "Datastore", "description": "Size and compression of the database (step 4)."}])
 
 # The dashboard is a plain HTML file in the browser; this lets it call the API. (Step 12 adds the API key.)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST", "PATCH"], allow_headers=["*"])
@@ -55,6 +59,7 @@ app.include_router(ingest.router)
 app.include_router(lab.router)
 app.include_router(read.router)
 app.include_router(stats.router)
+app.include_router(operations.router)
 
 
 @app.exception_handler(PoolTimeout)

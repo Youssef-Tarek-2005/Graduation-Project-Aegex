@@ -212,6 +212,7 @@ class CaptureRow(BaseModel):
     kind: str
     pcap_path: str | None
     notes: str | None
+    dataset: str | None = Field(None, description="public dataset id (datasets/sources.json); null = our honeypot")
 
 
 class AttackRunOut(BaseModel):
@@ -272,6 +273,94 @@ class FlowOut(BaseModel):
     run_id: str | None
     feature_version: str | None
     features: dict[str, float] | None = Field(None, description="only with ?include_features=true")
+    fwd_flags: int | None = Field(None, description="TCP flags of the originator, OR-ed: FIN=1 SYN=2 RST=4 PSH=8 "
+                                                    "ACK=16 URG=32 (contract 2.1)")
+    bwd_flags: int | None = Field(None, description="TCP flags of the responder")
+    attack_class: str | None = Field(None, description="benign | scanning | ddos | mirai | ransomware | other "
+                                                       "(public datasets; null for honeypot flows)")
+    label_info: dict[str, Any] | None = Field(None, description="where a dataset label came from: original_label, "
+                                                               "label_note, campaign, mal_frac")
+
+
+# ------------------------------------------------------------------------------------------- Step 5: operations
+class DatasetLoaded(BaseModel):
+    captures: int = Field(description="captures of this dataset in the database the API reads")
+    flows: int
+    attack_flows: int
+
+
+class DatasetOut(BaseModel):
+    id: str
+    name: str
+    host: str = Field(description="kaggle or zenodo")
+    url: str
+    download_bytes: int | None = Field(description="size of the original files the AI team used")
+    label_method: str
+    used_by_models: list[str]
+    loaded: DatasetLoaded
+    measured: dict[str, Any] | None = Field(description="Step 1 analysis totals (datasets/report), if it ran")
+
+
+class DatasetCaptureOut(BaseModel):
+    capture_id: str
+    kind: str
+    start_ts: datetime
+    end_ts: datetime | None
+    notes: str | None
+    flows: int
+    attack_flows: int
+    classes: dict[str, int] = Field(description="flows per attack_class")
+
+
+class DatasetDetail(DatasetOut):
+    captures: list[DatasetCaptureOut]
+    caveats: list[str]
+
+
+class PipelineStageOut(BaseModel):
+    name: str
+    status: str = Field(description="PASS | WARN | FAIL | SKIP")
+    counts: dict[str, Any]
+    lines: list[str]
+    seconds: float
+
+
+class PipelineRunSummary(BaseModel):
+    run_id: str = Field(description="file name of the run report, without .json")
+    session: str
+    kind: str = Field(description="session | datasets")
+    started: str
+    ok: bool
+    stages: dict[str, str] = Field(description="stage name -> status")
+
+
+class PipelineRunOut(BaseModel):
+    run_id: str
+    session: str
+    kind: str
+    started: str
+    ok: bool
+    stages: list[PipelineStageOut]
+
+
+class HypertableOut(BaseModel):
+    table: str
+    rows: int = Field(description="approximate (TimescaleDB statistics)")
+    bytes: int
+    chunks: int
+    compressed_chunks: int
+    before_compression: int | None
+    after_compression: int | None
+
+
+class DatastoreOut(BaseModel):
+    database: str
+    bytes: int
+    hypertables: list[HypertableOut]
+    tables: dict[str, int] = Field(description="row counts of the small tables")
+    flows_from: datetime | None
+    flows_to: datetime | None
+    captures_by_source: dict[str, int] = Field(description="'honeypot' or the dataset id -> captures")
 
 
 class WindowOut(BaseModel):

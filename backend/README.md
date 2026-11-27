@@ -1040,5 +1040,106 @@ looks after them:
   on Windows. A restore always creates a **new** database, so it can never overwrite live data. `backups/` is not
   in git.
 
+## API additions (8-step plan, Step 5)
+
+New endpoints ([`api/operations.py`](api/operations.py)), listed at http://localhost:8001/docs:
+
+| Endpoint | What it gives |
+|---|---|
+| `GET /api/v1/datasets` | the 8 public datasets: source, size, labels, models, what is loaded in this database, Step 1's measured totals |
+| `GET /api/v1/datasets/{id}` | one dataset's captures with flows per attack class, and its caveats |
+| `GET /api/v1/pipeline/runs`, `/pipeline/runs/{run_id}` | the pipeline's run reports (Step 3), stage by stage |
+| `GET /api/v1/datastore` | size, rows, chunks and compression of this database (Step 4) |
+
+`GET /api/v1/flows` now also returns `fwd_flags`, `bwd_flags`, `attack_class` and `label_info`. It filters on
+`scenario`, `attack_class`, `src_ip` and `dataset` (`kitsune`, …, or `honeypot`). `GET /api/v1/captures` shows and
+filters `dataset`. Wrong filter values are refused with every problem listed (422). The API reads one database
+(`AEGEX_DB_URL`); start it on `aegex_datasets` to browse the public datasets with every endpoint.
+
+## Replay a recorded attack live (8-step plan, Step 6)
+
+[`demo/replay.py`](demo/replay.py) plays a stored capture back as live traffic, through the same ingest endpoint
+the real Zeek sensor uses:
+
+```powershell
+.venv\Scripts\python -m demo.replay --capture ds-kitsune-mirai --dry-run                      # the plan only
+.venv\Scripts\python -m demo.replay --capture ds-kitsune-mirai --from 2018-10-25T06:58:00Z --speed 10
+.venv\Scripts\python -m demo.replay --capture ds-kitsune-mirai --map 192.168.2.110=192.168.137.50
+.venv\Scripts\python -m demo.replay --clean                                                   # remove replays
+```
+
+- Time is moved to now and compressed by `--speed`. `--from` / `--to` pick a part of the recording.
+- TCP flags travel in Zeek's `history`, so they arrive unchanged.
+- `--map` gives a recorded host one of our addresses.
+- Replayed data is unlabelled, like real live traffic. The ground truth (which flow was an attack) goes to
+  `replays/<capture>.json` for Step 8.
+
+## Rule-based correlation baseline (8-step plan, Step 7)
+
+[`correlate/rules.py`](correlate/rules.py) uses simple rules with no machine learning. It is the yardstick the AI
+models have to beat. Each rule looks at one source address in one minute:
+
+| Rule | Fires at | Scenario |
+|---|---|---|
+| port_scan | ≥ 20 ports tried on one host | vulnerability_scanning |
+| host_sweep | ≥ 20 hosts tried, mostly unanswered (or ARP requests) | vulnerability_scanning |
+| telnet_scan | Telnet tried on ≥ 5 hosts | mirai_botnet |
+| flood | ≥ 100 connections to one service (host + port) | dos |
+| brute_force | ≥ 5 failed logins in 10 minutes (fail2ban's defaults) | bruteforce |
+
+Hits from the same source less than 2 minutes apart form **one incident**, even when different rules fired. The
+incident also collects that source's events from the other sources (Cowrie logins, honeypot hits) and the devices
+it reached. The thresholds are round numbers fixed before any evaluation.
+
+```powershell
+.venv\Scripts\python -m correlate --capture cap-2026-11-20-a        # database: AEGEX_DB_URL
+.venv\Scripts\python -m correlate --all --db aegex_poc
+.venv\Scripts\python -m correlate --capture ds-kitsune-mirai --db aegex_datasets --dry-run
+```
+
+Incidents are saved as alerts with `model_name = 'rules'`, so the API, the dashboard (AI alerts → "Rule baseline")
+and Step 8 treat them like the AI models' alerts. A re-run replaces them. The pipeline runs it as the stage
+"correlate (rule baseline)". The rules count per minute of the traffic's own clock, so a sped-up replay looks
+faster to them: score the baseline on traffic at its original speed.
+
+## Evaluation harness (8-step plan, Step 8)
+
+[`evaluate/`](evaluate/) scores every detector on a labelled capture, side by side. The detectors are the rule
+baseline, LSTM-AE, VAE, LSTM-AE + VAE (the AI team's alert), temporal GAT, and all of them together:
+
+```powershell
+.venv\Scripts\python -m evaluate --capture ds-kitsune-mirai --db aegex_datasets --from 2018-10-25T06:58:00Z `
+                                 --capture poc-attack --db aegex_poc --from -
+```
+
+- **Ground truth** = flow labels (the dataset's own labels, or Task A's attack log through `label_capture`).
+- **Covered flows:** an alert covers the flows in its time window that its host *sent* (rules, GAT), or that
+  *belong to* its device by the AI team's own rule (`aegex_prep.assign_device`, for LSTM-AE / VAE windows).
+- **Flow level:** recall, precision, F1 and false alarm rate. **Attacker level:** attack sources found, normal hosts
+  flagged, and time from a host's first attack flow to its first alert.
+- **Calibrated like the honeypot:** on our network the models calibrate on a normal recording first. For Kitsune,
+  the 70 attack-free minutes play that part (`python -m demo.cut_pcap ... --before 2018-10-25T06:58:00Z`, then
+  `python -m detect <pcap> --normal <cut>`). Only the time after the cut is scored (`--from`). `detect.py
+  --reference-scaler kitsune` instead uses the scaler stored in the model, with no calibration.
+
+Results (27 Nov 2026, `evaluate/report/evaluation.md`):
+
+| Kitsune Mirai, infection period (27,966 flows, 13,104 attack) | Recall | Precision | F1 | False alarms | Bots found |
+|---|---|---|---|---|---|
+| Rule baseline | 100 % | 84.4 % | 91.5 % | 16.3 % | 1 / 2 |
+| LSTM-AE | 57.0 % | 84.2 % | 68.0 % | 9.4 % | 1 / 2 |
+| VAE | 94.3 % | 80.5 % | 86.9 % | 20.1 % | 1 / 2 |
+| LSTM-AE + VAE | 98.3 % | 80.2 % | 88.3 % | 21.4 % | 1 / 2 |
+| LSTM-AE + VAE, not calibrated (stored scaler, whole capture) | 100 % | 41.5 % | 58.6 % | 50.1 % | 2 / 2 |
+| Temporal GAT (pooled threshold: never trained on Kitsune) | 100 % | 56.5 % | 72.2 % | 67.9 % | 2 / 2 |
+
+On the PoC recording (synthetic, loud scan + flood), the rules score 100 % / 100 % with 0 false alarms. LSTM-AE + VAE
+reach 100 % recall and 98 % precision, but also flag the phone (12 % false alarms).
+
+What this shows, honestly: loud, known attacks are caught by simple rules. The AI models need calibration on our own
+normal traffic (it halves their false alarms). The VAE is the stronger of the two AI stages. Only the GAT finds the
+quiet second Mirai bot (.107), but it does not transfer to networks it was not trained on, as the AI team warns.
+The test data is small: one public capture plus one synthetic recording.
+
 **For the team:** [TEAM_GUIDE.md](TEAM_GUIDE.md) is the short version of this README: the steps in one table, and
 what each task does with the backend.
