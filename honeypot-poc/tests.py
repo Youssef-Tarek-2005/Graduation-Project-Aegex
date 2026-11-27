@@ -13,7 +13,7 @@ ROOT = pathlib.Path(__file__).parent
 def build_sets(ip):
     return {
         "gentle": [
-            ["ping", "-n", "4", ip],
+            ["ping", "-c", "4", ip],
             ["curl", "-m", "10", f"http://{ip}/"],
             ["curl", "-m", "10", f"http://{ip}/status"],
             ["curl", "-m", "10", "-X", "POST", "-d", "user=admin&pass=test", f"http://{ip}/login"],

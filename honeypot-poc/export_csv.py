@@ -6,7 +6,7 @@ Creates in the session folder:
   events.csv   the ESP32's own event reports (from events.jsonl)
 """
 import csv, json, subprocess, sys, datetime, pathlib
-from common import load_config
+from common import load_config, tool
 
 ROOT = pathlib.Path(__file__).parent
 TSHARK_FIELDS = ["frame.number", "frame.time_epoch", "ip.src", "ip.dst", "ip.proto",
@@ -60,7 +60,7 @@ def flatten_events(src, dst):
 
 def main():
     cfg = load_config()
-    tshark = str(pathlib.Path(cfg["dumpcap"]).with_name("tshark.exe"))
+    tshark = tool(cfg, "tshark")
     data = ROOT / "data"
     if len(sys.argv) > 1:
         folder = pathlib.Path(sys.argv[1])

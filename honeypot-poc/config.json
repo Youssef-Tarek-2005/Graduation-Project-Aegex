@@ -1,8 +1,10 @@
 {
-  "esp32_ip": "192.168.137.241",
-  "hotspot_ip": "192.168.137.1",
+  "esp32_ip": "auto",
+  "interface": "wlan0",
   "collector_port": 5000,
-  "dumpcap": "C:\\Program Files\\Wireshark\\dumpcap.exe",
+  "dumpcap": "dumpcap",
+  "tshark": "tshark",
+  "mergecap": "mergecap",
   "rotate_seconds": 60,
   "capture_filter": "",
   "update_seconds": 10,
