@@ -8,7 +8,8 @@
 # 4. the dashboard in the browser
 # Anything already running is left alone, so running it twice is safe. Close a window to stop that part.
 
-$ErrorActionPreference = "Stop"
+# "Continue", not "Stop": docker prints an error while Docker Desktop is still off, and the script checks that itself
+$ErrorActionPreference = "Continue"
 $backend = $PSScriptRoot
 $py = Join-Path $backend ".venv\Scripts\python.exe"
 $dbUrl = "postgresql://aegex:aegex@127.0.0.1:5433/aegex_poc"
@@ -41,6 +42,17 @@ Write-Host "2/4 PoC database (tables + devices)" -ForegroundColor Cyan
 & $py -m ingest.poc_db | Select-Object -First 1
 
 Write-Host "3/4 API, dashboard, live demo" -ForegroundColor Cyan
+if (Test-Port 8001) {
+    # an API that is already running must be on the PoC database, or the live demo refuses to start
+    $db = $null
+    try { $db = (Invoke-RestMethod -Uri "http://127.0.0.1:8001/health" -TimeoutSec 5).database_name } catch { }
+    if ($db -ne "aegex_poc") {
+        Write-Host "    the API on 8001 uses database '$db', not aegex_poc: restarting it" -ForegroundColor Yellow
+        Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" | Where-Object { $_.CommandLine -match '-m api' } |
+            ForEach-Object { Stop-Process -Id $_.ProcessId -Force -Confirm:$false }
+        for ($i = 0; $i -lt 10; $i++) { Start-Sleep 1; if (-not (Test-Port 8001)) { break } }
+    }
+}
 if (-not (Test-Port 8001)) {
     Start-Window "AEGEX API 8001" "`$env:AEGEX_DB_URL = '$dbUrl'; .venv\Scripts\python -m api --host 0.0.0.0"
     for ($i = 0; $i -lt 30; $i++) { Start-Sleep 1; if (Test-Port 8001) { break } }
@@ -52,6 +64,10 @@ $running = Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" | Where-O
 if (-not $running) {
     Start-Sleep 2
     Start-Window "AEGEX live demo" ".venv\Scripts\python -m demo.live_demo"
+    Start-Sleep 8
+    $running = Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" | Where-Object { $_.CommandLine -like "*demo.live_demo*" }
+    if ($running) { Write-Host "    live demo started" }
+    else { Write-Host "    the live demo stopped right away: read the message in its window" -ForegroundColor Red }
 } else { Write-Host "    live demo already running" }
 
 Write-Host "4/4 opening the dashboard" -ForegroundColor Cyan
